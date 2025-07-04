@@ -504,9 +504,9 @@ def get_hash(data: str, algorithm: str = "md5") -> str:
 
     # Select hash algorithm
     if algorithm == "md5":
-        hasher = hashlib.md5()
+        hasher = hashlib.md5(usedforsecurity=False)
     elif algorithm == "sha1":
-        hasher = hashlib.sha1()
+        hasher = hashlib.sha1(usedforsecurity=False)
     elif algorithm == "sha256":
         hasher = hashlib.sha256()
     else:

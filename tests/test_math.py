@@ -12,6 +12,7 @@ from pyutils.math import (
     factorial,
     fibonacci,
     gcd,
+    get_random_int,
     get_random_item_from_array,
     is_even,
     is_odd,
@@ -20,7 +21,6 @@ from pyutils.math import (
     lerp,
     normalize,
     radians_to_degrees,
-    random_int,
     round_to_precision,
 )
 
@@ -393,37 +393,37 @@ class TestIsOdd:
         assert is_odd(-4) is False
 
 
-class TestRandomInt:
-    """Test random_int function."""
+class TestGetRandomInt:
+    """Test get_random_int function."""
 
-    def test_random_int_range(self):
-        """Test that random_int returns value in range."""
+    def test_get_random_int_range(self):
+        """Test that get_random_int returns value in range."""
         for _ in range(100):  # Test multiple times
-            result = random_int(1, 10)
+            result = get_random_int(1, 10)
             assert 1 <= result <= 10
             assert isinstance(result, int)
 
-    def test_random_int_single_value(self):
-        """Test random_int with same min and max."""
-        result = random_int(5, 5)
+    def test_get_random_int_single_value(self):
+        """Test get_random_int with same min and max."""
+        result = get_random_int(5, 5)
         assert result == 5
 
-    def test_random_int_negative_range(self):
-        """Test random_int with negative range."""
+    def test_get_random_int_negative_range(self):
+        """Test get_random_int with negative range."""
         for _ in range(100):
-            result = random_int(-10, -1)
+            result = get_random_int(-10, -1)
             assert -10 <= result <= -1
 
-    def test_random_int_zero_range(self):
-        """Test random_int with range including zero."""
+    def test_get_random_int_zero_range(self):
+        """Test get_random_int with range including zero."""
         for _ in range(100):
-            result = random_int(-5, 5)
+            result = get_random_int(-5, 5)
             assert -5 <= result <= 5
 
-    def test_random_int_invalid_range(self):
-        """Test random_int with invalid range."""
+    def test_get_random_int_invalid_range(self):
+        """Test get_random_int with invalid range."""
         with pytest.raises(ValueError):
-            random_int(10, 1)
+            get_random_int(10, 1)
 
 
 class TestGetRandomItemFromArray:

@@ -58,13 +58,13 @@ from .math import (
     factorial,
     fibonacci,
     gcd,
+    get_random_int,
     is_even,
     is_odd,
     is_prime,
     lcm,
     lerp,
     normalize,
-    random_int,
 )
 from .object import (
     deep_copy,
@@ -144,8 +144,8 @@ __all__ = [
     # Object functions
     "pick",
     "race",
+    "get_random_int",
     # Math functions
-    "random_int",
     "range_iter",
     # Array functions
     "range_list",

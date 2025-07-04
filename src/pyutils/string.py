@@ -4,7 +4,6 @@ This module provides utility functions for working with strings,
 ported from the jsutils library.
 """
 
-import random
 import re
 import string as string_module
 import uuid
@@ -66,8 +65,9 @@ def generate_base62_code(length: int = 8) -> str:
         >>> all(c in string_module.ascii_letters + string_module.digits for c in code)
         True
     """
+    import secrets
     chars = string_module.ascii_letters + string_module.digits
-    return "".join(random.choice(chars) for _ in range(length))
+    return "".join(secrets.choice(chars) for _ in range(length))
 
 
 def fuzzy_match(pattern: str, text: str) -> float:

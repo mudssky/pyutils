@@ -4,32 +4,37 @@ This module provides utility functions for mathematical operations,
 ported from the jsutils library.
 """
 
-import random
 from typing import TypeVar
 
 
 T = TypeVar("T")
 
 
-def random_int(min_val: int, max_val: int) -> int:
-    """Generate a random integer between min_val and max_val (inclusive).
+def get_random_int(min_val: int, max_val: int) -> int:
+    """Generate a random integer between min and max (inclusive).
 
     Args:
         min_val: Minimum value (inclusive)
         max_val: Maximum value (inclusive)
 
     Returns:
-        Random integer in the specified range
+        Random integer between min_val and max_val
+
+    Raises:
+        ValueError: If min_val > max_val
 
     Examples:
-        >>> result = random_int(1, 10)
+        >>> result = get_random_int(1, 10)
         >>> 1 <= result <= 10
         True
-        >>> result = random_int(5, 5)
-        >>> result
+        >>> get_random_int(5, 5)
         5
     """
-    return random.randint(min_val, max_val)
+    if min_val > max_val:
+        raise ValueError("min_val must be less than or equal to max_val")
+
+    import secrets
+    return secrets.randbelow(max_val - min_val + 1) + min_val
 
 
 def get_random_item_from_array(items: list[T]) -> T:
@@ -54,7 +59,8 @@ def get_random_item_from_array(items: list[T]) -> T:
     """
     if not items:
         raise IndexError("Cannot select from empty list")
-    return random.choice(items)
+    import secrets
+    return secrets.choice(items)
 
 
 def clamp(
