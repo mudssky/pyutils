@@ -170,9 +170,6 @@ def merge(*dicts: dict[Any, Any]) -> dict[Any, Any]:
     result: dict[Any, Any] = {}
 
     for d in dicts:
-        if not isinstance(d, dict):
-            continue
-
         for key, value in d.items():
             if (
                 key in result
@@ -213,27 +210,27 @@ def remove_non_serializable_props(obj: Any) -> Any:
             return False
 
     if isinstance(obj, dict):
-        result = {}
+        dict_result: dict[Any, Any] = {}
         for key, value in obj.items():
             if isinstance(value, dict | list):
                 # Recursively clean nested structures
                 cleaned_value = remove_non_serializable_props(value)
                 if cleaned_value is not None:
-                    result[key] = cleaned_value
+                    dict_result[key] = cleaned_value
             elif is_serializable(value):
-                result[key] = value
-        return result
+                dict_result[key] = value
+        return dict_result
     elif isinstance(obj, list):
-        result = []
+        list_result: list[Any] = []
         for item in obj:
             if isinstance(item, dict | list):
                 # Recursively clean nested structures
                 cleaned_item = remove_non_serializable_props(item)
                 if cleaned_item is not None:
-                    result.append(cleaned_item)
+                    list_result.append(cleaned_item)
             elif is_serializable(item):
-                result.append(item)
-        return result
+                list_result.append(item)
+        return list_result
     else:
         return obj if is_serializable(obj) else None
 

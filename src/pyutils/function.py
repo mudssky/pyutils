@@ -44,14 +44,14 @@ class Debouncer:
         self.leading = leading
         self.trailing = trailing
         self.timer: threading.Timer | None = None
-        self.last_args: tuple = ()
-        self.last_kwargs: dict = {}
+        self.last_args: tuple[Any, ...] = ()
+        self.last_kwargs: dict[str, Any] = {}
         self.result: Any = None
         self.is_leading_executed = False
         self.is_trailing_executed = False
         self.lock = threading.Lock()
 
-    def __call__(self, *args, **kwargs) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Call the debounced function."""
         with self.lock:
             self.last_args = args
@@ -167,14 +167,14 @@ class Throttler:
         self.leading = leading
         self.trailing = trailing
         self.timer: threading.Timer | None = None
-        self.last_args: tuple = ()
-        self.last_kwargs: dict = {}
+        self.last_args: tuple[Any, ...] = ()
+        self.last_kwargs: dict[str, Any] = {}
         self.result: Any = None
         self.is_leading_executed = False
         self.is_trailing_executed = False
         self.lock = threading.Lock()
 
-    def __call__(self, *args, **kwargs) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Call the throttled function."""
         with self.lock:
             self.last_args = args
@@ -268,7 +268,7 @@ class PollingController:
         interval: float = 5.0,
         max_retries: int = 3,
         immediate: bool = False,
-        max_executions: int = float("inf"),
+        max_executions: int | float = float("inf"),
     ):
         """Initialize polling controller.
 
@@ -298,7 +298,7 @@ class PollingController:
         self.execution_count = 0
         self.last_result: T | None = None
         self.last_error: Exception | None = None
-        self._task: asyncio.Task | None = None
+        self._task: asyncio.Task[Any] | None = None
 
     async def start(self) -> None:
         """Start polling."""
@@ -369,7 +369,7 @@ def create_polling(
     interval: float = 5.0,
     max_retries: int = 3,
     immediate: bool = False,
-    max_executions: int = float("inf"),
+    max_executions: int | float = float("inf"),
 ) -> PollingController:
     """Create a polling controller.
 
@@ -442,7 +442,7 @@ def with_retry(
         if asyncio.iscoroutinefunction(func):
 
             @wraps(func)
-            async def async_wrapper(*args, **kwargs):
+            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 retry_count = 0
                 last_error = None
 
@@ -456,18 +456,19 @@ def with_retry(
                         if retry_count > max_retries or (
                             should_retry and not should_retry(error)
                         ):
-                            raise last_error from None
+                            raise error
 
                         if delay > 0:
                             await asyncio.sleep(delay)
 
-                raise last_error from None
+                if last_error:
+                    raise last_error
 
             return async_wrapper  # type: ignore
         else:
 
             @wraps(func)
-            def sync_wrapper(*args, **kwargs):
+            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
                 retry_count = 0
                 last_error = None
 
@@ -481,12 +482,13 @@ def with_retry(
                         if retry_count > max_retries or (
                             should_retry and not should_retry(error)
                         ):
-                            raise last_error from None
+                            raise error
 
                         if delay > 0:
                             time.sleep(delay)
 
-                raise last_error from None
+                if last_error:
+                    raise last_error
 
             return sync_wrapper  # type: ignore
 
@@ -513,12 +515,12 @@ def memoize(func: F) -> F:
         >>> expensive_calculation(5)  # Uses cached result, no print
         25
     """
-    cache: dict[tuple, Any] = {}
+    cache: dict[tuple[Any, ...], Any] = {}
 
     if asyncio.iscoroutinefunction(func):
 
         @wraps(func)
-        async def async_wrapper(*args, **kwargs):
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
             # Create cache key from args and kwargs
             key = (args, tuple(sorted(kwargs.items())))
 
@@ -534,7 +536,7 @@ def memoize(func: F) -> F:
     else:
 
         @wraps(func)
-        def sync_wrapper(*args, **kwargs):
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             # Create cache key from args and kwargs
             key = (args, tuple(sorted(kwargs.items())))
 
@@ -573,7 +575,7 @@ def once(func: F) -> F:
     result = None
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         nonlocal called, result
         if not called:
             result = func(*args, **kwargs)

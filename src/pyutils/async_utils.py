@@ -140,7 +140,16 @@ async def race(*coroutines: Awaitable[T]) -> T:
         >>> # asyncio.run(main())
     """
     # Convert coroutines to tasks explicitly
-    tasks = [asyncio.create_task(coro) for coro in coroutines]
+    tasks: list[asyncio.Task[T]] = []
+    for coro in coroutines:
+        if asyncio.iscoroutine(coro):
+            tasks.append(asyncio.create_task(coro))
+        else:
+            # Convert awaitable to coroutine
+            async def _wrap(c: Awaitable[T] = coro) -> T:
+                return await c
+
+            tasks.append(asyncio.create_task(_wrap()))
 
     done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
 
@@ -149,7 +158,8 @@ async def race(*coroutines: Awaitable[T]) -> T:
         task.cancel()
 
     # Return result of first completed task
-    return done.pop().result()
+    completed_task = done.pop()
+    return completed_task.result()
 
 
 async def retry_async(
@@ -207,7 +217,9 @@ async def retry_async(
                 await asyncio.sleep(current_delay)
                 current_delay *= backoff_factor
 
-    raise last_error
+    if last_error:
+        raise last_error
+    raise RuntimeError("No attempts were made")
 
 
 async def map_async(
@@ -278,7 +290,7 @@ async def filter_async(
     return [item for item, passed in results if passed]
 
 
-def run_in_thread(func: Callable[..., T], *args, **kwargs) -> Awaitable[T]:
+def run_in_thread(func: Callable[..., T], *args: Any, **kwargs: Any) -> Awaitable[T]:
     """Run a synchronous function in a thread pool.
 
     Args:
@@ -351,11 +363,11 @@ async def batch_process(
 class AsyncContextManager:
     """Base class for async context managers."""
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncContextManager":
         """Enter async context."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Exit async context."""
         pass
 
@@ -363,18 +375,18 @@ class AsyncContextManager:
 class AsyncTimer(AsyncContextManager):
     """Async context manager for timing operations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize timer."""
         self.start_time: float | None = None
         self.end_time: float | None = None
         self.elapsed: float | None = None
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncTimer":
         """Start timing."""
         self.start_time = time.time()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Stop timing."""
         self.end_time = time.time()
         if self.start_time is not None:
