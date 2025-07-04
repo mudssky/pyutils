@@ -206,17 +206,27 @@ def remove_non_serializable_props(obj: Any) -> Any:
             return False
     
     if isinstance(obj, dict):
-        return {
-            key: remove_non_serializable_props(value)
-            for key, value in obj.items()
-            if is_serializable(value)
-        }
+        result = {}
+        for key, value in obj.items():
+            if isinstance(value, (dict, list)):
+                # Recursively clean nested structures
+                cleaned_value = remove_non_serializable_props(value)
+                if cleaned_value is not None:
+                    result[key] = cleaned_value
+            elif is_serializable(value):
+                result[key] = value
+        return result
     elif isinstance(obj, list):
-        return [
-            remove_non_serializable_props(item)
-            for item in obj
-            if is_serializable(item)
-        ]
+        result = []
+        for item in obj:
+            if isinstance(item, (dict, list)):
+                # Recursively clean nested structures
+                cleaned_item = remove_non_serializable_props(item)
+                if cleaned_item is not None:
+                    result.append(cleaned_item)
+            elif is_serializable(item):
+                result.append(item)
+        return result
     else:
         return obj if is_serializable(obj) else None
 
@@ -405,3 +415,107 @@ def set_nested_value(obj: Dict[str, Any], path: str, value: Any, separator: str 
     
     current[parts[-1]] = value
     return obj
+
+
+def get(obj: Dict[str, Any], key: str, default: Any = None) -> Any:
+    """Get a value from a dictionary with optional default.
+    
+    Args:
+        obj: Source dictionary
+        key: Key to retrieve
+        default: Default value if key not found
+        
+    Returns:
+        Value at the specified key or default
+        
+    Examples:
+        >>> get({'name': 'Alice', 'age': 25}, 'name')
+        'Alice'
+        >>> get({'name': 'Alice'}, 'age', 0)
+        0
+        >>> get({}, 'nonexistent') is None
+        True
+    """
+    return obj.get(key, default)
+
+
+def clone(obj: Any) -> Any:
+    """Create a shallow copy of an object.
+    
+    Args:
+        obj: Object to clone
+        
+    Returns:
+        Shallow copy of the object
+        
+    Examples:
+        >>> original = {'a': 1, 'b': [1, 2, 3]}
+        >>> cloned = clone(original)
+        >>> cloned['a'] = 2
+        >>> original['a']
+        1
+        >>> cloned['b'] is original['b']
+        True
+    """
+    import copy
+    return copy.copy(obj)
+
+
+def set_value(obj: Dict[str, Any], key: str, value: Any) -> Dict[str, Any]:
+    """Set a value in a dictionary.
+    
+    Args:
+        obj: Target dictionary (will be modified)
+        key: Key to set
+        value: Value to set
+        
+    Returns:
+        The modified dictionary
+        
+    Examples:
+        >>> data = {'name': 'Alice'}
+        >>> set_value(data, 'age', 25)
+        {'name': 'Alice', 'age': 25}
+        >>> data
+        {'name': 'Alice', 'age': 25}
+    """
+    obj[key] = value
+    return obj
+
+
+def has(obj: Dict[str, Any], key: str) -> bool:
+    """Check if a dictionary has a specific key.
+    
+    Args:
+        obj: Dictionary to check
+        key: Key to look for
+        
+    Returns:
+        True if key exists, False otherwise
+        
+    Examples:
+        >>> has({'name': 'Alice', 'age': 25}, 'name')
+        True
+        >>> has({'name': 'Alice'}, 'age')
+        False
+    """
+    return key in obj
+
+
+def filter_dict(obj: Dict[K, V], predicate: Callable[[K, V], bool]) -> Dict[K, V]:
+    """Filter a dictionary based on a predicate function.
+    
+    Args:
+        obj: Dictionary to filter
+        predicate: Function that takes key and value, returns True to keep
+        
+    Returns:
+        New dictionary with filtered key-value pairs
+        
+    Examples:
+        >>> filter_dict({'a': 1, 'b': 2, 'c': 3}, lambda k, v: v > 1)
+        {'b': 2, 'c': 3}
+        >>> filter_dict({'DB_HOST': 'localhost', 'API_KEY': 'secret'}, lambda k, v: k.startswith('DB_'))
+        {'DB_HOST': 'localhost'}
+    """
+    return {k: v for k, v in obj.items() if predicate(k, v)}
