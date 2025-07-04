@@ -97,8 +97,8 @@ def test_math_functions():
     print("  ✅ lerp works")
     
     # Test is_even and is_odd
-    assert math.is_even(4) == True
-    assert math.is_odd(5) == True
+    assert math.is_even(4)
+    assert math.is_odd(5)
     print("  ✅ is_even and is_odd work")
     
     # Test gcd and lcm
@@ -111,8 +111,8 @@ def test_math_functions():
     print("  ✅ factorial works")
     
     # Test is_prime
-    assert math.is_prime(7) == True
-    assert math.is_prime(8) == False
+    assert math.is_prime(7)
+    assert not math.is_prime(8)
     print("  ✅ is_prime works")
     
     print("✅ All math functions passed")

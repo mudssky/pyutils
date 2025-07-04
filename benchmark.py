@@ -130,7 +130,7 @@ def benchmark_array_functions():
     # 测试数据
     small_array = list(range(100))
     medium_array = list(range(1000))
-    large_array = list(range(10000))
+    list(range(10000))
     
     # chunk 函数测试
     result = benchmark(array.chunk, medium_array, 10, iterations=1000)
@@ -158,9 +158,8 @@ def benchmark_string_functions():
     print("=" * 50)
     
     # 测试数据
-    short_text = "hello_world_example"
     medium_text = "this_is_a_much_longer_string_with_many_words_and_underscores"
-    long_text = "_".join([f"word{i}" for i in range(50)])
+    "_".join([f"word{i}" for i in range(50)])
     
     # camel_case 测试
     result = benchmark(string.camel_case, medium_text, iterations=10000)
@@ -221,9 +220,9 @@ def benchmark_object_functions():
     print("=" * 50)
     
     # 测试数据
-    small_obj = {f"key{i}": f"value{i}" for i in range(10)}
+    {f"key{i}": f"value{i}" for i in range(10)}
     medium_obj = {f"key{i}": f"value{i}" for i in range(100)}
-    large_obj = {f"key{i}": f"value{i}" for i in range(1000)}
+    {f"key{i}": f"value{i}" for i in range(1000)}
     
     # pick 测试
     keys_to_pick = [f"key{i}" for i in range(0, 50, 5)]
@@ -272,7 +271,7 @@ def benchmark_function_utilities():
     
     # 第二次调用（有缓存）
     start_time = time.perf_counter()
-    result2 = fibonacci_memo(30)
+    fibonacci_memo(30)
     cached_call_time = time.perf_counter() - start_time
     
     print("  memoize fibonacci(30):")
