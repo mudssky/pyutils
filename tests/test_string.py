@@ -2,7 +2,6 @@
 
 """Tests for string module."""
 
-import pytest
 import uuid
 from pyutils.string import (
     camel_case, snake_case, pascal_case, dash_case, slugify, truncate,

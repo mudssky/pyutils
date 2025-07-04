@@ -1,16 +1,8 @@
 #!/usr/bin/env python
 
-"""Tests for `pyutils` package."""
-
-import pytest
-
-
-#!/usr/bin/env python
-
 """Integration tests for pyutils package."""
 
 import pytest
-import asyncio
 from pyutils import (
     array, string, math, object, function, async_utils, bytes
 )
@@ -252,7 +244,7 @@ class TestModuleCompatibility:
         assert sys.version_info >= (3, 6), "Requires Python 3.6+"
         
         # Test type hints work (Python 3.5+)
-        from typing import List, Dict, Optional
+        from typing import List, Dict
         
         def typed_function(items: List[str]) -> Dict[str, int]:
             return {item: len(item) for item in items}
@@ -263,7 +255,6 @@ class TestModuleCompatibility:
     def test_import_structure(self):
         """Test that import structure is consistent."""
         # Test that we can import from package root
-        import pyutils
         
         # Test that submodules are accessible
         from pyutils import array as arr_module
@@ -279,8 +270,10 @@ class TestModuleCompatibility:
             from pyutils import (
                 array, string, math, object, function, async_utils, bytes
             )
+            # Use the imports to avoid unused import warnings
+            modules = [array, string, math, object, function, async_utils, bytes]
             # If we get here, no circular imports
-            assert True
+            assert len(modules) == 7
         except ImportError as e:
             pytest.fail(f"Circular import detected: {e}")
 
