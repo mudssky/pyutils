@@ -66,6 +66,7 @@ def generate_base62_code(length: int = 8) -> str:
         True
     """
     import secrets
+
     chars = string_module.ascii_letters + string_module.digits
     return "".join(secrets.choice(chars) for _ in range(length))
 

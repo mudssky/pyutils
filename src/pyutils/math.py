@@ -34,6 +34,7 @@ def get_random_int(min_val: int, max_val: int) -> int:
         raise ValueError("min_val must be less than or equal to max_val")
 
     import secrets
+
     return secrets.randbelow(max_val - min_val + 1) + min_val
 
 
@@ -60,6 +61,7 @@ def get_random_item_from_array(items: list[T]) -> T:
     if not items:
         raise IndexError("Cannot select from empty list")
     import secrets
+
     return secrets.choice(items)
 
 
