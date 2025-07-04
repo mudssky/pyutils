@@ -105,6 +105,8 @@ ENV/
 .mypy_cache/
 
 # IDE settings
-.vscode/
+# .vscode/
 .idea/
 
+
+copy.code-workspace
