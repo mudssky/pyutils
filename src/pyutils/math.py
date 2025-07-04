@@ -111,6 +111,9 @@ def normalize(value: Union[int, float], min_val: Union[int, float], max_val: Uni
     Returns:
         Normalized value (0.0 to 1.0)
         
+    Raises:
+        ZeroDivisionError: If max_val equals min_val (zero range)
+        
     Examples:
         >>> normalize(5, 0, 10)
         0.5
@@ -120,7 +123,7 @@ def normalize(value: Union[int, float], min_val: Union[int, float], max_val: Uni
         0.0
     """
     if max_val == min_val:
-        return 0.0
+        raise ZeroDivisionError("Cannot normalize with zero range (max_val == min_val)")
     return (value - min_val) / (max_val - min_val)
 
 
