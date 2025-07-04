@@ -10,7 +10,6 @@ from typing import (
     Callable,
     Dict,
     Generator,
-    Iterable,
     List,
     Optional,
     Tuple,
@@ -71,28 +70,37 @@ def range_iter(start: int, end: Optional[int] = None, step: int = 1) -> Generato
     yield from range(start, end, step)
 
 
-def boil(items: List[T], compare_fn: Callable[[T, T], T]) -> Optional[T]:
-    """Reduce a list to a single value using a comparison function.
+def boil(items: List[T], reducer_fn: Callable[[T, T], T], initial_value: Optional[T] = None) -> Optional[T]:
+    """Reduce a list to a single value using a reducer function.
     
     Args:
         items: List of items to reduce
-        compare_fn: Function that takes two items and returns the preferred one
+        reducer_fn: Function that takes accumulator and current item, returns new accumulator
+        initial_value: Initial value for the accumulator
         
     Returns:
-        The final reduced value, or None if list is empty
+        The final reduced value, or initial_value if list is empty
         
     Examples:
-        >>> boil([1, 2, 3, 4], max)
-        4
-        >>> boil(['a', 'bb', 'ccc'], lambda a, b: a if len(a) > len(b) else b)
-        'ccc'
+        >>> boil([1, 2, 3, 4], lambda acc, x: acc + x, 0)
+        10
+        >>> boil([1, 2, 3, 4], lambda acc, x: acc * x, 1)
+        24
+        >>> boil(['a', 'b', 'c'], lambda acc, x: acc + x, '')
+        'abc'
     """
     if not items:
-        return None
+        return initial_value
     
-    result = items[0]
-    for item in items[1:]:
-        result = compare_fn(result, item)
+    if initial_value is None:
+        result = items[0]
+        start_index = 1
+    else:
+        result = initial_value
+        start_index = 0
+    
+    for item in items[start_index:]:
+        result = reducer_fn(result, item)
     return result
 
 
@@ -106,6 +114,9 @@ def chunk(items: List[T], size: int) -> List[List[T]]:
     Returns:
         List of chunks
         
+    Raises:
+        ValueError: If size is less than or equal to 0
+        
     Examples:
         >>> chunk([1, 2, 3, 4, 5], 2)
         [[1, 2], [3, 4], [5]]
@@ -113,7 +124,7 @@ def chunk(items: List[T], size: int) -> List[List[T]]:
         [['a', 'b', 'c'], ['d']]
     """
     if size <= 0:
-        return []
+        raise ValueError("Chunk size must be greater than 0")
     return [items[i:i + size] for i in range(0, len(items), size)]
 
 
@@ -140,29 +151,26 @@ def count_by(items: List[T], key_fn: Callable[[T], K]) -> Dict[K, int]:
     return result
 
 
-def diff(old_list: List[T], new_list: List[T]) -> Tuple[List[T], List[T]]:
-    """Find items added and removed between two lists.
+def diff(old_list: List[T], new_list: List[T]) -> List[T]:
+    """Find items that are in old_list but not in new_list.
     
     Args:
         old_list: Original list
         new_list: New list
         
     Returns:
-        Tuple of (added_items, removed_items)
+        List of items that were removed (in old_list but not in new_list)
         
     Examples:
-        >>> diff([1, 2, 3], [2, 3, 4])
-        ([4], [1])
-        >>> diff(['a', 'b'], ['b', 'c', 'd'])
-        (['c', 'd'], ['a'])
+        >>> diff([1, 2, 3, 4], [2, 4])
+        [1, 3]
+        >>> diff([1, 2, 3], [1, 2, 3])
+        []
+        >>> diff([1, 1, 2, 3], [1])
+        [2, 3]
     """
-    old_set = set(old_list)
     new_set = set(new_list)
-    
-    added = [item for item in new_list if item not in old_set]
-    removed = [item for item in old_list if item not in new_set]
-    
-    return added, removed
+    return [item for item in old_list if item not in new_set]
 
 
 def first(items: List[T], default: Optional[T] = None) -> Optional[T]:
@@ -420,7 +428,7 @@ def shuffle(items: List[T]) -> List[T]:
 
 
 def alphabetical(items: List[str], key_fn: Optional[Callable[[str], str]] = None) -> List[str]:
-    """Sort strings alphabetically.
+    """Sort strings alphabetically (case-insensitive by default).
     
     Args:
         items: List of strings to sort
@@ -432,9 +440,31 @@ def alphabetical(items: List[str], key_fn: Optional[Callable[[str], str]] = None
     Examples:
         >>> alphabetical(['banana', 'apple', 'cherry'])
         ['apple', 'banana', 'cherry']
-        >>> alphabetical(['Apple', 'banana', 'Cherry'], key_fn=str.lower)
-        ['Apple', 'banana', 'Cherry']
+        >>> alphabetical(['Banana', 'apple', 'Cherry'])
+        ['apple', 'Banana', 'Cherry']
     """
     if key_fn is None:
-        return sorted(items)
+        # Default to case-insensitive sorting while preserving original case
+        return sorted(items, key=str.lower)
     return sorted(items, key=key_fn)
+
+
+def filter_list(items: List[T], predicate: Callable[[T], bool]) -> List[T]:
+    """Filter a list based on a predicate function.
+    
+    Args:
+        items: List to filter
+        predicate: Function that returns True for items to keep
+        
+    Returns:
+        New list containing only items that match the predicate
+        
+    Examples:
+        >>> filter_list([1, 2, 3, 4, 5], lambda x: x % 2 == 0)
+        [2, 4]
+        >>> filter_list(['apple', 'banana', 'cherry'], lambda x: len(x) > 5)
+        ['banana', 'cherry']
+        >>> filter_list(['DB_HOST=localhost', 'DB_PORT=5432', 'API_KEY=secret'], lambda x: x.startswith('DB_'))
+        ['DB_HOST=localhost', 'DB_PORT=5432']
+    """
+    return [item for item in items if predicate(item)]
