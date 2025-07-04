@@ -1,7 +1,33 @@
 # Ruff配置文件
 # 详细配置说明：https://docs.astral.sh/ruff/
 
-[tool.ruff]
+# 行长度限制（与项目规范一致）
+line-length = 88
+
+# 目标Python版本
+target-version = "py310"
+
+# 排除目录
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    ".uv",
+    "build",
+    "dist",
+    "docs/_build",
+    "htmlcov",
+    ".tox",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+]
+
+# 每个文件的最大修复数
+fix = true
+show-fixes = true
+
+[lint]
 # 启用更多规则集
 select = [
     "E",   # pycodestyle errors
@@ -25,53 +51,30 @@ ignore = [
     "D104", # Missing docstring in public package
     "S101", # Use of assert detected (pytest uses assert)
     "T20",  # Avoid print statements (允许在示例中使用)
+    "PT011", # pytest-raises-too-broad (测试中可以使用宽泛的异常捕获)
+    "S311", # suspicious-non-cryptographic-random-usage (工具函数中可以使用)
+    "S324", # hashlib-insecure-hash-function (工具函数中可以使用MD5等)
 ]
 
-# 行长度限制（与项目规范一致）
-line-length = 88
-
-# 目标Python版本
-target-version = "py36"
-
-# 排除目录
-exclude = [
-    ".git",
-    "__pycache__",
-    ".venv",
-    ".uv",
-    "build",
-    "dist",
-    "docs/_build",
-    "htmlcov",
-    ".tox",
-    ".pytest_cache",
-    ".mypy_cache",
-    ".ruff_cache",
-]
-
-# 每个文件的最大修复数
-fix = true
-show-fixes = true
-
-[tool.ruff.pydocstyle]
+[lint.pydocstyle]
 # 使用Google风格的docstring
 convention = "google"
 
-[tool.ruff.isort]
+[lint.isort]
 # 导入排序配置
 known-first-party = ["pyutils"]
 force-single-line = false
 lines-after-imports = 2
 split-on-trailing-comma = true
 
-[tool.ruff.flake8-pytest-style]
+[lint.flake8-pytest-style]
 # pytest风格配置
 fixture-parentheses = false
 parametrize-names-type = "tuple"
 parametrize-values-type = "tuple"
 parametrize-values-row-type = "tuple"
 
-[tool.ruff.per-file-ignores]
+[lint.per-file-ignores]
 # 测试文件特殊规则
 "tests/**/*.py" = [
     "D",    # 测试文件不需要docstring

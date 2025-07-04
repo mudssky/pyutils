@@ -7,7 +7,7 @@ name = "pyutils"
 version = "0.1.0"
 description = "python utils function library"
 readme = "README.rst"
-requires-python = ">=3.6"
+requires-python = ">=3.10"
 authors = [{ name = "mudssky", email = "mudssky@gmail.com" }]
 maintainers = [{ name = "mudssky", email = "mudssky@gmail.com" }]
 classifiers = []
