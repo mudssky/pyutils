@@ -191,6 +191,9 @@ def test_function_utilities():
     print("✅ All function utilities passed")
 
 
+import pytest
+
+@pytest.mark.asyncio
 async def test_async_functions():
     """Test async utility functions."""
     print("\n🧪 Testing async functions...")
