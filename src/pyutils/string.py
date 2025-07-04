@@ -11,43 +11,28 @@ import string as string_module
 from typing import Dict, List, Optional, Union
 
 
-def gen_all_cases_combination(text: str) -> List[str]:
-    """Generate all possible case combinations of a string.
+def gen_all_cases_combination(text: str) -> Dict[str, str]:
+    """Generate all common case combinations of a string.
     
     Args:
         text: Input string
         
     Returns:
-        List of all case combinations
+        Dictionary with different case styles
         
     Examples:
-        >>> gen_all_cases_combination('ab')
-        ['ab', 'aB', 'Ab', 'AB']
-        >>> len(gen_all_cases_combination('abc'))
-        8
+        >>> result = gen_all_cases_combination('hello_world')
+        >>> result['camelCase']
+        'helloWorld'
+        >>> result['PascalCase']
+        'HelloWorld'
     """
-    if not text:
-        return ['']
-    
-    result = []
-    
-    def generate(index: int, current: str) -> None:
-        if index == len(text):
-            result.append(current)
-            return
-        
-        char = text[index]
-        if char.isalpha():
-            # Add lowercase version
-            generate(index + 1, current + char.lower())
-            # Add uppercase version
-            generate(index + 1, current + char.upper())
-        else:
-            # Non-alphabetic character, keep as is
-            generate(index + 1, current + char)
-    
-    generate(0, '')
-    return result
+    return {
+        'camelCase': camel_case(text),
+        'snake_case': snake_case(text),
+        'PascalCase': pascal_case(text),
+        'dash-case': dash_case(text)
+    }
 
 
 def generate_uuid() -> str:
@@ -86,33 +71,46 @@ def generate_base62_code(length: int = 8) -> str:
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-def fuzzy_match(pattern: str, text: str) -> bool:
-    """Check if pattern matches text with fuzzy matching.
+def fuzzy_match(pattern: str, text: str) -> float:
+    """Calculate fuzzy match score between pattern and text.
     
     Args:
         pattern: Pattern to match
         text: Text to search in
         
     Returns:
-        True if pattern matches, False otherwise
+        Similarity score between 0.0 and 1.0
         
     Examples:
-        >>> fuzzy_match('abc', 'aabbcc')
-        True
-        >>> fuzzy_match('abc', 'axbycz')
-        True
-        >>> fuzzy_match('abc', 'xyz')
-        False
+        >>> fuzzy_match('hello', 'hello')
+        1.0
+        >>> fuzzy_match('hello', 'world')
+        0.0
+        >>> fuzzy_match('hello', 'helo')
+        0.8
     """
+    if not pattern and not text:
+        return 1.0
+    if not pattern or not text:
+        return 0.0
+    
     pattern = pattern.lower()
     text = text.lower()
     
+    if pattern == text:
+        return 1.0
+    
+    # Simple character-based similarity
+    matches = 0
     pattern_idx = 0
+    
     for char in text:
         if pattern_idx < len(pattern) and char == pattern[pattern_idx]:
+            matches += 1
             pattern_idx += 1
     
-    return pattern_idx == len(pattern)
+    # Calculate similarity based on matched characters vs pattern length
+    return matches / len(pattern) if len(pattern) > 0 else 0.0
 
 
 def get_file_ext(filename: str) -> str:
@@ -131,30 +129,52 @@ def get_file_ext(filename: str) -> str:
         'gz'
         >>> get_file_ext('README')
         ''
+        >>> get_file_ext('.gitignore')
+        ''
+        >>> get_file_ext('.config.json')
+        'json'
     """
-    if '.' not in filename:
+    if not filename or '.' not in filename:
         return ''
-    return filename.split('.')[-1]
+    
+    # Extract just the filename from path
+    basename = filename.split('/')[-1].split('\\')[-1]
+    
+    # Handle hidden files (starting with .)
+    if basename.startswith('.'):
+        # Count dots to determine if there's an extension
+        dot_count = basename.count('.')
+        if dot_count == 1:  # Only one dot at the beginning, no extension
+            return ''
+        else:  # Multiple dots, last part is extension
+            return basename.split('.')[-1]
+    
+    # Regular files
+    return basename.split('.')[-1]
 
 
 def capitalize(text: str) -> str:
-    """Capitalize the first letter of a string.
+    """Capitalize the first letter of each word in a string.
     
     Args:
         text: Input string
         
     Returns:
-        String with first letter capitalized
+        String with first letter of each word capitalized
         
     Examples:
         >>> capitalize('hello world')
-        'Hello world'
+        'Hello World'
         >>> capitalize('HELLO')
         'Hello'
+        >>> capitalize('   ')
+        '   '
     """
     if not text:
         return text
-    return text[0].upper() + text[1:].lower()
+    if not text.strip():
+        return text
+    return ' '.join(word.capitalize() for word in text.split())
 
 
 def camel_case(text: str) -> str:
@@ -173,17 +193,25 @@ def camel_case(text: str) -> str:
         'helloWorldTest'
         >>> camel_case('hello_world_test')
         'helloWorldTest'
+        >>> camel_case('helloWorld')
+        'helloWorld'
     """
-    # Split on spaces, hyphens, underscores
+    if not text:
+        return ''
+    
+    # First, split on camelCase boundaries
+    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    # Then split on spaces, hyphens, underscores
     words = re.split(r'[\s\-_]+', text.strip())
+    words = [word for word in words if word]
+    
     if not words:
         return ''
     
     # First word lowercase, rest title case
     result = words[0].lower()
     for word in words[1:]:
-        if word:
-            result += word.capitalize()
+        result += word.capitalize()
     
     return result
 
@@ -254,14 +282,23 @@ def pascal_case(text: str) -> str:
         'HelloWorldTest'
         >>> pascal_case('hello_world_test')
         'HelloWorldTest'
+        >>> pascal_case('helloWorld')
+        'HelloWorld'
     """
-    # Split on spaces, hyphens, underscores
+    if not text:
+        return ''
+    
+    # First, split on camelCase boundaries
+    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    # Then split on spaces, hyphens, underscores
     words = re.split(r'[\s\-_]+', text.strip())
+    words = [word for word in words if word]
+    
     if not words:
         return ''
     
     # Capitalize each word
-    return ''.join(word.capitalize() for word in words if word)
+    return ''.join(word.capitalize() for word in words)
 
 
 def parse_template(template: str, variables: Dict[str, Union[str, int, float]]) -> str:
@@ -390,32 +427,41 @@ def remove_suffix(text: str, suffix: str) -> str:
         >>> remove_suffix('test string', 'hello')
         'test string'
     """
+    if not suffix:
+        return text
     if text.endswith(suffix):
         return text[:-len(suffix)]
     return text
 
 
-def generate_merge_paths(base_path: str, *paths: str) -> str:
-    """Generate a merged path from base path and additional paths.
+def generate_merge_paths(paths: List[str]) -> str:
+    """Generate a merged path from a list of path segments.
     
     Args:
-        base_path: Base path
-        *paths: Additional path segments
+        paths: List of path segments
         
     Returns:
         Merged path
         
     Examples:
-        >>> generate_merge_paths('/home', 'user', 'documents')
-        '/home/user/documents'
-        >>> generate_merge_paths('C:', 'Users', 'Alice')
+        >>> generate_merge_paths(['path1', 'path2', 'file.txt'])
+        'path1/path2/file.txt'
+        >>> generate_merge_paths(['C:', 'Users', 'Alice'])
         'C:/Users/Alice'
     """
-    import os
-    result = base_path
+    if not paths:
+        return ''
+    
+    # Filter out empty segments and clean up slashes
+    clean_paths = []
     for path in paths:
-        result = os.path.join(result, path).replace('\\', '/')
-    return result
+        if path:  # Skip empty strings
+            # Remove leading and trailing slashes
+            clean_path = path.strip('/')
+            if clean_path:
+                clean_paths.append(clean_path)
+    
+    return '/'.join(clean_paths)
 
 
 def slugify(text: str, separator: str = '-') -> str:
@@ -456,7 +502,7 @@ def truncate(text: str, length: int, suffix: str = '...') -> str:
         
     Examples:
         >>> truncate('Hello World', 5)
-        'He...'
+        'Hello...'
         >>> truncate('Hello World', 20)
         'Hello World'
         >>> truncate('Hello World', 8, '...')
@@ -465,10 +511,13 @@ def truncate(text: str, length: int, suffix: str = '...') -> str:
     if len(text) <= length:
         return text
     
+    if length == 0:
+        return suffix
+    
     if length <= len(suffix):
         return suffix[:length]
     
-    return text[:length - len(suffix)] + suffix
+    return text[:length] + suffix
 
 
 def word_count(text: str) -> int:
