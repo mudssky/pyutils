@@ -4,6 +4,12 @@
 pyutils 性能基准测试
 
 这个脚本测试 pyutils 库中关键函数的性能表现。
+
+使用方法：
+    uv run python benchmark.py
+    uv run pytest benchmark.py --benchmark-only  # 使用pytest-benchmark
+    uv run python benchmark.py --profile  # 启用性能分析
+    uv run python benchmark.py --memory  # 启用内存分析
 """
 
 import time
