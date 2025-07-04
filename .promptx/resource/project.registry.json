@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "source": "project",
+  "metadata": {
+    "version": "2.0.0",
+    "description": "project 级资源注册表",
+    "createdAt": "2025-07-04T12:34:24.824Z",
+    "updatedAt": "2025-07-04T12:34:24.827Z",
+    "resourceCount": 5
+  },
+  "resources": [
+    {
+      "id": "python-expert",
+      "source": "project",
+      "protocol": "role",
+      "name": "Python Expert 角色",
+      "description": "专业角色，提供特定领域的专业能力",
+      "reference": "@project://.promptx/resource/domain/python-expert/python-expert.role.md",
+      "metadata": {
+        "createdAt": "2025-07-04T12:34:24.826Z",
+        "updatedAt": "2025-07-04T12:34:24.826Z",
+        "scannedAt": "2025-07-04T12:34:24.826Z"
+      }
+    },
+    {
+      "id": "code-quality",
+      "source": "project",
+      "protocol": "thought",
+      "name": "Code Quality 思维模式",
+      "description": "思维模式，指导AI的思考方式",
+      "reference": "@project://.promptx/resource/domain/python-expert/thought/code-quality.thought.md",
+      "metadata": {
+        "createdAt": "2025-07-04T12:34:24.826Z",
+        "updatedAt": "2025-07-04T12:34:24.826Z",
+        "scannedAt": "2025-07-04T12:34:24.826Z"
+      }
+    },
+    {
+      "id": "python-development",
+      "source": "project",
+      "protocol": "thought",
+      "name": "Python Development 思维模式",
+      "description": "思维模式，指导AI的思考方式",
+      "reference": "@project://.promptx/resource/domain/python-expert/thought/python-development.thought.md",
+      "metadata": {
+        "createdAt": "2025-07-04T12:34:24.826Z",
+        "updatedAt": "2025-07-04T12:34:24.826Z",
+        "scannedAt": "2025-07-04T12:34:24.826Z"
+      }
+    },
+    {
+      "id": "python-workflow",
+      "source": "project",
+      "protocol": "execution",
+      "name": "Python Workflow 执行模式",
+      "description": "执行模式，定义具体的行为模式",
+      "reference": "@project://.promptx/resource/domain/python-expert/execution/python-workflow.execution.md",
+      "metadata": {
+        "createdAt": "2025-07-04T12:34:24.826Z",
+        "updatedAt": "2025-07-04T12:34:24.826Z",
+        "scannedAt": "2025-07-04T12:34:24.826Z"
+      }
+    },
+    {
+      "id": "testing-strategy",
+      "source": "project",
+      "protocol": "execution",
+      "name": "Testing Strategy 执行模式",
+      "description": "执行模式，定义具体的行为模式",
+      "reference": "@project://.promptx/resource/domain/python-expert/execution/testing-strategy.execution.md",
+      "metadata": {
+        "createdAt": "2025-07-04T12:34:24.826Z",
+        "updatedAt": "2025-07-04T12:34:24.826Z",
+        "scannedAt": "2025-07-04T12:34:24.826Z"
+      }
+    }
+  ],
+  "stats": {
+    "totalResources": 5,
+    "byProtocol": {
+      "role": 1,
+      "thought": 2,
+      "execution": 2
+    },
+    "bySource": {
+      "project": 5
+    }
+  }
+}
