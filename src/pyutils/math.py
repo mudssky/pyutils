@@ -5,21 +5,22 @@ ported from the jsutils library.
 """
 
 import random
-from typing import List, TypeVar, Union
+from typing import TypeVar
 
-T = TypeVar('T')
+
+T = TypeVar("T")
 
 
 def random_int(min_val: int, max_val: int) -> int:
     """Generate a random integer between min_val and max_val (inclusive).
-    
+
     Args:
         min_val: Minimum value (inclusive)
         max_val: Maximum value (inclusive)
-        
+
     Returns:
         Random integer in the specified range
-        
+
     Examples:
         >>> result = random_int(1, 10)
         >>> 1 <= result <= 10
@@ -31,18 +32,18 @@ def random_int(min_val: int, max_val: int) -> int:
     return random.randint(min_val, max_val)
 
 
-def get_random_item_from_array(items: List[T]) -> T:
+def get_random_item_from_array(items: list[T]) -> T:
     """Get a random item from a list.
-    
+
     Args:
         items: List to select from
-        
+
     Returns:
         Random item from the list
-        
+
     Raises:
         IndexError: If the list is empty
-        
+
     Examples:
         >>> items = [1, 2, 3, 4, 5]
         >>> result = get_random_item_from_array(items)
@@ -56,17 +57,19 @@ def get_random_item_from_array(items: List[T]) -> T:
     return random.choice(items)
 
 
-def clamp(value: Union[int, float], min_val: Union[int, float], max_val: Union[int, float]) -> Union[int, float]:
+def clamp(
+    value: int | float, min_val: int | float, max_val: int | float
+) -> int | float:
     """Clamp a value between min and max bounds.
-    
+
     Args:
         value: Value to clamp
         min_val: Minimum bound
         max_val: Maximum bound
-        
+
     Returns:
         Clamped value
-        
+
     Examples:
         >>> clamp(5, 1, 10)
         5
@@ -78,17 +81,17 @@ def clamp(value: Union[int, float], min_val: Union[int, float], max_val: Union[i
     return max(min_val, min(value, max_val))
 
 
-def lerp(start: Union[int, float], end: Union[int, float], t: float) -> float:
+def lerp(start: int | float, end: int | float, t: float) -> float:
     """Linear interpolation between two values.
-    
+
     Args:
         start: Starting value
         end: Ending value
         t: Interpolation factor (0.0 to 1.0)
-        
+
     Returns:
         Interpolated value
-        
+
     Examples:
         >>> lerp(0, 10, 0.5)
         5.0
@@ -100,20 +103,20 @@ def lerp(start: Union[int, float], end: Union[int, float], t: float) -> float:
     return start + (end - start) * t
 
 
-def normalize(value: Union[int, float], min_val: Union[int, float], max_val: Union[int, float]) -> float:
+def normalize(value: int | float, min_val: int | float, max_val: int | float) -> float:
     """Normalize a value to a 0-1 range based on min and max bounds.
-    
+
     Args:
         value: Value to normalize
         min_val: Minimum bound
         max_val: Maximum bound
-        
+
     Returns:
         Normalized value (0.0 to 1.0)
-        
+
     Raises:
         ZeroDivisionError: If max_val equals min_val (zero range)
-        
+
     Examples:
         >>> normalize(5, 0, 10)
         0.5
@@ -127,15 +130,15 @@ def normalize(value: Union[int, float], min_val: Union[int, float], max_val: Uni
     return (value - min_val) / (max_val - min_val)
 
 
-def degrees_to_radians(degrees: Union[int, float]) -> float:
+def degrees_to_radians(degrees: int | float) -> float:
     """Convert degrees to radians.
-    
+
     Args:
         degrees: Angle in degrees
-        
+
     Returns:
         Angle in radians
-        
+
     Examples:
         >>> import math
         >>> abs(degrees_to_radians(180) - math.pi) < 1e-10
@@ -144,18 +147,19 @@ def degrees_to_radians(degrees: Union[int, float]) -> float:
         True
     """
     import math
+
     return degrees * math.pi / 180
 
 
-def radians_to_degrees(radians: Union[int, float]) -> float:
+def radians_to_degrees(radians: int | float) -> float:
     """Convert radians to degrees.
-    
+
     Args:
         radians: Angle in radians
-        
+
     Returns:
         Angle in degrees
-        
+
     Examples:
         >>> import math
         >>> abs(radians_to_degrees(math.pi) - 180) < 1e-10
@@ -164,18 +168,19 @@ def radians_to_degrees(radians: Union[int, float]) -> float:
         True
     """
     import math
+
     return radians * 180 / math.pi
 
 
 def is_even(number: int) -> bool:
     """Check if a number is even.
-    
+
     Args:
         number: Integer to check
-        
+
     Returns:
         True if even, False if odd
-        
+
     Examples:
         >>> is_even(4)
         True
@@ -189,13 +194,13 @@ def is_even(number: int) -> bool:
 
 def is_odd(number: int) -> bool:
     """Check if a number is odd.
-    
+
     Args:
         number: Integer to check
-        
+
     Returns:
         True if odd, False if even
-        
+
     Examples:
         >>> is_odd(4)
         False
@@ -209,14 +214,14 @@ def is_odd(number: int) -> bool:
 
 def gcd(a: int, b: int) -> int:
     """Calculate the greatest common divisor of two integers.
-    
+
     Args:
         a: First integer
         b: Second integer
-        
+
     Returns:
         Greatest common divisor
-        
+
     Examples:
         >>> gcd(12, 8)
         4
@@ -226,19 +231,20 @@ def gcd(a: int, b: int) -> int:
         5
     """
     import math
+
     return math.gcd(a, b)
 
 
 def lcm(a: int, b: int) -> int:
     """Calculate the least common multiple of two integers.
-    
+
     Args:
         a: First integer
         b: Second integer
-        
+
     Returns:
         Least common multiple
-        
+
     Examples:
         >>> lcm(12, 8)
         24
@@ -248,6 +254,7 @@ def lcm(a: int, b: int) -> int:
         0
     """
     import math
+
     if a == 0 or b == 0:
         return 0
     return abs(a * b) // math.gcd(a, b)
@@ -255,16 +262,16 @@ def lcm(a: int, b: int) -> int:
 
 def factorial(n: int) -> int:
     """Calculate the factorial of a non-negative integer.
-    
+
     Args:
         n: Non-negative integer
-        
+
     Returns:
         Factorial of n
-        
+
     Raises:
         ValueError: If n is negative
-        
+
     Examples:
         >>> factorial(5)
         120
@@ -275,20 +282,21 @@ def factorial(n: int) -> int:
     """
     if n < 0:
         raise ValueError("Factorial is not defined for negative numbers")
-    
+
     import math
+
     return math.factorial(n)
 
 
 def is_prime(n: int) -> bool:
     """Check if a number is prime.
-    
+
     Args:
         n: Integer to check
-        
+
     Returns:
         True if prime, False otherwise
-        
+
     Examples:
         >>> is_prime(7)
         True
@@ -305,8 +313,9 @@ def is_prime(n: int) -> bool:
         return True
     if n % 2 == 0:
         return False
-    
+
     import math
+
     for i in range(3, int(math.sqrt(n)) + 1, 2):
         if n % i == 0:
             return False
@@ -315,16 +324,16 @@ def is_prime(n: int) -> bool:
 
 def fibonacci(n: int) -> int:
     """Calculate the nth Fibonacci number.
-    
+
     Args:
         n: Position in Fibonacci sequence (0-indexed)
-        
+
     Returns:
         nth Fibonacci number
-        
+
     Raises:
         ValueError: If n is negative
-        
+
     Examples:
         >>> fibonacci(0)
         0
@@ -335,10 +344,10 @@ def fibonacci(n: int) -> int:
     """
     if n < 0:
         raise ValueError("Fibonacci is not defined for negative numbers")
-    
+
     if n <= 1:
         return n
-    
+
     a, b = 0, 1
     for _ in range(2, n + 1):
         a, b = b, a + b
@@ -347,14 +356,14 @@ def fibonacci(n: int) -> int:
 
 def round_to_precision(value: float, precision: int) -> float:
     """Round a number to specified decimal places.
-    
+
     Args:
         value: Number to round
         precision: Number of decimal places
-        
+
     Returns:
         Rounded number
-        
+
     Examples:
         >>> round_to_precision(3.14159, 2)
         3.14

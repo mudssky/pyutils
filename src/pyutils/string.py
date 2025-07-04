@@ -4,22 +4,21 @@ This module provides utility functions for working with strings,
 ported from the jsutils library.
 """
 
-import re
-import uuid
 import random
+import re
 import string as string_module
-from typing import Dict, List, Optional, Union
+import uuid
 
 
-def gen_all_cases_combination(text: str) -> Dict[str, str]:
+def gen_all_cases_combination(text: str) -> dict[str, str]:
     """Generate all common case combinations of a string.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         Dictionary with different case styles
-        
+
     Examples:
         >>> result = gen_all_cases_combination('hello_world')
         >>> result['camelCase']
@@ -28,19 +27,19 @@ def gen_all_cases_combination(text: str) -> Dict[str, str]:
         'HelloWorld'
     """
     return {
-        'camelCase': camel_case(text),
-        'snake_case': snake_case(text),
-        'PascalCase': pascal_case(text),
-        'dash-case': dash_case(text)
+        "camelCase": camel_case(text),
+        "snake_case": snake_case(text),
+        "PascalCase": pascal_case(text),
+        "dash-case": dash_case(text),
     }
 
 
 def generate_uuid() -> str:
     """Generate a UUID string.
-    
+
     Returns:
         UUID string
-        
+
     Examples:
         >>> uuid_str = generate_uuid()
         >>> len(uuid_str)
@@ -53,13 +52,13 @@ def generate_uuid() -> str:
 
 def generate_base62_code(length: int = 8) -> str:
     """Generate a random Base62 string.
-    
+
     Args:
         length: Length of the generated string, defaults to 8
-        
+
     Returns:
         Random Base62 string
-        
+
     Examples:
         >>> code = generate_base62_code(10)
         >>> len(code)
@@ -68,19 +67,19 @@ def generate_base62_code(length: int = 8) -> str:
         True
     """
     chars = string_module.ascii_letters + string_module.digits
-    return ''.join(random.choice(chars) for _ in range(length))
+    return "".join(random.choice(chars) for _ in range(length))
 
 
 def fuzzy_match(pattern: str, text: str) -> float:
     """Calculate fuzzy match score between pattern and text.
-    
+
     Args:
         pattern: Pattern to match
         text: Text to search in
-        
+
     Returns:
         Similarity score between 0.0 and 1.0
-        
+
     Examples:
         >>> fuzzy_match('hello', 'hello')
         1.0
@@ -93,35 +92,35 @@ def fuzzy_match(pattern: str, text: str) -> float:
         return 1.0
     if not pattern or not text:
         return 0.0
-    
+
     pattern = pattern.lower()
     text = text.lower()
-    
+
     if pattern == text:
         return 1.0
-    
+
     # Simple character-based similarity
     matches = 0
     pattern_idx = 0
-    
+
     for char in text:
         if pattern_idx < len(pattern) and char == pattern[pattern_idx]:
             matches += 1
             pattern_idx += 1
-    
+
     # Calculate similarity based on matched characters vs pattern length
     return matches / len(pattern) if len(pattern) > 0 else 0.0
 
 
 def get_file_ext(filename: str) -> str:
     """Get file extension from filename.
-    
+
     Args:
         filename: Filename to extract extension from
-        
+
     Returns:
         File extension (without dot)
-        
+
     Examples:
         >>> get_file_ext('document.pdf')
         'pdf'
@@ -134,34 +133,34 @@ def get_file_ext(filename: str) -> str:
         >>> get_file_ext('.config.json')
         'json'
     """
-    if not filename or '.' not in filename:
-        return ''
-    
+    if not filename or "." not in filename:
+        return ""
+
     # Extract just the filename from path
-    basename = filename.split('/')[-1].split('\\')[-1]
-    
+    basename = filename.split("/")[-1].split("\\")[-1]
+
     # Handle hidden files (starting with .)
-    if basename.startswith('.'):
+    if basename.startswith("."):
         # Count dots to determine if there's an extension
-        dot_count = basename.count('.')
+        dot_count = basename.count(".")
         if dot_count == 1:  # Only one dot at the beginning, no extension
-            return ''
+            return ""
         else:  # Multiple dots, last part is extension
-            return basename.split('.')[-1]
-    
+            return basename.split(".")[-1]
+
     # Regular files
-    return basename.split('.')[-1]
+    return basename.split(".")[-1]
 
 
 def capitalize(text: str) -> str:
     """Capitalize the first letter of each word in a string.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         String with first letter of each word capitalized
-        
+
     Examples:
         >>> capitalize('hello world')
         'Hello World'
@@ -174,18 +173,18 @@ def capitalize(text: str) -> str:
         return text
     if not text.strip():
         return text
-    return ' '.join(word.capitalize() for word in text.split())
+    return " ".join(word.capitalize() for word in text.split())
 
 
 def camel_case(text: str) -> str:
     """Convert string to camelCase.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         camelCase string
-        
+
     Examples:
         >>> camel_case('hello world')
         'helloWorld'
@@ -197,34 +196,34 @@ def camel_case(text: str) -> str:
         'helloWorld'
     """
     if not text:
-        return ''
-    
+        return ""
+
     # First, split on camelCase boundaries
-    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    text = re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
     # Then split on spaces, hyphens, underscores
-    words = re.split(r'[\s\-_]+', text.strip())
+    words = re.split(r"[\s\-_]+", text.strip())
     words = [word for word in words if word]
-    
+
     if not words:
-        return ''
-    
+        return ""
+
     # First word lowercase, rest title case
     result = words[0].lower()
     for word in words[1:]:
         result += word.capitalize()
-    
+
     return result
 
 
 def snake_case(text: str) -> str:
     """Convert string to snake_case.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         snake_case string
-        
+
     Examples:
         >>> snake_case('Hello World')
         'hello_world'
@@ -234,22 +233,22 @@ def snake_case(text: str) -> str:
         'hello_world'
     """
     # Insert underscore before uppercase letters that follow lowercase letters
-    text = re.sub(r'([a-z])([A-Z])', r'\1_\2', text)
+    text = re.sub(r"([a-z])([A-Z])", r"\1_\2", text)
     # Replace spaces and hyphens with underscores
-    text = re.sub(r'[\s\-]+', '_', text)
+    text = re.sub(r"[\s\-]+", "_", text)
     # Convert to lowercase
     return text.lower()
 
 
 def dash_case(text: str) -> str:
     """Convert string to dash-case (kebab-case).
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         dash-case string
-        
+
     Examples:
         >>> dash_case('Hello World')
         'hello-world'
@@ -259,22 +258,22 @@ def dash_case(text: str) -> str:
         'hello-world'
     """
     # Insert hyphen before uppercase letters that follow lowercase letters
-    text = re.sub(r'([a-z])([A-Z])', r'\1-\2', text)
+    text = re.sub(r"([a-z])([A-Z])", r"\1-\2", text)
     # Replace spaces and underscores with hyphens
-    text = re.sub(r'[\s_]+', '-', text)
+    text = re.sub(r"[\s_]+", "-", text)
     # Convert to lowercase
     return text.lower()
 
 
 def pascal_case(text: str) -> str:
     """Convert string to PascalCase.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         PascalCase string
-        
+
     Examples:
         >>> pascal_case('hello world')
         'HelloWorld'
@@ -286,55 +285,55 @@ def pascal_case(text: str) -> str:
         'HelloWorld'
     """
     if not text:
-        return ''
-    
+        return ""
+
     # First, split on camelCase boundaries
-    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    text = re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
     # Then split on spaces, hyphens, underscores
-    words = re.split(r'[\s\-_]+', text.strip())
+    words = re.split(r"[\s\-_]+", text.strip())
     words = [word for word in words if word]
-    
+
     if not words:
-        return ''
-    
+        return ""
+
     # Capitalize each word
-    return ''.join(word.capitalize() for word in words)
+    return "".join(word.capitalize() for word in words)
 
 
-def parse_template(template: str, variables: Dict[str, Union[str, int, float]]) -> str:
+def parse_template(template: str, variables: dict[str, str | int | float]) -> str:
     """Parse template string with variable substitution.
-    
+
     Args:
         template: Template string with {variable} placeholders
         variables: Dictionary of variable values
-        
+
     Returns:
         Parsed string with variables substituted
-        
+
     Examples:
         >>> parse_template('Hello {name}!', {'name': 'World'})
         'Hello World!'
-        >>> parse_template('{greeting} {name}, you are {age} years old', 
+        >>> parse_template('{greeting} {name}, you are {age} years old',
         ...                {'greeting': 'Hi', 'name': 'Alice', 'age': 25})
         'Hi Alice, you are 25 years old'
     """
     result = template
     for key, value in variables.items():
-        placeholder = '{' + key + '}'
+        placeholder = "{" + key + "}"
         result = result.replace(placeholder, str(value))
     return result
 
 
-def trim(text: str, chars: Optional[str] = None) -> str:
+def trim(text: str, chars: str | None = None) -> str:
     """Remove specified characters from both ends of string.
-    
+
     Args:
         text: Input string
         chars: Characters to remove, defaults to whitespace
-        
+
     Returns:
         Trimmed string
-        
+
     Examples:
         >>> trim('  hello  ')
         'hello'
@@ -348,16 +347,16 @@ def trim(text: str, chars: Optional[str] = None) -> str:
     return text.strip(chars)
 
 
-def trim_start(text: str, chars: Optional[str] = None) -> str:
+def trim_start(text: str, chars: str | None = None) -> str:
     """Remove specified characters from the start of string.
-    
+
     Args:
         text: Input string
         chars: Characters to remove, defaults to whitespace
-        
+
     Returns:
         Left-trimmed string
-        
+
     Examples:
         >>> trim_start('  hello  ')
         'hello  '
@@ -369,16 +368,16 @@ def trim_start(text: str, chars: Optional[str] = None) -> str:
     return text.lstrip(chars)
 
 
-def trim_end(text: str, chars: Optional[str] = None) -> str:
+def trim_end(text: str, chars: str | None = None) -> str:
     """Remove specified characters from the end of string.
-    
+
     Args:
         text: Input string
         chars: Characters to remove, defaults to whitespace
-        
+
     Returns:
         Right-trimmed string
-        
+
     Examples:
         >>> trim_end('  hello  ')
         '  hello'
@@ -392,14 +391,14 @@ def trim_end(text: str, chars: Optional[str] = None) -> str:
 
 def remove_prefix(text: str, prefix: str) -> str:
     """Remove prefix from string if present.
-    
+
     Args:
         text: Input string
         prefix: Prefix to remove
-        
+
     Returns:
         String with prefix removed
-        
+
     Examples:
         >>> remove_prefix('hello world', 'hello ')
         'world'
@@ -407,20 +406,20 @@ def remove_prefix(text: str, prefix: str) -> str:
         'test string'
     """
     if text.startswith(prefix):
-        return text[len(prefix):]
+        return text[len(prefix) :]
     return text
 
 
 def remove_suffix(text: str, suffix: str) -> str:
     """Remove suffix from string if present.
-    
+
     Args:
         text: Input string
         suffix: Suffix to remove
-        
+
     Returns:
         String with suffix removed
-        
+
     Examples:
         >>> remove_suffix('hello world', ' world')
         'hello'
@@ -430,19 +429,19 @@ def remove_suffix(text: str, suffix: str) -> str:
     if not suffix:
         return text
     if text.endswith(suffix):
-        return text[:-len(suffix)]
+        return text[: -len(suffix)]
     return text
 
 
-def generate_merge_paths(paths: List[str]) -> str:
+def generate_merge_paths(paths: list[str]) -> str:
     """Generate a merged path from a list of path segments.
-    
+
     Args:
         paths: List of path segments
-        
+
     Returns:
         Merged path
-        
+
     Examples:
         >>> generate_merge_paths(['path1', 'path2', 'file.txt'])
         'path1/path2/file.txt'
@@ -450,30 +449,30 @@ def generate_merge_paths(paths: List[str]) -> str:
         'C:/Users/Alice'
     """
     if not paths:
-        return ''
-    
+        return ""
+
     # Filter out empty segments and clean up slashes
     clean_paths = []
     for path in paths:
         if path:  # Skip empty strings
             # Remove leading and trailing slashes
-            clean_path = path.strip('/')
+            clean_path = path.strip("/")
             if clean_path:
                 clean_paths.append(clean_path)
-    
-    return '/'.join(clean_paths)
+
+    return "/".join(clean_paths)
 
 
-def slugify(text: str, separator: str = '-') -> str:
+def slugify(text: str, separator: str = "-") -> str:
     """Convert string to URL-friendly slug.
-    
+
     Args:
         text: Input string
         separator: Separator character, defaults to '-'
-        
+
     Returns:
         URL-friendly slug
-        
+
     Examples:
         >>> slugify('Hello World!')
         'hello-world'
@@ -483,23 +482,23 @@ def slugify(text: str, separator: str = '-') -> str:
     # Convert to lowercase
     text = text.lower()
     # Replace non-alphanumeric characters with separator
-    text = re.sub(r'[^a-z0-9]+', separator, text)
+    text = re.sub(r"[^a-z0-9]+", separator, text)
     # Remove leading/trailing separators
     text = text.strip(separator)
     return text
 
 
-def truncate(text: str, length: int, suffix: str = '...') -> str:
+def truncate(text: str, length: int, suffix: str = "...") -> str:
     """Truncate string to specified length with optional suffix.
-    
+
     Args:
         text: Input string
         length: Maximum length
         suffix: Suffix to add if truncated, defaults to '...'
-        
+
     Returns:
         Truncated string
-        
+
     Examples:
         >>> truncate('Hello World', 5)
         'Hello...'
@@ -510,25 +509,25 @@ def truncate(text: str, length: int, suffix: str = '...') -> str:
     """
     if len(text) <= length:
         return text
-    
+
     if length == 0:
         return suffix
-    
+
     if length <= len(suffix):
         return suffix[:length]
-    
+
     return text[:length] + suffix
 
 
 def word_count(text: str) -> int:
     """Count words in a string.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         Number of words
-        
+
     Examples:
         >>> word_count('Hello world')
         2
@@ -542,13 +541,13 @@ def word_count(text: str) -> int:
 
 def reverse(text: str) -> str:
     """Reverse a string.
-    
+
     Args:
         text: Input string
-        
+
     Returns:
         Reversed string
-        
+
     Examples:
         >>> reverse('hello')
         'olleh'

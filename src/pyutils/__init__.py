@@ -8,180 +8,163 @@ Ported from the jsutils JavaScript library to provide similar functionality in P
 """
 
 __author__ = """mudssky"""
-__email__ = 'mudssky@gmail.com'
-__version__ = '0.1.0'
+__email__ = "mudssky@gmail.com"
+__version__ = "0.1.0"
 
 # Import all modules
-from . import array
-from . import string
-from . import math
-from . import object
-from . import function
-from . import async_utils
+from . import array, async_utils, function, math, object, string
 from . import bytes as bytes_utils
 
 # Import commonly used functions for convenience
 from .array import (
-    range_list,
-    range_iter,
-    chunk,
-    unique,
-    shuffle,
-    first,
-    last,
-    diff,
-    has_intersects,
-    toggle,
-    zip_object,
     alphabetical,
+    chunk,
+    diff,
+    first,
+    has_intersects,
+    last,
+    range_iter,
+    range_list,
+    shuffle,
+    toggle,
+    unique,
+    zip_object,
 )
-
-from .string import (
-    camel_case,
-    snake_case,
-    dash_case,
-    pascal_case,
-    capitalize,
-    slugify,
-    truncate,
-    trim,
-    generate_uuid,
-    fuzzy_match,
-    parse_template,
-)
-
-from .math import (
-    random_int,
-    clamp,
-    lerp,
-    normalize,
-    is_even,
-    is_odd,
-    gcd,
-    lcm,
-    factorial,
-    is_prime,
-    fibonacci,
-)
-
-from .object import (
-    pick,
-    omit,
-    merge,
-    deep_copy,
-    flatten_dict,
-    get_nested_value,
-    set_nested_value,
-    safe_json_stringify,
-)
-
-from .function import (
-    debounce,
-    throttle,
-    with_retry,
-    memoize,
-    once,
-)
-
 from .async_utils import (
-    sleep_async,
-    timeout,
     delay,
+    filter_async,
+    map_async,
     race,
     retry_async,
-    map_async,
-    filter_async,
     run_in_thread,
+    sleep_async,
+    timeout,
 )
-
 from .bytes import (
     Bytes,
     bytes_util,
     humanize_bytes,
     parse_bytes,
 )
+from .function import (
+    debounce,
+    memoize,
+    once,
+    throttle,
+    with_retry,
+)
+from .math import (
+    clamp,
+    factorial,
+    fibonacci,
+    gcd,
+    is_even,
+    is_odd,
+    is_prime,
+    lcm,
+    lerp,
+    normalize,
+    random_int,
+)
+from .object import (
+    deep_copy,
+    flatten_dict,
+    get_nested_value,
+    merge,
+    omit,
+    pick,
+    safe_json_stringify,
+    set_nested_value,
+)
+from .string import (
+    camel_case,
+    capitalize,
+    dash_case,
+    fuzzy_match,
+    generate_uuid,
+    parse_template,
+    pascal_case,
+    slugify,
+    snake_case,
+    trim,
+    truncate,
+)
+
 
 # Define what gets exported when using "from pyutils import *"
 __all__ = [
-    # Modules
-    'array',
-    'string', 
-    'math',
-    'object',
-    'function',
-    'async_utils',
-    'bytes_utils',
-    
-    # Array functions
-    'range_list',
-    'range_iter',
-    'chunk',
-    'unique',
-    'shuffle',
-    'first',
-    'last',
-    'diff',
-    'has_intersects',
-    'toggle',
-    'zip_object',
-    'alphabetical',
-    
-    # String functions
-    'camel_case',
-    'snake_case',
-    'dash_case',
-    'pascal_case',
-    'capitalize',
-    'slugify',
-    'truncate',
-    'trim',
-    'generate_uuid',
-    'fuzzy_match',
-    'parse_template',
-    
-    # Math functions
-    'random_int',
-    'clamp',
-    'lerp',
-    'normalize',
-    'is_even',
-    'is_odd',
-    'gcd',
-    'lcm',
-    'factorial',
-    'is_prime',
-    'fibonacci',
-    
-    # Object functions
-    'pick',
-    'omit',
-    'merge',
-    'deep_copy',
-    'flatten_dict',
-    'get_nested_value',
-    'set_nested_value',
-    'safe_json_stringify',
-    
-    # Function utilities
-    'debounce',
-    'throttle',
-    'with_retry',
-    'memoize',
-    'once',
-    
-    # Async utilities
-    'sleep_async',
-    'timeout',
-    'delay',
-    'race',
-    'retry_async',
-    'map_async',
-    'filter_async',
-    'run_in_thread',
-    
     # Bytes utilities
-    'Bytes',
-    'bytes_util',
-    'humanize_bytes',
-    'parse_bytes',
+    "Bytes",
+    "alphabetical",
+    # Modules
+    "array",
+    "async_utils",
+    "bytes_util",
+    "bytes_utils",
+    # String functions
+    "camel_case",
+    "capitalize",
+    "chunk",
+    "clamp",
+    "dash_case",
+    # Function utilities
+    "debounce",
+    "deep_copy",
+    "delay",
+    "diff",
+    "factorial",
+    "fibonacci",
+    "filter_async",
+    "first",
+    "flatten_dict",
+    "function",
+    "fuzzy_match",
+    "gcd",
+    "generate_uuid",
+    "get_nested_value",
+    "has_intersects",
+    "humanize_bytes",
+    "is_even",
+    "is_odd",
+    "is_prime",
+    "last",
+    "lcm",
+    "lerp",
+    "map_async",
+    "math",
+    "memoize",
+    "merge",
+    "normalize",
+    "object",
+    "omit",
+    "once",
+    "parse_bytes",
+    "parse_template",
+    "pascal_case",
+    # Object functions
+    "pick",
+    "race",
+    # Math functions
+    "random_int",
+    "range_iter",
+    # Array functions
+    "range_list",
+    "retry_async",
+    "run_in_thread",
+    "safe_json_stringify",
+    "set_nested_value",
+    "shuffle",
+    # Async utilities
+    "sleep_async",
+    "slugify",
+    "snake_case",
+    "string",
+    "throttle",
+    "timeout",
+    "toggle",
+    "trim",
+    "truncate",
+    "unique",
+    "with_retry",
+    "zip_object",
 ]

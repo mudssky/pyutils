@@ -5,23 +5,25 @@ ported from the jsutils library.
 """
 
 import json
-from typing import Any, Callable, Dict, List, Optional, TypeVar
-
-K = TypeVar('K')
-V = TypeVar('V')
-T = TypeVar('T')
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 
-def pick(obj: Dict[K, V], keys: List[K]) -> Dict[K, V]:
+K = TypeVar("K")
+V = TypeVar("V")
+T = TypeVar("T")
+
+
+def pick(obj: dict[K, V], keys: list[K]) -> dict[K, V]:
     """Create a new dictionary with only the specified keys.
-    
+
     Args:
         obj: Source dictionary
         keys: List of keys to pick
-        
+
     Returns:
         New dictionary with only the specified keys
-        
+
     Examples:
         >>> pick({'a': 1, 'b': 2, 'c': 3}, ['a', 'c'])
         {'a': 1, 'c': 3}
@@ -31,16 +33,16 @@ def pick(obj: Dict[K, V], keys: List[K]) -> Dict[K, V]:
     return {key: obj[key] for key in keys if key in obj}
 
 
-def pick_by(obj: Dict[K, V], predicate: Callable[[V, K], bool]) -> Dict[K, V]:
+def pick_by(obj: dict[K, V], predicate: Callable[[V, K], bool]) -> dict[K, V]:
     """Create a new dictionary with key-value pairs that satisfy the predicate.
-    
+
     Args:
         obj: Source dictionary
         predicate: Function that takes (value, key) and returns boolean
-        
+
     Returns:
         New dictionary with filtered key-value pairs
-        
+
     Examples:
         >>> pick_by({'a': 1, 'b': 2, 'c': 3}, lambda v, k: v > 1)
         {'b': 2, 'c': 3}
@@ -50,16 +52,16 @@ def pick_by(obj: Dict[K, V], predicate: Callable[[V, K], bool]) -> Dict[K, V]:
     return {key: value for key, value in obj.items() if predicate(value, key)}
 
 
-def omit(obj: Dict[K, V], keys: List[K]) -> Dict[K, V]:
+def omit(obj: dict[K, V], keys: list[K]) -> dict[K, V]:
     """Create a new dictionary without the specified keys.
-    
+
     Args:
         obj: Source dictionary
         keys: List of keys to omit
-        
+
     Returns:
         New dictionary without the specified keys
-        
+
     Examples:
         >>> omit({'a': 1, 'b': 2, 'c': 3}, ['b'])
         {'a': 1, 'c': 3}
@@ -69,16 +71,16 @@ def omit(obj: Dict[K, V], keys: List[K]) -> Dict[K, V]:
     return {key: value for key, value in obj.items() if key not in keys}
 
 
-def omit_by(obj: Dict[K, V], predicate: Callable[[V, K], bool]) -> Dict[K, V]:
+def omit_by(obj: dict[K, V], predicate: Callable[[V, K], bool]) -> dict[K, V]:
     """Create a new dictionary without key-value pairs that satisfy the predicate.
-    
+
     Args:
         obj: Source dictionary
         predicate: Function that takes (value, key) and returns boolean
-        
+
     Returns:
         New dictionary with filtered key-value pairs
-        
+
     Examples:
         >>> omit_by({'a': 1, 'b': 2, 'c': 3}, lambda v, k: v > 1)
         {'a': 1}
@@ -88,16 +90,16 @@ def omit_by(obj: Dict[K, V], predicate: Callable[[V, K], bool]) -> Dict[K, V]:
     return {key: value for key, value in obj.items() if not predicate(value, key)}
 
 
-def map_keys(obj: Dict[K, V], mapper: Callable[[K], T]) -> Dict[T, V]:
+def map_keys(obj: dict[K, V], mapper: Callable[[K], T]) -> dict[T, V]:
     """Create a new dictionary with transformed keys.
-    
+
     Args:
         obj: Source dictionary
         mapper: Function to transform keys
-        
+
     Returns:
         New dictionary with transformed keys
-        
+
     Examples:
         >>> map_keys({'a': 1, 'b': 2}, str.upper)
         {'A': 1, 'B': 2}
@@ -107,16 +109,16 @@ def map_keys(obj: Dict[K, V], mapper: Callable[[K], T]) -> Dict[T, V]:
     return {mapper(key): value for key, value in obj.items()}
 
 
-def map_values(obj: Dict[K, V], mapper: Callable[[V], T]) -> Dict[K, T]:
+def map_values(obj: dict[K, V], mapper: Callable[[V], T]) -> dict[K, T]:
     """Create a new dictionary with transformed values.
-    
+
     Args:
         obj: Source dictionary
         mapper: Function to transform values
-        
+
     Returns:
         New dictionary with transformed values
-        
+
     Examples:
         >>> map_values({'a': 1, 'b': 2}, lambda x: x * 2)
         {'a': 2, 'b': 4}
@@ -128,13 +130,13 @@ def map_values(obj: Dict[K, V], mapper: Callable[[V], T]) -> Dict[K, T]:
 
 def is_object(value: Any) -> bool:
     """Check if a value is a dictionary (object-like).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a dictionary, False otherwise
-        
+
     Examples:
         >>> is_object({'a': 1})
         True
@@ -148,15 +150,15 @@ def is_object(value: Any) -> bool:
     return isinstance(value, dict)
 
 
-def merge(*dicts: Dict[Any, Any]) -> Dict[Any, Any]:
+def merge(*dicts: dict[Any, Any]) -> dict[Any, Any]:
     """Recursively merge multiple dictionaries.
-    
+
     Args:
         *dicts: Dictionaries to merge
-        
+
     Returns:
         Merged dictionary
-        
+
     Examples:
         >>> merge({'a': 1}, {'b': 2})
         {'a': 1, 'b': 2}
@@ -165,30 +167,34 @@ def merge(*dicts: Dict[Any, Any]) -> Dict[Any, Any]:
         >>> merge({'a': 1}, {'a': 2})
         {'a': 2}
     """
-    result: Dict[Any, Any] = {}
-    
+    result: dict[Any, Any] = {}
+
     for d in dicts:
         if not isinstance(d, dict):
             continue
-            
+
         for key, value in d.items():
-            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            if (
+                key in result
+                and isinstance(result[key], dict)
+                and isinstance(value, dict)
+            ):
                 result[key] = merge(result[key], value)
             else:
                 result[key] = value
-    
+
     return result
 
 
 def remove_non_serializable_props(obj: Any) -> Any:
     """Remove properties that cannot be JSON serialized.
-    
+
     Args:
         obj: Object to clean
-        
+
     Returns:
         Object with only JSON-serializable properties
-        
+
     Examples:
         >>> import datetime
         >>> data = {'name': 'Alice', 'func': lambda x: x, 'date': 'today'}
@@ -198,17 +204,18 @@ def remove_non_serializable_props(obj: Any) -> Any:
         >>> 'func' in cleaned
         False
     """
+
     def is_serializable(value: Any) -> bool:
         try:
             json.dumps(value)
             return True
         except (TypeError, ValueError):
             return False
-    
+
     if isinstance(obj, dict):
         result = {}
         for key, value in obj.items():
-            if isinstance(value, (dict, list)):
+            if isinstance(value, dict | list):
                 # Recursively clean nested structures
                 cleaned_value = remove_non_serializable_props(value)
                 if cleaned_value is not None:
@@ -219,7 +226,7 @@ def remove_non_serializable_props(obj: Any) -> Any:
     elif isinstance(obj, list):
         result = []
         for item in obj:
-            if isinstance(item, (dict, list)):
+            if isinstance(item, dict | list):
                 # Recursively clean nested structures
                 cleaned_item = remove_non_serializable_props(item)
                 if cleaned_item is not None:
@@ -231,16 +238,16 @@ def remove_non_serializable_props(obj: Any) -> Any:
         return obj if is_serializable(obj) else None
 
 
-def safe_json_stringify(obj: Any, indent: Optional[int] = None) -> str:
+def safe_json_stringify(obj: Any, indent: int | None = None) -> str:
     """Safely convert object to JSON string, removing non-serializable properties.
-    
+
     Args:
         obj: Object to stringify
         indent: JSON indentation, optional
-        
+
     Returns:
         JSON string
-        
+
     Examples:
         >>> safe_json_stringify({'name': 'Alice', 'age': 25})
         '{"name": "Alice", "age": 25}'
@@ -256,15 +263,15 @@ def safe_json_stringify(obj: Any, indent: Optional[int] = None) -> str:
     return json.dumps(cleaned_obj, indent=indent)
 
 
-def invert(obj: Dict[K, V]) -> Dict[V, K]:
+def invert(obj: dict[K, V]) -> dict[V, K]:
     """Create a new dictionary with keys and values swapped.
-    
+
     Args:
         obj: Source dictionary
-        
+
     Returns:
         New dictionary with keys and values swapped
-        
+
     Examples:
         >>> invert({'a': 1, 'b': 2})
         {1: 'a', 2: 'b'}
@@ -276,13 +283,13 @@ def invert(obj: Dict[K, V]) -> Dict[V, K]:
 
 def deep_copy(obj: Any) -> Any:
     """Create a deep copy of an object.
-    
+
     Args:
         obj: Object to copy
-        
+
     Returns:
         Deep copy of the object
-        
+
     Examples:
         >>> original = {'a': {'b': 1}}
         >>> copied = deep_copy(original)
@@ -291,20 +298,23 @@ def deep_copy(obj: Any) -> Any:
         1
     """
     import copy
+
     return copy.deepcopy(obj)
 
 
-def flatten_dict(obj: Dict[str, Any], separator: str = '.', prefix: str = '') -> Dict[str, Any]:
+def flatten_dict(
+    obj: dict[str, Any], separator: str = ".", prefix: str = ""
+) -> dict[str, Any]:
     """Flatten a nested dictionary.
-    
+
     Args:
         obj: Dictionary to flatten
         separator: Separator for nested keys, defaults to '.'
         prefix: Prefix for keys, defaults to ''
-        
+
     Returns:
         Flattened dictionary
-        
+
     Examples:
         >>> flatten_dict({'a': {'b': {'c': 1}}})
         {'a.b.c': 1}
@@ -312,62 +322,64 @@ def flatten_dict(obj: Dict[str, Any], separator: str = '.', prefix: str = '') ->
         {'user.name': 'Alice', 'user.age': 25}
     """
     result = {}
-    
+
     for key, value in obj.items():
         new_key = f"{prefix}{separator}{key}" if prefix else key
-        
+
         if isinstance(value, dict):
             result.update(flatten_dict(value, separator, new_key))
         else:
             result[new_key] = value
-    
+
     return result
 
 
-def unflatten_dict(obj: Dict[str, Any], separator: str = '.') -> Dict[str, Any]:
+def unflatten_dict(obj: dict[str, Any], separator: str = ".") -> dict[str, Any]:
     """Unflatten a flattened dictionary.
-    
+
     Args:
         obj: Flattened dictionary
         separator: Separator used in keys, defaults to '.'
-        
+
     Returns:
         Nested dictionary
-        
+
     Examples:
         >>> unflatten_dict({'a.b.c': 1})
         {'a': {'b': {'c': 1}}}
         >>> unflatten_dict({'user.name': 'Alice', 'user.age': 25})
         {'user': {'name': 'Alice', 'age': 25}}
     """
-    result: Dict[str, Any] = {}
-    
+    result: dict[str, Any] = {}
+
     for key, value in obj.items():
         parts = key.split(separator)
         current = result
-        
+
         for part in parts[:-1]:
             if part not in current:
                 current[part] = {}
             current = current[part]
-        
+
         current[parts[-1]] = value
-    
+
     return result
 
 
-def get_nested_value(obj: Dict[str, Any], path: str, separator: str = '.', default: Any = None) -> Any:
+def get_nested_value(
+    obj: dict[str, Any], path: str, separator: str = ".", default: Any = None
+) -> Any:
     """Get a nested value from a dictionary using a path.
-    
+
     Args:
         obj: Source dictionary
         path: Path to the value (e.g., 'user.profile.name')
         separator: Path separator, defaults to '.'
         default: Default value if path not found
-        
+
     Returns:
         Value at the specified path or default
-        
+
     Examples:
         >>> data = {'user': {'profile': {'name': 'Alice'}}}
         >>> get_nested_value(data, 'user.profile.name')
@@ -377,7 +389,7 @@ def get_nested_value(obj: Dict[str, Any], path: str, separator: str = '.', defau
     """
     parts = path.split(separator)
     current = obj
-    
+
     try:
         for part in parts:
             current = current[part]
@@ -386,18 +398,20 @@ def get_nested_value(obj: Dict[str, Any], path: str, separator: str = '.', defau
         return default
 
 
-def set_nested_value(obj: Dict[str, Any], path: str, value: Any, separator: str = '.') -> Dict[str, Any]:
+def set_nested_value(
+    obj: dict[str, Any], path: str, value: Any, separator: str = "."
+) -> dict[str, Any]:
     """Set a nested value in a dictionary using a path.
-    
+
     Args:
         obj: Target dictionary (will be modified)
         path: Path to set the value (e.g., 'user.profile.name')
         value: Value to set
         separator: Path separator, defaults to '.'
-        
+
     Returns:
         The modified dictionary
-        
+
     Examples:
         >>> data = {}
         >>> set_nested_value(data, 'user.profile.name', 'Alice')
@@ -407,27 +421,27 @@ def set_nested_value(obj: Dict[str, Any], path: str, value: Any, separator: str 
     """
     parts = path.split(separator)
     current = obj
-    
+
     for part in parts[:-1]:
         if part not in current:
             current[part] = {}
         current = current[part]
-    
+
     current[parts[-1]] = value
     return obj
 
 
-def get(obj: Dict[str, Any], key: str, default: Any = None) -> Any:
+def get(obj: dict[str, Any], key: str, default: Any = None) -> Any:
     """Get a value from a dictionary with optional default.
-    
+
     Args:
         obj: Source dictionary
         key: Key to retrieve
         default: Default value if key not found
-        
+
     Returns:
         Value at the specified key or default
-        
+
     Examples:
         >>> get({'name': 'Alice', 'age': 25}, 'name')
         'Alice'
@@ -441,13 +455,13 @@ def get(obj: Dict[str, Any], key: str, default: Any = None) -> Any:
 
 def clone(obj: Any) -> Any:
     """Create a shallow copy of an object.
-    
+
     Args:
         obj: Object to clone
-        
+
     Returns:
         Shallow copy of the object
-        
+
     Examples:
         >>> original = {'a': 1, 'b': [1, 2, 3]}
         >>> cloned = clone(original)
@@ -458,20 +472,21 @@ def clone(obj: Any) -> Any:
         True
     """
     import copy
+
     return copy.copy(obj)
 
 
-def set_value(obj: Dict[str, Any], key: str, value: Any) -> Dict[str, Any]:
+def set_value(obj: dict[str, Any], key: str, value: Any) -> dict[str, Any]:
     """Set a value in a dictionary.
-    
+
     Args:
         obj: Target dictionary (will be modified)
         key: Key to set
         value: Value to set
-        
+
     Returns:
         The modified dictionary
-        
+
     Examples:
         >>> data = {'name': 'Alice'}
         >>> set_value(data, 'age', 25)
@@ -483,16 +498,16 @@ def set_value(obj: Dict[str, Any], key: str, value: Any) -> Dict[str, Any]:
     return obj
 
 
-def has(obj: Dict[str, Any], key: str) -> bool:
+def has(obj: dict[str, Any], key: str) -> bool:
     """Check if a dictionary has a specific key.
-    
+
     Args:
         obj: Dictionary to check
         key: Key to look for
-        
+
     Returns:
         True if key exists, False otherwise
-        
+
     Examples:
         >>> has({'name': 'Alice', 'age': 25}, 'name')
         True
@@ -502,20 +517,21 @@ def has(obj: Dict[str, Any], key: str) -> bool:
     return key in obj
 
 
-def filter_dict(obj: Dict[K, V], predicate: Callable[[K, V], bool]) -> Dict[K, V]:
+def filter_dict(obj: dict[K, V], predicate: Callable[[K, V], bool]) -> dict[K, V]:
     """Filter a dictionary based on a predicate function.
-    
+
     Args:
         obj: Dictionary to filter
         predicate: Function that takes key and value, returns True to keep
-        
+
     Returns:
         New dictionary with filtered key-value pairs
-        
+
     Examples:
         >>> filter_dict({'a': 1, 'b': 2, 'c': 3}, lambda k, v: v > 1)
         {'b': 2, 'c': 3}
-        >>> filter_dict({'DB_HOST': 'localhost', 'API_KEY': 'secret'}, lambda k, v: k.startswith('DB_'))
+        >>> filter_dict({'DB_HOST': 'localhost', 'API_KEY': 'secret'},
+        ...              lambda k, v: k.startswith('DB_'))
         {'DB_HOST': 'localhost'}
     """
     return {k: v for k, v in obj.items() if predicate(k, v)}

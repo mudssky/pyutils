@@ -7,9 +7,11 @@ ported from the jsutils library.
 
 import asyncio
 import time
-from typing import Any, Awaitable, Callable, List, Optional, TypeVar
+from collections.abc import Awaitable, Callable
+from typing import Any, TypeVar
 
-T = TypeVar('T')
+
+T = TypeVar("T")
 
 
 async def sleep_async(seconds: float) -> None:
@@ -29,9 +31,7 @@ async def sleep_async(seconds: float) -> None:
 
 
 async def timeout(
-    coro: Awaitable[T],
-    timeout_seconds: float,
-    default: Optional[T] = None
+    coro: Awaitable[T], timeout_seconds: float, default: T | None = None
 ) -> T:
     """Execute coroutine with timeout.
 
@@ -85,9 +85,8 @@ async def delay(value: T, seconds: float) -> T:
 
 
 async def gather_with_concurrency(
-    *coroutines: Awaitable[T],
-    limit: int = 10
-) -> List[T]:
+    *coroutines: Awaitable[T], limit: int = 10
+) -> list[T]:
     """Execute coroutines with concurrency limit.
 
     Args:
@@ -119,22 +118,22 @@ async def gather_with_concurrency(
 
 async def race(*coroutines: Awaitable[T]) -> T:
     """Return the result of the first coroutine to complete.
-    
+
     Args:
         *coroutines: Coroutines to race
-        
+
     Returns:
         Result of the first completed coroutine
-        
+
     Examples:
         >>> async def slow():
         ...     await asyncio.sleep(1)
         ...     return "slow"
-        >>> 
+        >>>
         >>> async def fast():
         ...     await asyncio.sleep(0.1)
         ...     return "fast"
-        >>> 
+        >>>
         >>> async def main():
         ...     result = await race(slow(), fast())
         ...     print(result)  # "fast"
@@ -142,16 +141,13 @@ async def race(*coroutines: Awaitable[T]) -> T:
     """
     # Convert coroutines to tasks explicitly
     tasks = [asyncio.create_task(coro) for coro in coroutines]
-    
-    done, pending = await asyncio.wait(
-        tasks,
-        return_when=asyncio.FIRST_COMPLETED
-    )
-    
+
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+
     # Cancel pending tasks
     for task in pending:
         task.cancel()
-    
+
     # Return result of first completed task
     return done.pop().result()
 
@@ -161,7 +157,7 @@ async def retry_async(
     max_retries: int = 3,
     delay: float = 0,
     backoff_factor: float = 1,
-    should_retry: Optional[Callable[[Exception], bool]] = None
+    should_retry: Callable[[Exception], bool] | None = None,
 ) -> T:
     """Retry an async function with exponential backoff.
 
@@ -215,10 +211,8 @@ async def retry_async(
 
 
 async def map_async(
-    func: Callable[[T], Awaitable[Any]],
-    items: List[T],
-    concurrency: int = 10
-) -> List[Any]:
+    func: Callable[[T], Awaitable[Any]], items: list[T], concurrency: int = 10
+) -> list[Any]:
     """Apply async function to list of items with concurrency control.
 
     Args:
@@ -250,10 +244,8 @@ async def map_async(
 
 
 async def filter_async(
-    predicate: Callable[[T], Awaitable[bool]],
-    items: List[T],
-    concurrency: int = 10
-) -> List[T]:
+    predicate: Callable[[T], Awaitable[bool]], items: list[T], concurrency: int = 10
+) -> list[T]:
     """Filter list using async predicate with concurrency control.
 
     Args:
@@ -311,11 +303,11 @@ def run_in_thread(func: Callable[..., T], *args, **kwargs) -> Awaitable[T]:
 
 
 async def batch_process(
-    items: List[T],
-    processor: Callable[[List[T]], Awaitable[List[Any]]],
+    items: list[T],
+    processor: Callable[[list[T]], Awaitable[list[Any]]],
     batch_size: int = 100,
-    concurrency: int = 5
-) -> List[Any]:
+    concurrency: int = 5,
+) -> list[Any]:
     """Process items in batches with concurrency control.
 
     Args:
@@ -341,12 +333,11 @@ async def batch_process(
         >>> # asyncio.run(main())
     """
     # Create batches
-    batches = [items[i:i + batch_size] for i in range(0, len(items), batch_size)]
+    batches = [items[i : i + batch_size] for i in range(0, len(items), batch_size)]
 
     # Process batches with concurrency control
     batch_results = await gather_with_concurrency(
-        *[processor(batch) for batch in batches],
-        limit=concurrency
+        *[processor(batch) for batch in batches], limit=concurrency
     )
 
     # Flatten results
@@ -374,9 +365,9 @@ class AsyncTimer(AsyncContextManager):
 
     def __init__(self):
         """Initialize timer."""
-        self.start_time: Optional[float] = None
-        self.end_time: Optional[float] = None
-        self.elapsed: Optional[float] = None
+        self.start_time: float | None = None
+        self.end_time: float | None = None
+        self.elapsed: float | None = None
 
     async def __aenter__(self):
         """Start timing."""
@@ -391,9 +382,7 @@ class AsyncTimer(AsyncContextManager):
 
 
 async def with_timeout_default(
-    coro: Awaitable[T],
-    timeout_seconds: float,
-    default: T
+    coro: Awaitable[T], timeout_seconds: float, default: T
 ) -> T:
     """Execute coroutine with timeout, returning default on timeout.
 
@@ -424,9 +413,8 @@ async def with_timeout_default(
 
 
 async def wait_for_all(
-    *coroutines: Awaitable[Any],
-    timeout: Optional[float] = None
-) -> List[Any]:
+    *coroutines: Awaitable[Any], timeout: float | None = None
+) -> list[Any]:
     """Wait for all coroutines to complete.
 
     Args:
@@ -456,16 +444,10 @@ async def wait_for_all(
     if timeout is None:
         return await asyncio.gather(*coroutines)
     else:
-        return await asyncio.wait_for(
-            asyncio.gather(*coroutines),
-            timeout=timeout
-        )
+        return await asyncio.wait_for(asyncio.gather(*coroutines), timeout=timeout)
 
 
-async def wait_for_any(
-    *coroutines: Awaitable[T],
-    timeout: Optional[float] = None
-) -> T:
+async def wait_for_any(*coroutines: Awaitable[T], timeout: float | None = None) -> T:
     """Wait for any coroutine to complete.
 
     Args:
@@ -495,7 +477,4 @@ async def wait_for_any(
     if timeout is None:
         return await race(*coroutines)
     else:
-        return await asyncio.wait_for(
-            race(*coroutines),
-            timeout=timeout
-        )
+        return await asyncio.wait_for(race(*coroutines), timeout=timeout)
