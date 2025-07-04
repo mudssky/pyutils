@@ -342,6 +342,10 @@ class PollingController:
             
             if self.is_active and self.execution_count < self.max_executions:
                 await asyncio.sleep(self.interval)
+        
+        # Set is_active to False when loop ends due to max_executions reached
+        if self.execution_count >= self.max_executions:
+            self.is_active = False
     
     def status(self) -> Dict[str, Any]:
         """Get current status."""
