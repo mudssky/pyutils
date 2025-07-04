@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint lint/flake8
+.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint test benchmark security pre-commit
 
 .DEFAULT_GOAL := help
 
@@ -48,42 +48,60 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-lint/flake8: ## check style with flake8
-	flake8 pyutils tests
+lint: ## check code style with ruff
+	uv run ruff check src/ tests/
 
+format: ## format code with ruff
+	uv run ruff format src/ tests/
+	uv run ruff check --fix src/ tests/
 
-lint: lint/flake8 ## check style
+type-check: ## run type checking with mypy
+	uv run mypy src/
 
-test: ## run tests quickly with the default Python
-	pytest
+security: ## run security checks with bandit
+	uv run bandit -r src/
 
-test-all: ## run tests on every Python version with tox
-	tox
+test: ## run tests quickly with pytest
+	uv run pytest tests/
 
-coverage: ## check code coverage quickly with the default Python
-	coverage run --source pyutils -m pytest
-	coverage report -m
-	coverage html
+test-cov: ## run tests with coverage
+	uv run pytest --cov=src --cov-report=html --cov-report=term
 	$(BROWSER) htmlcov/index.html
+
+benchmark: ## run performance benchmarks
+	uv run python benchmark.py
+
+pre-commit: ## install pre-commit hooks
+	uv run pre-commit install
+	uv run pre-commit install --hook-type commit-msg
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/pyutils.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ pyutils
+	uv run sphinx-apidoc -o docs/ src/pyutils
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+	uv run watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: dist ## package and upload a release
-	twine upload dist/*
-
-dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+build: clean ## builds source and wheel package with uv
+	uv build
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+release: build ## package and upload a release
+	uv run twine upload dist/*
+
+install: ## install the package and dependencies with uv
+	uv sync --all-extras --dev
+
+ci: lint type-check security test-cov ## run all CI checks
+	@echo "All CI checks passed!"
+
+dev-setup: install pre-commit ## setup development environment
+	@echo "Development environment setup complete!"
+	@echo "Run 'make help' to see available commands."
+
+quick-check: format lint type-check ## quick pre-commit checks
+	@echo "Quick checks completed!"
