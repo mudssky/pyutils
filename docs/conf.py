@@ -71,12 +71,16 @@ autodoc_default_options = {
 autosummary_generate = True
 autosummary_imported_members = True
 
-# Intersphinx mapping
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://numpy.org/doc/stable/', None),
-    'pandas': ('https://pandas.pydata.org/docs/', None),
-}
+# Intersphinx mapping - disabled to avoid SSL issues
+# intersphinx_mapping = {
+#     'python': ('https://docs.python.org/3', None),
+#     'numpy': ('https://numpy.org/doc/stable/', None),
+#     'pandas': ('https://pandas.pydata.org/docs/', None),
+# }
+
+# Intersphinx timeout settings
+intersphinx_timeout = 5
+intersphinx_mapping = {}
 
 # Todo extension settings
 todo_include_todos = True

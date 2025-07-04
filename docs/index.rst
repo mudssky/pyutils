@@ -9,7 +9,7 @@ pyutils 文档
 
    installation
    quickstart
-   api
+   modules
    contributing
    changelog
 

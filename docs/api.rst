@@ -67,58 +67,10 @@ API 参考
    :undoc-members:
    :show-inheritance:
 
-缓存工具 (cache_utils)
-----------------------
+命令行工具 (cli)
+----------------
 
-.. automodule:: pyutils.cache_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-数据工具 (data_utils)
----------------------
-
-.. automodule:: pyutils.data_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-文件工具 (file_utils)
----------------------
-
-.. automodule:: pyutils.file_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-网络工具 (network_utils)
-------------------------
-
-.. automodule:: pyutils.network_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-系统工具 (system_utils)
------------------------
-
-.. automodule:: pyutils.system_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-时间工具 (time_utils)
----------------------
-
-.. automodule:: pyutils.time_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-验证工具 (validation_utils)
----------------------------
-
-.. automodule:: pyutils.validation_utils
+.. automodule:: pyutils.cli
    :members:
    :undoc-members:
    :show-inheritance:
