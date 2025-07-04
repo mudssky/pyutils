@@ -7,8 +7,7 @@ ported from the jsutils library.
 
 import asyncio
 import time
-from typing import Any, Awaitable, Callable, List, Optional, TypeVar, Union
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Awaitable, Callable, List, Optional, TypeVar
 
 T = TypeVar('T')
 
