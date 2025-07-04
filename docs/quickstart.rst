@@ -277,7 +277,7 @@ pyutils 提供了丰富的数组和列表操作工具：
 
 现在您已经了解了 pyutils 的基本用法，可以：
 
-1. 查看 :doc:`api` 了解完整的 API 参考
+1. 查看 :doc:`modules` 了解完整的 API 参考
 2. 阅读 :doc:`contributing` 了解如何贡献代码
 3. 查看 GitHub 仓库中的更多示例
 4. 运行性能基准测试：``uv run python benchmark.py``

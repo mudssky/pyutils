@@ -12,6 +12,10 @@ pyutils 文档
    modules
    contributing
    changelog
+   authors
+   history
+   readme
+   usage
 
 特性
 ----

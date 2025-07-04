@@ -20,7 +20,7 @@
     git clone https://github.com/your-username/pyutils.git
     cd pyutils
 
-2. **安装 uv**（如果尚未安装）::
+2. **安装 uv** （如果尚未安装）::
 
     # Windows
     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
