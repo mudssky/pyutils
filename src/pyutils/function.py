@@ -8,7 +8,7 @@ ported from the jsutils library.
 import asyncio
 import time
 import threading
-from typing import Any, Awaitable, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Awaitable, Callable, Dict, Optional, TypeVar
 from functools import wraps
 
 T = TypeVar('T')
@@ -506,20 +506,36 @@ def memoize(func: F) -> F:
     """
     cache: Dict[tuple, Any] = {}
     
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        # Create cache key from args and kwargs
-        key = (args, tuple(sorted(kwargs.items())))
+    if asyncio.iscoroutinefunction(func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            # Create cache key from args and kwargs
+            key = (args, tuple(sorted(kwargs.items())))
+            
+            if key not in cache:
+                cache[key] = await func(*args, **kwargs)
+            
+            return cache[key]
         
-        if key not in cache:
-            cache[key] = func(*args, **kwargs)
+        async_wrapper.cache = cache  # type: ignore
+        async_wrapper.cache_clear = lambda: cache.clear()  # type: ignore
         
-        return cache[key]
-    
-    wrapper.cache = cache  # type: ignore
-    wrapper.cache_clear = lambda: cache.clear()  # type: ignore
-    
-    return wrapper  # type: ignore
+        return async_wrapper  # type: ignore
+    else:
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            # Create cache key from args and kwargs
+            key = (args, tuple(sorted(kwargs.items())))
+            
+            if key not in cache:
+                cache[key] = func(*args, **kwargs)
+            
+            return cache[key]
+        
+        sync_wrapper.cache = cache  # type: ignore
+        sync_wrapper.cache_clear = lambda: cache.clear()  # type: ignore
+        
+        return sync_wrapper  # type: ignore
 
 
 def once(func: F) -> F:

@@ -5,10 +5,9 @@
 import asyncio
 import pytest
 import time
-from unittest.mock import Mock, call
 from pyutils.function import (
     memoize, debounce, throttle, once, with_retry, create_polling,
-    Debouncer, Throttler, PollingController
+    Debouncer, Throttler
 )
 
 
