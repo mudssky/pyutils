@@ -469,3 +469,92 @@ def parse_bytes(byte_string: str, binary: bool = True) -> int:
         raise ValueError(f"Unknown unit: {unit}")
     
     return int(number * decimal_units[unit])
+
+
+def get_hash(data: str, algorithm: str = 'md5') -> str:
+    """Generate hash for given data.
+    
+    Args:
+        data: String data to hash
+        algorithm: Hash algorithm to use ('md5', 'sha1', 'sha256'), defaults to 'md5'
+        
+    Returns:
+        Hexadecimal hash string
+        
+    Examples:
+        >>> get_hash('hello')
+        '5d41402abc4b2a76b9719d911017c592'
+        >>> get_hash('hello', 'sha256')
+        '2cf24dba4f21d4288094e9b9eb4e5f0164e031c02c90b3a8b26f6c8b'
+    """
+    import hashlib
+    
+    # Convert string to bytes
+    data_bytes = data.encode('utf-8')
+    
+    # Select hash algorithm
+    if algorithm == 'md5':
+        hasher = hashlib.md5()
+    elif algorithm == 'sha1':
+        hasher = hashlib.sha1()
+    elif algorithm == 'sha256':
+        hasher = hashlib.sha256()
+    else:
+        raise ValueError(f"Unsupported hash algorithm: {algorithm}")
+    
+    hasher.update(data_bytes)
+    return hasher.hexdigest()
+
+
+def to_base64(data: str) -> str:
+    """Encode string data to base64.
+    
+    Args:
+        data: String data to encode
+        
+    Returns:
+        Base64 encoded string
+        
+    Examples:
+        >>> to_base64('hello')
+        'aGVsbG8='
+        >>> to_base64('world')
+        'd29ybGQ='
+    """
+    import base64
+    
+    # Convert string to bytes
+    data_bytes = data.encode('utf-8')
+    
+    # Encode to base64
+    encoded_bytes = base64.b64encode(data_bytes)
+    
+    # Convert back to string
+    return encoded_bytes.decode('utf-8')
+
+
+def from_base64(data: str) -> str:
+    """Decode base64 string data.
+    
+    Args:
+        data: Base64 encoded string
+        
+    Returns:
+        Decoded string
+        
+    Examples:
+        >>> from_base64('aGVsbG8=')
+        'hello'
+        >>> from_base64('d29ybGQ=')
+        'world'
+    """
+    import base64
+    
+    # Convert string to bytes
+    data_bytes = data.encode('utf-8')
+    
+    # Decode from base64
+    decoded_bytes = base64.b64decode(data_bytes)
+    
+    # Convert back to string
+    return decoded_bytes.decode('utf-8')
