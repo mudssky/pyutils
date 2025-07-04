@@ -10,7 +10,7 @@ import time
 import sys
 import os
 import asyncio
-from typing import Callable, Any
+from typing import Callable
 
 # 添加 src 目录到 Python 路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -275,7 +275,7 @@ def benchmark_function_utilities():
     result2 = fibonacci_memo(30)
     cached_call_time = time.perf_counter() - start_time
     
-    print(f"  memoize fibonacci(30):")
+    print("  memoize fibonacci(30):")
     print(f"    首次调用: {format_time(first_call_time)}")
     print(f"    缓存调用: {format_time(cached_call_time)}")
     print(f"    加速比: {first_call_time / cached_call_time:.0f}x")
@@ -298,7 +298,7 @@ def benchmark_function_utilities():
         expensive_init()
     total_time = time.perf_counter() - start_time
     
-    print(f"  once decorator (1000 calls):")
+    print("  once decorator (1000 calls):")
     print(f"    总时间: {format_time(total_time)}")
     print(f"    实际执行次数: {call_count}")
     print(f"    平均每次调用: {format_time(total_time / 1000)}")
@@ -328,7 +328,7 @@ async def benchmark_async_functions():
     result = await async_utils.map_async(simple_async_func, items, concurrency=5)
     total_time = time.perf_counter() - start_time
     
-    print(f"  map_async (10 items, concurrency=5):")
+    print("  map_async (10 items, concurrency=5):")
     print(f"    总时间: {format_time(total_time)}")
     print(f"    结果: {result}")
     print(f"    平均每项: {format_time(total_time / len(items))}")
@@ -347,7 +347,7 @@ async def benchmark_async_functions():
     winner = await async_utils.race(fast_task(), slow_task())
     race_time = time.perf_counter() - start_time
     
-    print(f"  race (fast vs slow):")
+    print("  race (fast vs slow):")
     print(f"    总时间: {format_time(race_time)}")
     print(f"    获胜者: {winner}")
     print()

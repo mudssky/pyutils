@@ -6,7 +6,6 @@ to ensure they are working correctly after porting from jsutils.
 """
 
 import sys
-import os
 import asyncio
 from pathlib import Path
 
@@ -265,7 +264,7 @@ def test_imports():
     print("\n🧪 Testing imports...")
     
     # Test direct imports from pyutils
-    from pyutils import chunk, camel_case, clamp, pick, memoize
+    from pyutils import chunk, camel_case, clamp, pick
     
     # Test that they work
     assert chunk([1, 2, 3, 4], 2) == [[1, 2], [3, 4]]

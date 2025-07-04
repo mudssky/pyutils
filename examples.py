@@ -182,11 +182,11 @@ def demo_function_utilities():
         return n * n
     
     print("使用 memoize 装饰器:")
-    print(f"第一次调用 expensive_calculation(5):")
+    print("第一次调用 expensive_calculation(5):")
     result1 = expensive_calculation(5)
     print(f"结果: {result1}")
     
-    print(f"第二次调用 expensive_calculation(5) (应该使用缓存):")
+    print("第二次调用 expensive_calculation(5) (应该使用缓存):")
     result2 = expensive_calculation(5)
     print(f"结果: {result2}")
     

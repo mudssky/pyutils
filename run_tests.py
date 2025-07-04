@@ -27,7 +27,7 @@ def run_command(cmd, description):
         print("STDERR:", e.stderr)
         return False
     except FileNotFoundError:
-        print(f"ERROR: Command not found. Make sure the required tools are installed.")
+        print("ERROR: Command not found. Make sure the required tools are installed.")
         return False
 
 
