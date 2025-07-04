@@ -2,7 +2,6 @@
 
 """Tests for object module."""
 
-import pytest
 from pyutils.object import (
     pick, pick_by, omit, omit_by, map_keys, map_values, is_object,
     merge, remove_non_serializable_props, safe_json_stringify, invert,

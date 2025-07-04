@@ -5,7 +5,7 @@ ported from the jsutils library.
 """
 
 import json
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 K = TypeVar('K')
 V = TypeVar('V')
