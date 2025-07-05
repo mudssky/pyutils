@@ -115,7 +115,7 @@ jobs:
           -v
 
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
@@ -186,7 +186,7 @@ jobs:
         uv run bandit -r src/ -f txt
 
     - name: Upload security report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: security-report
@@ -256,7 +256,7 @@ jobs:
 
     - name: Upload to GitHub Pages
       if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v4
       with:
         path: docs/_build/html
 
@@ -266,14 +266,14 @@ jobs:
       uses: actions/deploy-pages@v4
 
     - name: Upload documentation artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: documentation
         path: docs/_build/html
         retention-days: 30
 
     - name: Upload linkcheck results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: linkcheck-results
@@ -340,7 +340,7 @@ jobs:
         fi
 
     - name: Upload benchmark results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: benchmark-results
@@ -448,7 +448,7 @@ jobs:
         uv run python -m tarfile -l dist/*.tar.gz
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist-${{ steps.version.outputs.version }}
         path: dist/
