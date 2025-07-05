@@ -134,11 +134,13 @@ Write-Host ""
 # 发布到 TestPyPI 或正式 PyPI
 if ($TestOnly) {
     Write-Host "发布到 TestPyPI..." -ForegroundColor Green
+    $testOnlySuccess = $false
     try {
         uv run twine upload --repository testpypi dist/*
         Write-Host "✓ 成功发布到 TestPyPI" -ForegroundColor Green
         Write-Host "测试安装命令：" -ForegroundColor Yellow
         Write-Host "pip install --index-url https://test.pypi.org/simple/ mudssky-pyutils" -ForegroundColor Cyan
+        $testOnlySuccess = $true
     } catch {
         Write-Host "✗ 发布到 TestPyPI 失败：$_" -ForegroundColor Red
         exit 1
@@ -146,9 +148,11 @@ if ($TestOnly) {
 } else {
     # 先发布到 TestPyPI
     Write-Host "发布到 TestPyPI 进行测试..." -ForegroundColor Green
+    $testPypiSuccess = $false
     try {
         uv run twine upload --repository testpypi dist/*
         Write-Host "✓ 成功发布到 TestPyPI" -ForegroundColor Green
+        $testPypiSuccess = $true
     } catch {
         Write-Host "✗ 发布到 TestPyPI 失败：$_" -ForegroundColor Red
         if (-not $Force) {
@@ -158,11 +162,16 @@ if ($TestOnly) {
     }
     
     Write-Host ""
-    Write-Host "请在 TestPyPI 上验证包是否正常：" -ForegroundColor Yellow
-    Write-Host "https://test.pypi.org/project/mudssky-pyutils/" -ForegroundColor Cyan
-    Write-Host "测试安装命令：" -ForegroundColor Yellow
-    Write-Host "pip install --index-url https://test.pypi.org/simple/ mudssky-pyutils" -ForegroundColor Cyan
-    Write-Host ""
+    if ($testPypiSuccess) {
+        Write-Host "请在 TestPyPI 上验证包是否正常：" -ForegroundColor Yellow
+        Write-Host "https://test.pypi.org/project/mudssky-pyutils/" -ForegroundColor Cyan
+        Write-Host "测试安装命令：" -ForegroundColor Yellow
+        Write-Host "pip install --index-url https://test.pypi.org/simple/ mudssky-pyutils" -ForegroundColor Cyan
+        Write-Host ""
+    } else {
+        Write-Host "注意：TestPyPI 上传失败，但将继续发布到正式 PyPI" -ForegroundColor Yellow
+        Write-Host ""
+    }
     
     # 确认发布到正式 PyPI
     if (-not $Force) {
@@ -174,6 +183,7 @@ if ($TestOnly) {
     }
     
     Write-Host "发布到正式 PyPI..." -ForegroundColor Green
+    $pypiSuccess = $false
     try {
         uv run twine upload dist/*
         Write-Host "✓ 成功发布到正式 PyPI" -ForegroundColor Green
@@ -181,6 +191,7 @@ if ($TestOnly) {
         Write-Host "pip install mudssky-pyutils" -ForegroundColor Cyan
         Write-Host "项目页面：" -ForegroundColor Yellow
         Write-Host "https://pypi.org/project/mudssky-pyutils/" -ForegroundColor Cyan
+        $pypiSuccess = $true
     } catch {
         Write-Host "✗ 发布到正式 PyPI 失败：$_" -ForegroundColor Red
         exit 1
@@ -188,5 +199,25 @@ if ($TestOnly) {
 }
 
 Write-Host ""
-Write-Host "=== 发布完成 ===" -ForegroundColor Magenta
+if ($TestOnly) {
+    if ($testOnlySuccess) {
+        Write-Host "=== 发布完成 ===" -ForegroundColor Magenta
+        Write-Host "✓ TestPyPI 发布成功" -ForegroundColor Green
+    } else {
+        Write-Host "=== 发布失败 ===" -ForegroundColor Red
+        Write-Host "✗ TestPyPI 发布失败" -ForegroundColor Red
+    }
+} else {
+    if ($pypiSuccess) {
+        if ($testPypiSuccess) {
+            Write-Host "=== 发布完成 ===" -ForegroundColor Magenta
+            Write-Host "✓ TestPyPI 和正式 PyPI 都发布成功" -ForegroundColor Green
+        } else {
+            Write-Host "=== 发布部分完成 ===" -ForegroundColor Yellow
+            Write-Host "✗ TestPyPI 发布失败，但正式 PyPI 发布成功" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "=== 发布失败 ===" -ForegroundColor Red
+    }
+}
 Write-Host "时间：$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Cyan
