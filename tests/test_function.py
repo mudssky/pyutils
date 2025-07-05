@@ -152,7 +152,7 @@ class TestDebounce:
         debounced_func("third")
 
         # Wait for debounce to trigger
-        time.sleep(0.15)
+        time.sleep(0.25)
 
         # Only the last call should have executed
         assert call_count == 1
@@ -179,7 +179,7 @@ class TestDebounce:
         debounced_func("second")
         debounced_func("third")
 
-        time.sleep(0.15)
+        time.sleep(0.25)
         assert call_count == 1
         assert results == ["first"]
 
@@ -195,7 +195,7 @@ class TestDebounce:
         debounced_func()
         debounced_func.cancel()
 
-        time.sleep(0.15)
+        time.sleep(0.25)
         assert call_count == 0  # Should not have executed
 
     def test_debounce_flush(self):
@@ -226,7 +226,7 @@ class TestDebounce:
         debounced_func()
         assert debounced_func.pending()
 
-        time.sleep(0.15)
+        time.sleep(0.25)
         assert not debounced_func.pending()
 
 
@@ -252,7 +252,7 @@ class TestThrottle:
         assert call_count == 1
 
         # Wait for throttle period to end
-        time.sleep(0.15)
+        time.sleep(0.25)
         throttled_func()
         # After waiting, the next call should execute
         assert call_count == 2
@@ -273,7 +273,7 @@ class TestThrottle:
         assert call_count == 0
 
         # Wait for trailing execution
-        time.sleep(0.15)
+        time.sleep(0.25)
         assert call_count == 1
 
     def test_throttle_cancel(self):
@@ -288,7 +288,7 @@ class TestThrottle:
         throttled_func()
         throttled_func.cancel()
 
-        time.sleep(0.15)
+        time.sleep(0.25)
         assert call_count == 0
 
     def test_throttle_flush(self):
@@ -567,7 +567,8 @@ class TestDebouncer:
         debouncer("test1")
         debouncer("test2")
 
-        time.sleep(0.15)
+        # Wait longer to account for system timer precision differences
+        time.sleep(0.25)
         assert call_count == 1
 
 
