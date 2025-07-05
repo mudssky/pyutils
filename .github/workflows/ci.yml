@@ -200,13 +200,25 @@ jobs:
     name: Build Documentation
     runs-on: ubuntu-latest
     needs: changes
-    if: needs.changes.outputs.docs == 'true' || needs.changes.outputs.python == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.docs == 'true' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+    # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch full history for proper version detection
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
@@ -238,7 +250,22 @@ jobs:
         cd docs
         uv run sphinx-build -b linkcheck . _build/linkcheck || true
 
-    - name: Upload documentation
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      uses: actions/configure-pages@v4
+
+    - name: Upload to GitHub Pages
+      if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/_build/html
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Upload documentation artifact
       uses: actions/upload-artifact@v3
       with:
         name: documentation
@@ -252,6 +279,20 @@ jobs:
         name: linkcheck-results
         path: docs/_build/linkcheck
         retention-days: 7
+
+    - name: Comment documentation URL
+      if: github.event_name == 'pull_request' && github.base_ref == 'main'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const comment = "## 📚 Documentation Preview\n\n✅ Documentation has been built successfully!\n\n**Preview URL**: ${{ steps.deployment.outputs.page_url }}\n\n*Documentation will be available at the above URL once this PR is merged to main.*";
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
 
     - name: Minimize uv cache
       run: uv cache prune --ci
@@ -316,7 +357,7 @@ jobs:
           const fs = require('fs');
           try {
             const results = JSON.parse(fs.readFileSync('benchmark-results.json', 'utf8'));
-            const comment = `## 🚀 Performance Benchmark Results\n\n${JSON.stringify(results, null, 2)}\n\n*Benchmarks run on commit ${context.sha.substring(0, 7)}*`;
+            const comment = "## 🚀 Performance Benchmark Results\n\n" + JSON.stringify(results, null, 2) + "\n\n*Benchmarks run on commit " + context.sha.substring(0, 7) + "*";
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
