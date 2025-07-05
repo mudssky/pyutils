@@ -96,7 +96,7 @@ release: build ## package and upload a release
 install: ## install the package and dependencies with uv
 	uv sync --all-extras --dev
 
-ci: lint type-check security test-cov ## run all CI checks
+ci: format lint type-check security test-cov ## run all CI checks
 	@echo "All CI checks passed!"
 
 dev-setup: install pre-commit ## setup development environment

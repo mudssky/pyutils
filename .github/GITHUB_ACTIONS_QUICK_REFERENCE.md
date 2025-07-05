@@ -4,10 +4,16 @@
 
 | 工作流 | 触发条件 | 主要功能 | 状态徽章 |
 |--------|----------|----------|----------|
-| **CI/CD** (`ci.yml`) | Push, PR, Manual | 测试、检查、发布 | ![CI](https://github.com/your-username/pyutils/workflows/CI/badge.svg) |
+| **CI/CD** (`ci.yml`) | Push, PR, Manual | 测试、检查、文档发布 | ![CI](https://github.com/your-username/pyutils/workflows/CI/badge.svg) |
 | **版本管理** (`version-bump.yml`) | Manual | 自动版本更新 | ![Version Bump](https://github.com/your-username/pyutils/workflows/Version%20Bump/badge.svg) |
 | **预发布** (`pre-release.yml`) | Pre-release tags, Manual | TestPyPI 发布 | ![Pre-release](https://github.com/your-username/pyutils/workflows/Pre-release/badge.svg) |
 | **依赖更新** (`dependency-update.yml`) | Schedule, Manual | 自动依赖更新 | ![Dependencies](https://github.com/your-username/pyutils/workflows/Dependencies/badge.svg) |
+
+## 📚 文档访问
+
+- **在线文档**: `https://<username>.github.io/<repository>` (GitHub Pages)
+- **文档状态**: ![Pages](https://github.com/your-username/pyutils/deployments/activity_log?environment=github-pages)
+- **构建状态**: 包含在 CI/CD 工作流中
 
 ## 📋 快速设置清单
 
@@ -16,6 +22,7 @@
 - [ ] 配置 PyPI Trusted Publishing
 - [ ] 设置环境保护规则 (`production`)
 - [ ] 配置分支保护规则 (`main`)
+- [ ] 配置 GitHub Pages (Settings → Pages → GitHub Actions)
 - [ ] 添加仓库密钥 (如果不使用 Trusted Publishing)
 
 ### ✅ 本地配置
@@ -80,6 +87,12 @@ make ci                          # 运行所有 CI 检查
 ```
 changes → test → lint → docs → performance → publish → notify
 ```
+
+**文档部署:**
+- 📚 自动构建 Sphinx 文档
+- 🌐 部署到 GitHub Pages (`main` 分支推送时)
+- 🔗 可通过 `https://<username>.github.io/<repository>` 访问
+- 📝 PR 中自动评论文档预览链接
 
 ### 2. 版本管理工作流 (`version-bump.yml`)
 

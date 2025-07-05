@@ -100,17 +100,149 @@ jobs:
       run: |
         uv run pytest tests/ -v --tb=short
         
+    - name: Create version bump branch
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new }}"
+        BRANCH_NAME="version-bump-v$NEW_VERSION"
+        git checkout -b "$BRANCH_NAME"
+        echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+        
     - name: Commit version bump
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         git add pyproject.toml src/pyutils/__init__.py
         git commit -m "chore: bump version to $NEW_VERSION"
         
+    - name: Push version bump branch
+      run: |
+        git push origin "${{ env.branch_name }}"
+        
+    - name: Create Pull Request
+      id: create_pr
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const newVersion = '${{ steps.new_version.outputs.new }}';
+          const currentVersion = '${{ steps.current_version.outputs.current }}';
+          const versionType = '${{ github.event.inputs.version_type }}';
+          const branchName = process.env.branch_name;
+          
+          const prTitle = 'chore: bump version to v' + newVersion;
+          const prBody = '## Version Bump to v' + newVersion + '\n\n' +
+                        'This PR bumps the version from ' + currentVersion + ' to ' + newVersion + '.\n\n' +
+                        '### Changes\n' +
+                        '- Updated version in pyproject.toml\n' +
+                        '- Updated version in src/pyutils/__init__.py\n\n' +
+                        '### Type\n' +
+                        '- **Bump Type**: ' + versionType + '\n\n' +
+                        'This PR will automatically trigger CI checks. Once merged, a GitHub release will be created if enabled.';
+          
+          const { data: pr } = await github.rest.pulls.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: prTitle,
+            head: branchName,
+            base: 'main',
+            body: prBody,
+            draft: false
+          });
+          
+          console.log('Created PR #' + pr.number + ': ' + pr.html_url);
+          core.setOutput('pr_number', pr.number);
+          core.setOutput('pr_url', pr.html_url);
+          return pr.number;
+          
+    - name: Wait for CI checks
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prNumber = ${{ steps.create_pr.outputs.pr_number }};
+          const maxWaitTime = 10 * 60 * 1000; // 10 minutes
+          const checkInterval = 30 * 1000; // 30 seconds
+          let waitTime = 0;
+          
+          console.log('Waiting for CI checks on PR #' + prNumber + '...');
+          
+          while (waitTime < maxWaitTime) {
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            
+            const { data: checks } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: pr.head.sha
+            });
+            
+            const requiredChecks = ['test', 'lint', 'docs'];
+            const checkStatuses = {};
+            
+            for (const check of checks.check_runs) {
+              if (requiredChecks.includes(check.name)) {
+                checkStatuses[check.name] = check.status;
+              }
+            }
+            
+            console.log('Check statuses:', checkStatuses);
+            
+            const allCompleted = requiredChecks.every(name => 
+              checkStatuses[name] === 'completed'
+            );
+            
+            if (allCompleted) {
+              const allPassed = requiredChecks.every(name => {
+                const check = checks.check_runs.find(c => c.name === name);
+                return check && check.conclusion === 'success';
+              });
+              
+              if (allPassed) {
+                console.log('All required checks passed!');
+                break;
+              } else {
+                throw new Error('Some required checks failed. Please check the PR for details.');
+              }
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+            waitTime += checkInterval;
+          }
+          
+          if (waitTime >= maxWaitTime) {
+            throw new Error('Timeout waiting for CI checks to complete');
+          }
+          
+    - name: Auto-merge PR
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prNumber = ${{ steps.create_pr.outputs.pr_number }};
+          
+          try {
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              commit_title: 'chore: bump version to v${{ steps.new_version.outputs.new }}',
+              merge_method: 'squash'
+            });
+            
+            console.log('Successfully merged PR #' + prNumber);
+          } catch (error) {
+            console.error('Failed to merge PR:', error.message);
+            throw error;
+          }
+          
     - name: Create and push tag
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
+        # Switch back to main and pull the merged changes
+        git checkout main
+        git pull origin main
+        
+        # Create and push tag
         git tag "v$NEW_VERSION"
-        git push origin main
         git push origin "v$NEW_VERSION"
         
     - name: Generate changelog
@@ -154,6 +286,7 @@ jobs:
         echo "- **Previous Version**: ${{ steps.current_version.outputs.current }}" >> $GITHUB_STEP_SUMMARY
         echo "- **New Version**: ${{ steps.new_version.outputs.new }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Bump Type**: ${{ github.event.inputs.version_type }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Pull Request**: ${{ steps.create_pr.outputs.pr_url }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Tag Created**: v${{ steps.new_version.outputs.new }}" >> $GITHUB_STEP_SUMMARY
         if [ "${{ github.event.inputs.create_release }}" = "true" ]; then
           echo "- **GitHub Release**: Created" >> $GITHUB_STEP_SUMMARY
@@ -161,4 +294,4 @@ jobs:
           echo "- **GitHub Release**: Skipped" >> $GITHUB_STEP_SUMMARY
         fi
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "The new version has been committed and tagged. If auto-release is enabled, the package will be published to PyPI automatically." >> $GITHUB_STEP_SUMMARY
+        echo "The version bump was completed via Pull Request to ensure CI checks pass. The new version has been tagged and merged to main. If auto-release is enabled, the package will be published to PyPI automatically." >> $GITHUB_STEP_SUMMARY

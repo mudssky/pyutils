@@ -248,6 +248,85 @@ function Test-EnvironmentConfig {
     return $issues
 }
 
+# 检查 GitHub Pages 配置
+function Test-GitHubPagesConfig {
+    Write-Header "检查 GitHub Pages 配置"
+
+    $issues = @()
+
+    # 检查 docs 目录和配置
+    if (Test-Path "docs") {
+        Write-Success "找到文档目录: docs"
+
+        # 检查 Sphinx 配置文件
+        if (Test-Path "docs/conf.py") {
+            Write-Success "找到 Sphinx 配置文件: docs/conf.py"
+        } else {
+            Write-Warning "缺少 Sphinx 配置文件: docs/conf.py"
+            $issues += "缺少 Sphinx 配置文件"
+        }
+
+        # 检查文档源文件
+        if (Test-Path "docs/index.rst") {
+            Write-Success "找到文档首页: docs/index.rst"
+        } else {
+            Write-Warning "缺少文档首页: docs/index.rst"
+            $issues += "缺少文档首页"
+        }
+    } else {
+        Write-Error "缺少文档目录: docs"
+        $issues += "缺少文档目录"
+    }
+
+    # 检查 CI 工作流中的 Pages 配置
+    $ciWorkflow = ".github/workflows/ci.yml"
+    if (Test-Path $ciWorkflow) {
+        $ciContent = Get-Content $ciWorkflow -Raw
+
+        # 检查 Pages 权限
+        if ($ciContent -match "pages:\s*write") {
+            Write-Success "CI 工作流包含 Pages 写权限"
+        } else {
+            Write-Warning "CI 工作流缺少 Pages 写权限"
+            $issues += "CI 工作流缺少 Pages 权限"
+        }
+
+        # 检查 Pages 部署步骤
+        if ($ciContent -match "actions/deploy-pages") {
+            Write-Success "CI 工作流包含 Pages 部署步骤"
+        } else {
+            Write-Warning "CI 工作流缺少 Pages 部署步骤"
+            $issues += "CI 工作流缺少 Pages 部署步骤"
+        }
+
+        # 检查 Pages 环境配置
+        if ($ciContent -match "environment:\s*name:\s*github-pages") {
+            Write-Success "CI 工作流包含 Pages 环境配置"
+        } else {
+            Write-Warning "CI 工作流缺少 Pages 环境配置"
+            $issues += "CI 工作流缺少 Pages 环境配置"
+        }
+    }
+
+    # 检查 GitHub Pages 设置文档
+    if (Test-Path ".github/GITHUB_PAGES_SETUP.md") {
+        Write-Success "找到 GitHub Pages 设置文档"
+    } else {
+        Write-Warning "缺少 GitHub Pages 设置文档"
+        $issues += "缺少 GitHub Pages 设置文档"
+    }
+
+    # 提供配置建议
+    if ($issues.Count -eq 0) {
+        Write-Success "GitHub Pages 配置完整"
+        Write-Info "请确保在 GitHub 仓库设置中启用 Pages (Settings → Pages → GitHub Actions)"
+    } else {
+        Write-Warning "GitHub Pages 配置不完整，请查看问题列表"
+    }
+
+    return $issues
+}
+
 # 检查 Git 配置
 function Test-GitConfig {
     Write-Header "检查 Git 配置"
@@ -311,6 +390,8 @@ function New-ConfigReport {
     $projectStatus = if (Test-ProjectFiles) { "✅ 完整" } else { "❌ 不完整" }
     $envIssues = Test-EnvironmentConfig
     $envStatus = if ($envIssues.Count -eq 0) { "✅ 正常" } else { "⚠️ 有问题" }
+    $pagesIssues = Test-GitHubPagesConfig
+    $pagesStatus = if ($pagesIssues.Count -eq 0) { "✅ 正常" } else { "⚠️ 有问题" }
     $gitIssues = Test-GitConfig
     $gitStatus = if ($gitIssues.Count -eq 0) { "✅ 正常" } else { "⚠️ 有问题" }
 
@@ -318,6 +399,7 @@ function New-ConfigReport {
 - **工作流文件**: $workflowStatus
 - **项目配置**: $projectStatus
 - **环境配置**: $envStatus
+- **GitHub Pages**: $pagesStatus
 - **Git 配置**: $gitStatus
 
 "@
@@ -325,6 +407,14 @@ function New-ConfigReport {
     if ($envIssues.Count -gt 0) {
         $report += "## 环境配置问题\n\n"
         foreach ($issue in $envIssues) {
+            $report += "- $issue\n"
+        }
+        $report += "\n"
+    }
+
+    if ($pagesIssues.Count -gt 0) {
+        $report += "## GitHub Pages 配置问题\n\n"
+        foreach ($issue in $pagesIssues) {
             $report += "- $issue\n"
         }
         $report += "\n"
@@ -345,12 +435,15 @@ function New-ConfigReport {
 2. 在 GitHub 仓库中配置 Trusted Publishing
 3. 设置环境保护规则
 4. 配置分支保护规则
-5. 测试工作流运行
+5. 配置 GitHub Pages (Settings → Pages → GitHub Actions)
+6. 查看 [GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md) 了解文档部署
+7. 测试工作流运行
 
 ## 有用的链接
 
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
 - [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/)
+- [GitHub Pages 文档](https://docs.github.com/en/pages)
 - [项目发布指南](./RELEASE_GUIDE.md)
 "@
 
@@ -401,14 +494,36 @@ function Start-SetupWizard {
         }
     }
 
-    # 步骤 4: GitHub 配置指导
-    Write-ColorOutput "\n步骤 4: GitHub 配置" "Cyan"
+    # 步骤 4: GitHub Pages 配置
+    Write-ColorOutput "\n步骤 4: GitHub Pages 配置" "Cyan"
+
+    $pagesIssues = Test-GitHubPagesConfig
+    if ($pagesIssues.Count -gt 0) {
+        Write-Warning "发现 GitHub Pages 配置问题:"
+        foreach ($issue in $pagesIssues) {
+            Write-Info "  - $issue"
+        }
+        $response = Read-Host "是否要查看 GitHub Pages 设置指南？ (y/n)"
+        if ($response -eq 'y' -or $response -eq 'Y') {
+            if (Test-Path ".github\GITHUB_PAGES_SETUP.md") {
+                Start-Process ".github\GITHUB_PAGES_SETUP.md"
+            } else {
+                Write-Warning "未找到 GitHub Pages 设置指南文件"
+            }
+        }
+    } else {
+        Write-Success "GitHub Pages 配置检查通过"
+    }
+
+    # 步骤 5: GitHub 配置指导
+    Write-ColorOutput "\n步骤 5: GitHub 配置" "Cyan"
 
     Write-Info "请在 GitHub 仓库中完成以下配置:"
     Write-Info "  1. 启用 GitHub Actions"
     Write-Info "  2. 配置 PyPI Trusted Publishing"
     Write-Info "  3. 设置环境保护规则"
     Write-Info "  4. 配置分支保护规则"
+    Write-Info "  5. 配置 GitHub Pages (Settings → Pages → GitHub Actions)"
 
     $response = Read-Host "\n是否要打开 GitHub Actions 设置指南？ (y/n)"
     if ($response -eq 'y' -or $response -eq 'Y') {
@@ -419,8 +534,8 @@ function Start-SetupWizard {
         }
     }
 
-    # 步骤 5: 生成报告
-    Write-ColorOutput "\n步骤 5: 生成配置报告" "Cyan"
+    # 步骤 6: 生成配置报告
+    Write-ColorOutput "\n步骤 6: 生成配置报告" "Cyan"
 
     $reportFile = New-ConfigReport
 
@@ -480,6 +595,7 @@ function Main {
         Test-WorkflowFiles
         Test-ProjectFiles
         Test-EnvironmentConfig
+        Test-GitHubPagesConfig
         Test-GitConfig
 
         Write-Info "\n检查完成。运行 -Setup 参数获取详细设置向导。"
