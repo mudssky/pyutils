@@ -31,8 +31,8 @@ class TestFlatMap:
 
     def test_flat_map_strings(self):
         """Test flat_map with strings."""
-        result = flat_map(['hello', 'world'], lambda x: list(x))
-        assert result == ['h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd']
+        result = flat_map(["hello", "world"], lambda x: list(x))
+        assert result == ["h", "e", "l", "l", "o", "w", "o", "r", "l", "d"]
 
     def test_flat_map_empty_list(self):
         """Test flat_map with empty list."""
@@ -217,8 +217,8 @@ class TestGroupBy:
 
     def test_group_by_first_letter(self):
         """Test group_by with first letter."""
-        result = group_by(['apple', 'banana', 'apricot'], lambda x: x[0])
-        expected = {'a': ['apple', 'apricot'], 'b': ['banana']}
+        result = group_by(["apple", "banana", "apricot"], lambda x: x[0])
+        expected = {"a": ["apple", "apricot"], "b": ["banana"]}
         assert result == expected
 
     def test_group_by_modulo(self):
@@ -266,8 +266,8 @@ class TestToSorted:
 
     def test_to_sorted_with_key(self):
         """Test to_sorted with key function."""
-        result = to_sorted(['banana', 'apple', 'cherry'], key=len)
-        assert result == ['apple', 'banana', 'cherry']
+        result = to_sorted(["banana", "apple", "cherry"], key=len)
+        assert result == ["apple", "banana", "cherry"]
 
     def test_to_sorted_reverse(self):
         """Test to_sorted with reverse parameter."""
@@ -286,19 +286,19 @@ class TestWithItem:
     def test_with_item_basic(self):
         """Test basic with_item functionality."""
         original = [1, 2, 3, 4]
-        result = with_item(original, 1, 'two')
-        assert result == [1, 'two', 3, 4]
+        result = with_item(original, 1, "two")
+        assert result == [1, "two", 3, 4]
         assert original == [1, 2, 3, 4]  # Original unchanged
 
     def test_with_item_negative_index(self):
         """Test with_item with negative index."""
-        result = with_item([1, 2, 3, 4], -1, 'last')
-        assert result == [1, 2, 3, 'last']
+        result = with_item([1, 2, 3, 4], -1, "last")
+        assert result == [1, 2, 3, "last"]
 
     def test_with_item_out_of_bounds(self):
         """Test with_item with out of bounds index."""
         original = [1, 2, 3]
-        result = with_item(original, 10, 'new')
+        result = with_item(original, 10, "new")
         assert result == [1, 2, 3]  # Unchanged
 
 
@@ -307,8 +307,8 @@ class TestEntries:
 
     def test_entries_basic(self):
         """Test basic entries functionality."""
-        result = entries(['a', 'b', 'c'])
-        assert result == [(0, 'a'), (1, 'b'), (2, 'c')]
+        result = entries(["a", "b", "c"])
+        assert result == [(0, "a"), (1, "b"), (2, "c")]
 
     def test_entries_empty_list(self):
         """Test entries with empty list."""
@@ -321,7 +321,7 @@ class TestKeys:
 
     def test_keys_basic(self):
         """Test basic keys functionality."""
-        result = keys(['a', 'b', 'c'])
+        result = keys(["a", "b", "c"])
         assert result == [0, 1, 2]
 
     def test_keys_empty_list(self):
@@ -335,9 +335,9 @@ class TestValues:
 
     def test_values_basic(self):
         """Test basic values functionality."""
-        original = ['a', 'b', 'c']
+        original = ["a", "b", "c"]
         result = values(original)
-        assert result == ['a', 'b', 'c']
+        assert result == ["a", "b", "c"]
         assert result is not original  # Different object
 
     def test_values_empty_list(self):
@@ -352,8 +352,8 @@ class TestSplice:
     def test_splice_remove_and_insert(self):
         """Test splice removing and inserting elements."""
         arr = [1, 2, 3, 4, 5]
-        removed = splice(arr, 2, 1, 'a', 'b')
-        assert arr == [1, 2, 'a', 'b', 4, 5]
+        removed = splice(arr, 2, 1, "a", "b")
+        assert arr == [1, 2, "a", "b", 4, 5]
         assert removed == [3]
 
     def test_splice_only_remove(self):
@@ -366,20 +366,20 @@ class TestSplice:
     def test_splice_only_insert(self):
         """Test splice only inserting elements."""
         arr = [1, 2, 3]
-        removed = splice(arr, 1, 0, 'a', 'b')
-        assert arr == [1, 'a', 'b', 2, 3]
+        removed = splice(arr, 1, 0, "a", "b")
+        assert arr == [1, "a", "b", 2, 3]
         assert removed == []
 
     def test_splice_negative_start(self):
         """Test splice with negative start index."""
         arr = [1, 2, 3, 4, 5]
-        removed = splice(arr, -2, 1, 'x')
-        assert arr == [1, 2, 3, 'x', 5]
+        removed = splice(arr, -2, 1, "x")
+        assert arr == [1, 2, 3, "x", 5]
         assert removed == [4]
 
     def test_splice_empty_array(self):
         """Test splice with empty array."""
         arr = []
-        removed = splice(arr, 0, 0, 'a')
-        assert arr == ['a']
+        removed = splice(arr, 0, 0, "a")
+        assert arr == ["a"]
         assert removed == []
