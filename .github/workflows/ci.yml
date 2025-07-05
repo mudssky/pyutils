@@ -105,14 +105,7 @@ jobs:
       run: uv sync --dev
 
     - name: Run tests with coverage
-      run: |
-        uv run pytest tests/ \
-          --cov=src/pyutils \
-          --cov-report=xml \
-          --cov-report=term-missing \
-          --cov-report=html \
-          --junitxml=pytest-results.xml \
-          -v
+      run: uv run pytest tests/ --cov=src/pyutils --cov-report=xml --cov-report=term-missing --cov-report=html --junitxml=pytest-results.xml -v
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
