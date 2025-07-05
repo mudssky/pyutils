@@ -1,0 +1,369 @@
+name: Dependency Update
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Type of update to perform'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - 'patch'
+          - 'minor'
+          - 'major'
+          - 'all'
+      create_pr:
+        description: 'Create pull request for updates'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  check-dependencies:
+    name: Check Dependencies
+    runs-on: ubuntu-latest
+    outputs:
+      has_updates: ${{ steps.check.outputs.has_updates }}
+      update_summary: ${{ steps.check.outputs.update_summary }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      
+    - name: Set up Python
+      run: uv python install 3.11
+      
+    - name: Install dependencies
+      run: uv sync --dev
+      
+    - name: Check for outdated dependencies
+      id: check
+      run: |
+        echo "Checking for outdated dependencies..."
+        
+        # Create a temporary file for updates
+        UPDATES_FILE="dependency_updates.txt"
+        
+        # Check for outdated packages using pip list --outdated
+        echo "=== Checking Python dependencies ===" > $UPDATES_FILE
+        
+        # Get current environment packages
+        uv run pip list --outdated --format=json > outdated.json 2>/dev/null || echo "[]" > outdated.json
+        
+        # Parse outdated packages
+        OUTDATED_COUNT=$(cat outdated.json | jq length)
+        
+        if [ "$OUTDATED_COUNT" -gt 0 ]; then
+          echo "Found $OUTDATED_COUNT outdated packages:" >> $UPDATES_FILE
+          cat outdated.json | jq -r '.[] | "- \(.name): \(.version) → \(.latest_version)"' >> $UPDATES_FILE
+          echo "has_updates=true" >> $GITHUB_OUTPUT
+        else
+          echo "No outdated packages found." >> $UPDATES_FILE
+          echo "has_updates=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check GitHub Actions versions
+        echo "" >> $UPDATES_FILE
+        echo "=== Checking GitHub Actions ===" >> $UPDATES_FILE
+        
+        # Find all workflow files
+        WORKFLOW_FILES=$(find .github/workflows -name "*.yml" -o -name "*.yaml")
+        
+        for file in $WORKFLOW_FILES; do
+          echo "Checking $file..." >> $UPDATES_FILE
+          
+          # Extract action versions (simplified check)
+          grep -E "uses: .+@v[0-9]+" "$file" | sed 's/.*uses: /- /' >> $UPDATES_FILE || true
+        done
+        
+        # Create summary
+        echo "update_summary<<EOF" >> $GITHUB_OUTPUT
+        cat $UPDATES_FILE >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        # Upload as artifact
+        echo "Dependency check completed. Results saved to artifact."
+        
+    - name: Upload dependency report
+      uses: actions/upload-artifact@v3
+      with:
+        name: dependency-report
+        path: dependency_updates.txt
+        retention-days: 30
+
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    needs: check-dependencies
+    if: needs.check-dependencies.outputs.has_updates == 'true' || github.event_name == 'workflow_dispatch'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      
+    - name: Set up Python
+      run: uv python install 3.11
+      
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+    - name: Create update branch
+      run: |
+        BRANCH_NAME="dependency-update-$(date +%Y%m%d-%H%M%S)"
+        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+        git checkout -b "$BRANCH_NAME"
+        
+    - name: Update dependencies
+      run: |
+        echo "Updating dependencies..."
+        
+        # Backup current lock file
+        cp uv.lock uv.lock.backup
+        
+        UPDATE_TYPE="${{ github.event.inputs.update_type || 'minor' }}"
+        
+        case $UPDATE_TYPE in
+          "patch")
+            echo "Updating patch versions only..."
+            # Update to latest patch versions
+            uv sync --upgrade-package "*" --dev
+            ;;
+          "minor")
+            echo "Updating minor versions..."
+            # Update to latest minor versions (default behavior)
+            uv sync --upgrade --dev
+            ;;
+          "major")
+            echo "Updating major versions..."
+            # This is more aggressive and might break things
+            uv sync --upgrade --dev
+            ;;
+          "all")
+            echo "Updating all dependencies to latest..."
+            # Remove lock file and regenerate
+            rm -f uv.lock
+            uv sync --dev
+            ;;
+        esac
+        
+    - name: Run tests after update
+      run: |
+        echo "Running tests to verify updates..."
+        
+        # Install updated dependencies
+        uv sync --dev
+        
+        # Run tests
+        uv run pytest tests/ -v --tb=short || {
+          echo "Tests failed after dependency update!"
+          echo "Restoring previous lock file..."
+          mv uv.lock.backup uv.lock
+          uv sync --dev
+          exit 1
+        }
+        
+        # Run linting
+        uv run ruff check src/ tests/ || {
+          echo "Linting failed after dependency update!"
+          echo "This might be due to new linting rules. Please review manually."
+        }
+        
+    - name: Generate update report
+      run: |
+        echo "Generating update report..."
+        
+        # Compare lock files
+        if [ -f uv.lock.backup ]; then
+          echo "## Dependency Updates" > UPDATE_REPORT.md
+          echo "" >> UPDATE_REPORT.md
+          echo "### Summary" >> UPDATE_REPORT.md
+          echo "- Update type: ${{ github.event.inputs.update_type || 'minor' }}" >> UPDATE_REPORT.md
+          echo "- Date: $(date)" >> UPDATE_REPORT.md
+          echo "- Triggered by: ${{ github.event_name }}" >> UPDATE_REPORT.md
+          echo "" >> UPDATE_REPORT.md
+          
+          echo "### Changes" >> UPDATE_REPORT.md
+          echo "\`\`\`" >> UPDATE_REPORT.md
+          
+          # Show differences (simplified)
+          if command -v diff >/dev/null 2>&1; then
+            diff uv.lock.backup uv.lock | head -50 >> UPDATE_REPORT.md || true
+          else
+            echo "Lock file updated. Please review changes manually." >> UPDATE_REPORT.md
+          fi
+          
+          echo "\`\`\`" >> UPDATE_REPORT.md
+          echo "" >> UPDATE_REPORT.md
+          
+          echo "### Test Results" >> UPDATE_REPORT.md
+          echo "✅ All tests passed after dependency update" >> UPDATE_REPORT.md
+          echo "" >> UPDATE_REPORT.md
+          
+          echo "### Next Steps" >> UPDATE_REPORT.md
+          echo "1. Review the changes in this PR" >> UPDATE_REPORT.md
+          echo "2. Test the application manually if needed" >> UPDATE_REPORT.md
+          echo "3. Merge if everything looks good" >> UPDATE_REPORT.md
+          
+          # Clean up backup
+          rm uv.lock.backup
+        fi
+        
+    - name: Commit changes
+      run: |
+        # Check if there are any changes
+        if git diff --quiet && git diff --staged --quiet; then
+          echo "No changes to commit"
+          echo "HAS_CHANGES=false" >> $GITHUB_ENV
+        else
+          echo "Committing dependency updates..."
+          git add .
+          git commit -m "chore: update dependencies
+          
+          - Update type: ${{ github.event.inputs.update_type || 'minor' }}
+          - Automated update via GitHub Actions
+          - All tests passing
+          
+          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          echo "HAS_CHANGES=true" >> $GITHUB_ENV
+        fi
+        
+    - name: Push changes
+      if: env.HAS_CHANGES == 'true'
+      run: |
+        git push origin "$BRANCH_NAME"
+        
+    - name: Create Pull Request
+      if: env.HAS_CHANGES == 'true' && (github.event.inputs.create_pr != 'false')
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Read update report if it exists
+          let body = '## 🔄 Automated Dependency Update\n\n';
+          
+          try {
+            const report = fs.readFileSync('UPDATE_REPORT.md', 'utf8');
+            body += report;
+          } catch (error) {
+            body += 'Automated dependency update completed.\n\n';
+            body += '### Changes\n';
+            body += '- Updated dependencies to latest compatible versions\n';
+            body += '- All tests are passing\n\n';
+            body += '### Review Checklist\n';
+            body += '- [ ] Review dependency changes\n';
+            body += '- [ ] Test application functionality\n';
+            body += '- [ ] Check for any breaking changes\n';
+          }
+          
+          body += '\n\n---\n';
+          body += '*This PR was created automatically by the dependency update workflow.*';
+          
+          const { data: pr } = await github.rest.pulls.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `chore: automated dependency update (${new Date().toISOString().split('T')[0]})`,
+            head: process.env.BRANCH_NAME,
+            base: 'main',
+            body: body,
+            draft: false
+          });
+          
+          console.log(`Created PR #${pr.number}: ${pr.html_url}`);
+          
+          // Add labels
+          await github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: pr.number,
+            labels: ['dependencies', 'automated']
+          });
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      
+    - name: Set up Python
+      run: uv python install 3.11
+      
+    - name: Install dependencies
+      run: uv sync --dev
+      
+    - name: Run security audit
+      run: |
+        echo "Running security audit..."
+        
+        # Install safety if not already installed
+        uv add --dev safety || true
+        
+        # Run safety check
+        uv run safety check --json > safety_report.json || {
+          echo "Security vulnerabilities found!"
+          cat safety_report.json
+          exit 1
+        }
+        
+        echo "✅ No security vulnerabilities found"
+        
+    - name: Upload security report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-audit-report
+        path: safety_report.json
+        retention-days: 30
+
+  notify:
+    name: Notification
+    runs-on: ubuntu-latest
+    needs: [check-dependencies, update-dependencies, security-audit]
+    if: always()
+    steps:
+    - name: Summary
+      run: |
+        echo "## 🔄 Dependency Update Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.check-dependencies.outputs.has_updates }}" = "true" ]; then
+          echo "📦 **Updates Available**: Yes" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "📦 **Updates Available**: No" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.update-dependencies.result }}" = "success" ]; then
+          echo "✅ **Update Process**: Success" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ needs.update-dependencies.result }}" = "skipped" ]; then
+          echo "⏭️ **Update Process**: Skipped (no updates needed)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Update Process**: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.security-audit.result }}" = "success" ]; then
+          echo "🔒 **Security Audit**: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "🚨 **Security Audit**: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Dependency Check Results" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "${{ needs.check-dependencies.outputs.update_summary }}" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

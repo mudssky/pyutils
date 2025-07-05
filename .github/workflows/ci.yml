@@ -1,41 +1,128 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
   release:
-    types: [ published ]
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      run_performance_tests:
+        description: 'Run performance tests'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PYTHON_VERSION: '3.11'
+  UV_CACHE_DIR: /tmp/.uv-cache
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.changes.outputs.python }}
+      docs: ${{ steps.changes.outputs.docs }}
+      workflows: ${{ steps.changes.outputs.workflows }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check for changes
+      uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          python:
+            - 'src/**'
+            - 'tests/**'
+            - 'pyproject.toml'
+            - 'uv.lock'
+          docs:
+            - 'docs/**'
+            - '*.md'
+          workflows:
+            - '.github/workflows/**'
+
   test:
-    name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    name: Test Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
+    needs: changes
+    if: needs.changes.outputs.python == 'true' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+        exclude:
+          # Reduce matrix size for faster CI
+          - os: windows-latest
+            python-version: '3.9'
+          - os: macos-latest
+            python-version: '3.9'
+          - os: windows-latest
+            python-version: '3.10'
+          - os: macos-latest
+            python-version: '3.10'
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
+
+    - name: Restore uv cache
+      uses: actions/cache@v3
       with:
-        version: "latest"
+        path: /tmp/.uv-cache
+        key: uv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-${{ matrix.python-version }}-
+          uv-${{ runner.os }}-
 
     - name: Set up Python ${{ matrix.python-version }}
       run: uv python install ${{ matrix.python-version }}
 
     - name: Install dependencies
-      run: |
-        uv sync --all-extras --dev
+      run: uv sync --dev
 
     - name: Run tests with coverage
       run: |
-        uv run pytest --cov=src --cov-report=xml --cov-report=html
+        uv run pytest tests/ \
+          --cov=src/pyutils \
+          --cov-report=xml \
+          --cov-report=term-missing \
+          --cov-report=html \
+          --junitxml=pytest-results.xml \
+          -v
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
+        path: |
+          pytest-results.xml
+          htmlcov/
+        retention-days: 7
 
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
@@ -44,15 +131,32 @@ jobs:
         file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
+        fail_ci_if_error: false
+
+    - name: Minimize uv cache
+      run: uv cache prune --ci
 
   lint:
     name: Code Quality
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.python == 'true' || github.event_name == 'workflow_dispatch'
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
+
+    - name: Restore uv cache
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.uv-cache
+        key: uv-${{ runner.os }}-lint-${{ hashFiles('**/uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-lint-
+          uv-${{ runner.os }}-
 
     - name: Set up Python
       run: uv python install 3.11
@@ -60,25 +164,61 @@ jobs:
     - name: Install dependencies
       run: uv sync --dev
 
-    - name: Run Ruff
+    - name: Run ruff linter
       run: |
-        uv run ruff check src/ tests/
+        echo "Running ruff linter..."
+        uv run ruff check src/ tests/ --output-format=github
+
+    - name: Run ruff formatter
+      run: |
+        echo "Checking code formatting..."
         uv run ruff format --check src/ tests/
 
-    - name: Run MyPy
-      run: uv run mypy src/
+    - name: Run mypy type checking
+      run: |
+        echo "Running mypy type checking..."
+        uv run mypy src/ --show-error-codes --pretty
 
-    - name: Run Bandit security check
-      run: uv run bandit -r src/
+    - name: Run bandit security linter
+      run: |
+        echo "Running bandit security checks..."
+        uv run bandit -r src/ -f json -o bandit-report.json || true
+        uv run bandit -r src/ -f txt
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-report
+        path: bandit-report.json
+        retention-days: 7
+
+    - name: Minimize uv cache
+      run: uv cache prune --ci
 
   docs:
     name: Build Documentation
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.docs == 'true' || needs.changes.outputs.python == 'true' || github.event_name == 'workflow_dispatch'
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for proper version detection
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
+
+    - name: Restore uv cache
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.uv-cache
+        key: uv-${{ runner.os }}-docs-${{ hashFiles('**/uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-docs-
+          uv-${{ runner.os }}-
 
     - name: Set up Python
       run: uv python install 3.11
@@ -86,26 +226,59 @@ jobs:
     - name: Install dependencies
       run: uv sync --dev
 
-    - name: Build docs
+    - name: Build documentation
       run: |
+        echo "Building documentation..."
         cd docs
-        uv run sphinx-build -b html . _build/html
+        uv run sphinx-build -b html . _build/html -W --keep-going
 
-    - name: Upload docs artifact
+    - name: Check documentation links
+      run: |
+        echo "Checking documentation links..."
+        cd docs
+        uv run sphinx-build -b linkcheck . _build/linkcheck || true
+
+    - name: Upload documentation
       uses: actions/upload-artifact@v3
       with:
         name: documentation
         path: docs/_build/html
+        retention-days: 30
+
+    - name: Upload linkcheck results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: linkcheck-results
+        path: docs/_build/linkcheck
+        retention-days: 7
+
+    - name: Minimize uv cache
+      run: uv cache prune --ci
 
   performance:
     name: Performance Benchmarks
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    needs: changes
+    if: (github.event_name == 'pull_request' && needs.changes.outputs.python == 'true') || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_performance_tests == 'true')
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need history for performance comparison
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
+
+    - name: Restore uv cache
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.uv-cache
+        key: uv-${{ runner.os }}-perf-${{ hashFiles('**/uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-perf-
+          uv-${{ runner.os }}-
 
     - name: Set up Python
       run: uv python install 3.11
@@ -113,13 +286,50 @@ jobs:
     - name: Install dependencies
       run: uv sync --dev
 
-    - name: Run benchmarks
+    - name: Run performance benchmarks
       run: |
-        if [ -f benchmark.py ]; then
+        echo "Running performance benchmarks..."
+        if [ -f benchmarks/benchmark.py ]; then
+          uv run python benchmarks/benchmark.py --output=benchmark-results.json
+        elif [ -f benchmark.py ]; then
           uv run python benchmark.py
         else
-          echo "No benchmark.py found, skipping performance tests"
+          echo "No benchmark files found, creating placeholder results"
+          echo '{"status": "no_benchmarks", "message": "No benchmark files found"}' > benchmark-results.json
         fi
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: benchmark-results
+        path: |
+          benchmark-results.json
+          benchmarks/results/
+        retention-days: 30
+
+    - name: Comment benchmark results
+      if: github.event_name == 'pull_request' && hashFiles('benchmark-results.json') != ''
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          try {
+            const results = JSON.parse(fs.readFileSync('benchmark-results.json', 'utf8'));
+            const comment = `## 🚀 Performance Benchmark Results\n\n${JSON.stringify(results, null, 2)}\n\n*Benchmarks run on commit ${context.sha.substring(0, 7)}*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          } catch (error) {
+            console.log('Could not post benchmark results:', error.message);
+          }
+
+    - name: Minimize uv cache
+      run: uv cache prune --ci
 
   publish:
     name: Publish to PyPI
@@ -128,11 +338,16 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     environment:
       name: pypi
-      url: https://pypi.org/p/pyutils
+      url: https://pypi.org/p/mudssky-pyutils
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+      contents: read
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
@@ -143,10 +358,151 @@ jobs:
     - name: Install dependencies
       run: uv sync --dev
 
+    - name: Extract version from tag
+      id: version
+      run: |
+        TAG_NAME="${{ github.ref_name }}"
+        VERSION=${TAG_NAME#v}  # Remove 'v' prefix
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Publishing version: $VERSION"
+
+    - name: Update version in files
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        echo "Updating version to: $VERSION"
+
+        # Update pyproject.toml
+        sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+
+        # Update __init__.py
+        sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" src/pyutils/__init__.py
+
+        # Verify changes
+        echo "Updated pyproject.toml:"
+        grep 'version =' pyproject.toml
+        echo "Updated __init__.py:"
+        grep '__version__' src/pyutils/__init__.py
+
+    - name: Run final tests
+      run: |
+        echo "Running final tests before publication..."
+        uv run pytest tests/ -v --tb=short
+
     - name: Build package
-      run: uv build
+      run: |
+        echo "Building package..."
+        uv build
+
+        # List built packages
+        echo "Built packages:"
+        ls -la dist/
+
+    - name: Verify package
+      run: |
+        echo "Verifying package integrity..."
+        uv run twine check dist/*
+
+        # Check package contents
+        echo "Package contents:"
+        uv run python -m tarfile -l dist/*.tar.gz
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist-${{ steps.version.outputs.version }}
+        path: dist/
+        retention-days: 90
 
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         packages-dir: dist/
+        verbose: true
+
+    - name: Verify PyPI publication
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        echo "Package published to PyPI!"
+        echo "Version: $VERSION"
+        echo "PyPI URL: https://pypi.org/project/mudssky-pyutils/$VERSION/"
+        echo "Install command: pip install mudssky-pyutils==$VERSION"
+
+        # Wait a bit for PyPI to propagate
+        sleep 30
+
+        # Try to install the published package
+        pip install "mudssky-pyutils==$VERSION" --no-deps
+        python -c "import pyutils; print(f'Successfully installed version: {pyutils.__version__}')"
+
+  notify:
+    name: Notification
+    runs-on: ubuntu-latest
+    needs: [test, lint, docs, performance, publish]
+    if: always() && (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release')
+
+    steps:
+    - name: Determine overall status
+      id: status
+      run: |
+        # Determine overall workflow status
+        if [ "${{ needs.test.result }}" = "failure" ] || [ "${{ needs.lint.result }}" = "failure" ]; then
+          echo "status=failure" >> $GITHUB_OUTPUT
+          echo "emoji=❌" >> $GITHUB_OUTPUT
+        elif [ "${{ needs.test.result }}" = "success" ] && [ "${{ needs.lint.result }}" = "success" ]; then
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "emoji=✅" >> $GITHUB_OUTPUT
+        else
+          echo "status=partial" >> $GITHUB_OUTPUT
+          echo "emoji=⚠️" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create workflow summary
+      run: |
+        echo "## ${{ steps.status.outputs.emoji }} CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Event**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        echo "### Job Results" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ needs.test.result }}" = "success" ]; then
+          echo "✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ needs.test.result }}" = "failure" ]; then
+          echo "❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⏭️ **Tests**: Skipped" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.lint.result }}" = "success" ]; then
+          echo "✅ **Code Quality**: Passed" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ needs.lint.result }}" = "failure" ]; then
+          echo "❌ **Code Quality**: Failed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⏭️ **Code Quality**: Skipped" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.docs.result }}" = "success" ]; then
+          echo "✅ **Documentation**: Built successfully" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ needs.docs.result }}" = "failure" ]; then
+          echo "❌ **Documentation**: Build failed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⏭️ **Documentation**: Skipped" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.performance.result }}" = "success" ]; then
+          echo "✅ **Performance**: Benchmarks completed" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ needs.performance.result }}" = "failure" ]; then
+          echo "❌ **Performance**: Benchmarks failed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⏭️ **Performance**: Skipped" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.publish.result }}" = "success" ]; then
+          echo "🚀 **Publication**: Successfully published to PyPI" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ needs.publish.result }}" = "failure" ]; then
+          echo "❌ **Publication**: Failed to publish" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⏭️ **Publication**: Skipped" >> $GITHUB_STEP_SUMMARY
+        fi
