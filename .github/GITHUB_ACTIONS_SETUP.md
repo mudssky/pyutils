@@ -51,7 +51,6 @@
      - `test (ubuntu-latest, 3.11)`
      - `lint`
      - `docs`
-   - ✅ Restrict pushes that create files larger than 100MB
 
 ### 2. 环境和密钥配置
 
