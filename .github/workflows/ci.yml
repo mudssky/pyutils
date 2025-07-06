@@ -115,7 +115,7 @@ jobs:
           -v
 
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
@@ -186,7 +186,7 @@ jobs:
         uv run bandit -r src/ -f txt
 
     - name: Upload security report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: security-report
@@ -239,14 +239,14 @@ jobs:
         uv run sphinx-build -b linkcheck . _build/linkcheck || true
 
     - name: Upload documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: documentation
         path: docs/_build/html
         retention-days: 30
 
     - name: Upload linkcheck results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: linkcheck-results
@@ -299,7 +299,7 @@ jobs:
         fi
 
     - name: Upload benchmark results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: benchmark-results
@@ -407,7 +407,7 @@ jobs:
         uv run python -m tarfile -l dist/*.tar.gz
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist-${{ steps.version.outputs.version }}
         path: dist/
