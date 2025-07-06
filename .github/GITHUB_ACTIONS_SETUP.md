@@ -51,7 +51,20 @@
      - `test (ubuntu-latest, 3.11)`
      - `lint`
      - `docs`
-   - ✅ Restrict pushes that create files larger than 100MB
+
+#### 配置 GitHub Pages
+
+1. 在 **Settings** → **Pages** 中
+2. 配置 Pages 设置：
+   - **Source**: Deploy from a branch
+   - **Branch**: `gh-pages` 或选择 **GitHub Actions**
+   - **Folder**: `/ (root)`
+3. 如果选择 GitHub Actions 作为源：
+   - ✅ 确保工作流有 `pages: write` 和 `id-token: write` 权限
+   - ✅ 文档将自动部署到 `https://<username>.github.io/<repository>`
+4. 可选配置：
+   - 自定义域名（如果有）
+   - 强制 HTTPS
 
 ### 2. 环境和密钥配置
 

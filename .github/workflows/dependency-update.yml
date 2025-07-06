@@ -91,7 +91,7 @@ jobs:
         echo "Dependency check completed. Results saved to artifact."
         
     - name: Upload dependency report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dependency-report
         path: dependency_updates.txt
@@ -325,7 +325,7 @@ jobs:
         
     - name: Upload security report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-audit-report
         path: safety_report.json

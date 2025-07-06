@@ -36,6 +36,14 @@ pyutils.cli module
    :show-inheritance:
    :undoc-members:
 
+pyutils.collection module
+-------------------------
+
+.. automodule:: pyutils.collection
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 pyutils.function module
 -----------------------
 
@@ -56,14 +64,6 @@ pyutils.object module
 ---------------------
 
 .. automodule:: pyutils.object
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-pyutils.pyutils module
-----------------------
-
-.. automodule:: pyutils.pyutils
    :members:
    :show-inheritance:
    :undoc-members:
