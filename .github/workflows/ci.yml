@@ -509,12 +509,17 @@ jobs:
           echo "⏭️ **Performance**: Skipped" >> $GITHUB_STEP_SUMMARY
         fi
 
-        if [ "${{ needs.publish.result }}" = "success" ]; then
-          echo "🚀 **Publication**: Successfully published to PyPI" >> $GITHUB_STEP_SUMMARY
-        elif [ "${{ needs.publish.result }}" = "failure" ]; then
-          echo "❌ **Publication**: Failed to publish" >> $GITHUB_STEP_SUMMARY
+        # Publication status is handled separately for release events
+        if [ "${{ github.event_name }}" = "release" ]; then
+          if [ "${{ needs.publish.result }}" = "success" ]; then
+            echo "🚀 **Publication**: Successfully published to PyPI" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.publish.result }}" = "failure" ]; then
+            echo "❌ **Publication**: Failed to publish" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⏭️ **Publication**: Skipped" >> $GITHUB_STEP_SUMMARY
+          fi
         else
-          echo "⏭️ **Publication**: Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "⏭️ **Publication**: Not applicable for ${{ github.event_name }} events" >> $GITHUB_STEP_SUMMARY
         fi
 
   # Summary job for branch protection rules
