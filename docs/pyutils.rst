@@ -68,14 +68,6 @@ pyutils.object module
    :show-inheritance:
    :undoc-members:
 
-pyutils.pyutils module
-----------------------
-
-.. automodule:: pyutils.pyutils
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 pyutils.string module
 ---------------------
 
