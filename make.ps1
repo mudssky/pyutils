@@ -5,7 +5,7 @@ param(
     [Parameter(Position=0)]
     [ValidateSet('help', 'clean', 'build', 'test', 'lint', 'format', 'type-check', 'publish', 'publish-test', 'install', 'dev-setup', 'ci', 'docs', 'benchmark', 'security')]
     [string]$Command = 'help',
-    
+
     [switch]$Verbose,
     [switch]$Force
 )
@@ -60,11 +60,11 @@ function Invoke-SafeCommand {
         [string]$Description,
         [switch]$IgnoreErrors
     )
-    
+
     if ($Verbose) {
         Write-Info "执行: $Command"
     }
-    
+
     try {
         Invoke-Expression $Command
         if ($LASTEXITCODE -ne 0 -and -not $IgnoreErrors) {
@@ -85,7 +85,7 @@ function Invoke-SafeCommand {
 function Show-Help {
     Write-ColorOutput "`n=== Python 项目构建工具 ===" -Color 'Magenta'
     Write-ColorOutput "使用方法: .\make.ps1 [命令] [参数]`n" -Color 'Cyan'
-    
+
     Write-ColorOutput "可用命令:" -Color 'Yellow'
     Write-Host "  help         显示此帮助信息"
     Write-Host "  clean        清理构建文件和缓存"
@@ -102,11 +102,11 @@ function Show-Help {
     Write-Host "  docs         生成文档"
     Write-Host "  benchmark    运行性能基准测试"
     Write-Host "  security     运行安全检查"
-    
+
     Write-ColorOutput "`n可用参数:" -Color 'Yellow'
     Write-Host "  -Verbose     显示详细输出"
     Write-Host "  -Force       强制执行（忽略某些错误）"
-    
+
     Write-ColorOutput "`n示例:" -Color 'Yellow'
     Write-Host "  .\make.ps1 build"
     Write-Host "  .\make.ps1 test -Verbose"
@@ -117,7 +117,7 @@ function Show-Help {
 # 清理构建文件
 function Invoke-Clean {
     Write-Info "清理构建文件和缓存..."
-    
+
     # 清理构建目录
     $dirsToClean = @('build', 'dist', '.eggs', '.tox', 'htmlcov', '.pytest_cache', '.ruff_cache')
     foreach ($dir in $dirsToClean) {
@@ -126,7 +126,7 @@ function Invoke-Clean {
             Write-Host "  已删除 $dir"
         }
     }
-    
+
     # 清理特定文件模式
     $patterns = @('*.egg-info', '*.egg', '__pycache__', '*.pyc', '*.pyo', '*~', '.coverage')
     foreach ($pattern in $patterns) {
@@ -142,26 +142,26 @@ function Invoke-Clean {
             }
         }
     }
-    
+
     Write-Success "清理完成"
 }
 
 # 构建包
 function Invoke-Build {
     Write-Info "构建包..."
-    
+
     # 先清理
     Invoke-Clean
-    
+
     # 检查 uv 命令
     if (-not (Test-Command "uv")) {
         Write-Error "未找到 uv 命令，请先安装 uv"
         exit 1
     }
-    
+
     # 构建
     Invoke-SafeCommand "uv build" "包构建"
-    
+
     # 显示构建结果
     if (Test-Path "dist") {
         Write-Info "构建文件:"
@@ -200,7 +200,7 @@ function Invoke-TypeCheck {
 # 发布到 PyPI
 function Invoke-Publish {
     Write-Info "发布到 PyPI..."
-    
+
     if (Test-Path "publish.ps1") {
         & ".\publish.ps1"
     } else {
@@ -214,7 +214,7 @@ function Invoke-Publish {
 # 发布到 TestPyPI
 function Invoke-PublishTest {
     Write-Info "发布到 TestPyPI..."
-    
+
     if (Test-Path "publish.ps1") {
         & ".\publish.ps1" -TestOnly
     } else {
@@ -234,14 +234,14 @@ function Invoke-Install {
 # 设置开发环境
 function Invoke-DevSetup {
     Write-Info "设置开发环境..."
-    
+
     # 安装依赖
     Invoke-Install
-    
+
     # 安装 pre-commit 钩子
     Invoke-SafeCommand "uv run pre-commit install" "pre-commit 钩子安装" -IgnoreErrors
     Invoke-SafeCommand "uv run pre-commit install --hook-type commit-msg" "commit-msg 钩子安装" -IgnoreErrors
-    
+
     Write-Success "开发环境设置完成！"
     Write-Info "运行 '.\make.ps1 help' 查看可用命令"
 }
@@ -249,14 +249,14 @@ function Invoke-DevSetup {
 # 生成文档
 function Invoke-Docs {
     Write-Info "生成文档..."
-    
+
     # 清理旧文档
     if (Test-Path "docs/pyutils.rst") { Remove-Item "docs/pyutils.rst" }
     if (Test-Path "docs/modules.rst") { Remove-Item "docs/modules.rst" }
-    
+
     # 生成 API 文档
     Invoke-SafeCommand "uv run sphinx-apidoc -o docs/ src/pyutils" "API 文档生成"
-    
+
     # 构建 HTML 文档
     Push-Location "docs"
     try {
@@ -272,7 +272,7 @@ function Invoke-Docs {
     } finally {
         Pop-Location
     }
-    
+
     # 打开文档
     $docPath = "docs/_build/html/index.html"
     if (Test-Path $docPath) {
@@ -289,7 +289,7 @@ function Invoke-Docs {
 # 运行基准测试
 function Invoke-Benchmark {
     Write-Info "运行性能基准测试..."
-    
+
     if (Test-Path "benchmark.py") {
         Invoke-SafeCommand "uv run python benchmark.py" "基准测试"
     } else {
@@ -306,24 +306,24 @@ function Invoke-Security {
 # 运行所有 CI 检查
 function Invoke-CI {
     Write-ColorOutput "`n=== 运行所有 CI 检查 ===" -Color 'Magenta'
-    
+
     $steps = @(
         @{ Name = "代码格式化"; Action = { Invoke-Format } },
         @{ Name = "代码风格检查"; Action = { Invoke-Lint } },
         @{ Name = "类型检查"; Action = { Invoke-TypeCheck } },
         @{ Name = "安全检查"; Action = { Invoke-Security } },
-        @{ Name = "运行测试"; Action = { 
+        @{ Name = "运行测试"; Action = {
             Invoke-SafeCommand "uv run pytest tests/ --cov=src --cov-report=term" "测试和覆盖率"
         }}
     )
-    
+
     $stepCount = $steps.Count
     $currentStep = 0
-    
+
     foreach ($step in $steps) {
         $currentStep++
         Write-ColorOutput "`n[$currentStep/$stepCount] $($step.Name)..." -Color 'Yellow'
-        
+
         try {
             & $step.Action
         } catch {
@@ -335,7 +335,7 @@ function Invoke-CI {
             Write-Warning "强制继续执行..."
         }
     }
-    
+
     Write-ColorOutput "`n✓ 所有 CI 检查完成！" -Color 'Green'
 }
 
@@ -345,7 +345,7 @@ try {
     Write-ColorOutput "项目: mudssky-pyutils" -Color 'Cyan'
     Write-ColorOutput "时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -Color 'Cyan'
     Write-Host ""
-    
+
     switch ($Command.ToLower()) {
         'help' { Show-Help }
         'clean' { Invoke-Clean }
@@ -362,15 +362,15 @@ try {
         'docs' { Invoke-Docs }
         'benchmark' { Invoke-Benchmark }
         'security' { Invoke-Security }
-        default { 
+        default {
             Write-Error "未知命令: $Command"
             Show-Help
             exit 1
         }
     }
-    
+
     Write-ColorOutput "`n操作完成！" -Color 'Green'
-    
+
 } catch {
     Write-Error "执行失败: $_"
     exit 1

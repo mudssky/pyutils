@@ -1,9 +1,9 @@
 # <type>[optional scope]: <description>
-# 
+#
 # [optional body]
-# 
+#
 # [optional footer(s)]
-# 
+#
 # Types:
 #   feat:     A new feature
 #   fix:      A bug fix
@@ -31,5 +31,5 @@
 # Breaking changes:
 #   feat!: remove deprecated API
 #   feat(api)!: change response format
-#   
+#
 #   BREAKING CHANGE: remove support for Node 12

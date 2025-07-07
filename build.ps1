@@ -64,7 +64,7 @@ Write-Host "开始构建包..." -ForegroundColor Green
 try {
     uv build
     Write-Host "构建成功！" -ForegroundColor Green
-    
+
     # 显示构建结果
     if (Test-Path "dist") {
         Write-Host "构建文件列表：" -ForegroundColor Yellow

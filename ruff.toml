@@ -50,7 +50,6 @@ ignore = [
     "D100", # Missing docstring in public module
     "D104", # Missing docstring in public package
     "S101", # Use of assert detected (pytest uses assert)
-    "T20",  # Avoid print statements (允许在示例中使用)
     "PT011", # pytest-raises-too-broad (测试中可以使用宽泛的异常捕获)
     "S311", # suspicious-non-cryptographic-random-usage (工具函数中可以使用)
     "S324", # hashlib-insecure-hash-function (工具函数中可以使用MD5等)
