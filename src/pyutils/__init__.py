@@ -12,7 +12,19 @@ __email__ = "mudssky@gmail.com"
 __version__ = "0.1.0"
 
 # Import all modules
-from . import array, async_utils, collection, date, encoding, function, math, object, string, type_utils, url
+from . import (
+    array,
+    async_utils,
+    collection,
+    date,
+    encoding,
+    function,
+    math,
+    object,
+    string,
+    type_utils,
+    url,
+)
 from . import bytes as bytes_utils
 
 # Import commonly used functions for convenience
@@ -65,6 +77,38 @@ from .collection import (
     values,
     with_item,
 )
+from .date import (
+    add_days,
+    add_hours,
+    add_minutes,
+    format_relative_time,
+    get_time,
+    is_valid_date,
+    now,
+    parse_date,
+    to_date_string,
+    to_iso_string,
+    to_time_string,
+)
+from .encoding import (
+    atob,
+    btoa,
+    decode_base64,
+    decode_hex,
+    encode_base64,
+    encode_hex,
+    escape_html,
+    generate_random_string,
+    hash_string,
+    is_base64,
+    is_hex,
+    is_json,
+    json_parse,
+    json_stringify,
+    unescape_html,
+    url_decode,
+    url_encode,
+)
 from .function import (
     debounce,
     memoize,
@@ -107,38 +151,6 @@ from .string import (
     snake_case,
     trim,
     truncate,
-)
-from .date import (
-    add_days,
-    add_hours,
-    add_minutes,
-    format_relative_time,
-    get_time,
-    is_valid_date,
-    now,
-    parse_date,
-    to_date_string,
-    to_iso_string,
-    to_time_string,
-)
-from .encoding import (
-    atob,
-    btoa,
-    decode_base64,
-    decode_hex,
-    encode_base64,
-    encode_hex,
-    escape_html,
-    generate_random_string,
-    hash_string,
-    is_base64,
-    is_hex,
-    is_json,
-    json_parse,
-    json_stringify,
-    unescape_html,
-    url_decode,
-    url_encode,
 )
 from .type_utils import (
     is_array,
@@ -208,11 +220,11 @@ __all__ = [
     "deep_copy",
     "delay",
     "diff",
-    "encoding",
     "encode_base64",
     "encode_hex",
     "encode_uri",
     "encode_uri_component",
+    "encoding",
     "entries",
     "escape_html",
     "every",

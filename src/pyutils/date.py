@@ -6,11 +6,12 @@ porting JavaScript Date object methods and other date utilities to Python.
 
 import datetime
 import time
-from typing import Union
 
 
 def now() -> int:
-    """Get current timestamp in milliseconds (like JavaScript Date.now()).
+    """Get current timestamp in milliseconds.
+
+    Similar to JavaScript Date.now().
 
     Returns:
         Current timestamp in milliseconds
@@ -45,22 +46,22 @@ def parse_date(date_string: str) -> datetime.datetime:
     """
     # Try common date formats
     formats = [
-        '%Y-%m-%d',
-        '%Y-%m-%dT%H:%M:%S',
-        '%Y-%m-%d %H:%M:%S',
-        '%Y/%m/%d',
-        '%m/%d/%Y',
-        '%d/%m/%Y',
-        '%Y-%m-%dT%H:%M:%S.%f',
-        '%Y-%m-%dT%H:%M:%SZ',
+        "%Y-%m-%d",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y/%m/%d",
+        "%m/%d/%Y",
+        "%d/%m/%Y",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%SZ",
     ]
-    
+
     for fmt in formats:
         try:
             return datetime.datetime.strptime(date_string, fmt)
         except ValueError:
             continue
-    
+
     raise ValueError(f"Unable to parse date string: {date_string}")
 
 
@@ -95,7 +96,7 @@ def to_date_string(dt: datetime.datetime) -> str:
         >>> to_date_string(dt)
         '2023-01-01'
     """
-    return dt.strftime('%Y-%m-%d')
+    return dt.strftime("%Y-%m-%d")
 
 
 def to_time_string(dt: datetime.datetime) -> str:
@@ -112,7 +113,7 @@ def to_time_string(dt: datetime.datetime) -> str:
         >>> to_time_string(dt)
         '12:30:45'
     """
-    return dt.strftime('%H:%M:%S')
+    return dt.strftime("%H:%M:%S")
 
 
 def get_time(dt: datetime.datetime) -> int:
@@ -193,7 +194,9 @@ def add_minutes(dt: datetime.datetime, minutes: int) -> datetime.datetime:
     return dt + datetime.timedelta(minutes=minutes)
 
 
-def format_relative_time(dt: datetime.datetime, base_dt: datetime.datetime = None) -> str:
+def format_relative_time(
+    dt: datetime.datetime, base_dt: datetime.datetime | None = None
+) -> str:
     """Format datetime as relative time string (like 'X minutes ago').
 
     Args:
@@ -212,17 +215,17 @@ def format_relative_time(dt: datetime.datetime, base_dt: datetime.datetime = Non
     """
     if base_dt is None:
         base_dt = datetime.datetime.now()
-    
+
     diff = base_dt - dt
     total_seconds = int(diff.total_seconds())
-    
+
     if total_seconds < 0:
         # Future time
         total_seconds = abs(total_seconds)
-        suffix = 'from now'
+        suffix = "from now"
     else:
-        suffix = 'ago'
-    
+        suffix = "ago"
+
     if total_seconds < 60:
         return f"{total_seconds} seconds {suffix}"
     elif total_seconds < 3600:

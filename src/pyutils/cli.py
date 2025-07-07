@@ -1,5 +1,6 @@
 """Console script for pyutils."""
 
+
 import typer
 from rich.console import Console
 
@@ -8,7 +9,7 @@ app = typer.Typer()
 console = Console()
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def main() -> None:
     """Console script for pyutils."""
     console.print("Replace this message by putting your code into pyutils.cli.main")

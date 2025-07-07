@@ -74,7 +74,7 @@ class TestPackageIntegration:
         sum_result = array.sum_by(numbers, lambda x: math.clamp(x, 0, 10))
         assert sum_result == 36  # 1 + 5 + 10 + 10 + 10
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_async_and_function_integration(self):
         """Test async_utils and function module integration."""
         # Create a memoized async function
@@ -97,7 +97,7 @@ class TestPackageIntegration:
         assert result2 == 10
         assert call_count == 1  # No additional call
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_async_array_processing(self):
         """Test async processing of arrays."""
         numbers = [1, 2, 3, 4, 5]
@@ -363,7 +363,7 @@ class TestRealWorldScenarios:
         assert object.get(alice, "display_name") == "Alice Johnson"
         assert object.has(alice, "email_hash")
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_async_data_processing_scenario(self, sample_data):
         """Test async data processing scenario."""
         products = sample_data["products"]

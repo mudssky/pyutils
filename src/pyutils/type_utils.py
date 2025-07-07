@@ -4,20 +4,19 @@ This module provides utility functions for type checking and conversion,
 porting JavaScript type checking methods and other type utilities to Python.
 """
 
-import json
 import re
-from typing import Any, Union
+from typing import Any
 
 
 def is_array(value: Any) -> bool:
     """Check if value is an array (list or tuple).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a list or tuple, False otherwise
-        
+
     Examples:
         >>> is_array([1, 2, 3])
         True
@@ -26,18 +25,18 @@ def is_array(value: Any) -> bool:
         >>> is_array('string')
         False
     """
-    return isinstance(value, (list, tuple))
+    return isinstance(value, list | tuple)
 
 
 def is_string(value: Any) -> bool:
     """Check if value is a string.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a string, False otherwise
-        
+
     Examples:
         >>> is_string('hello')
         True
@@ -49,13 +48,13 @@ def is_string(value: Any) -> bool:
 
 def is_number(value: Any) -> bool:
     """Check if value is a number (int or float).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a number, False otherwise
-        
+
     Examples:
         >>> is_number(123)
         True
@@ -65,18 +64,21 @@ def is_number(value: Any) -> bool:
         False
     """
     from decimal import Decimal
-    return isinstance(value, (int, float, complex, Decimal)) and not isinstance(value, bool)
+
+    return isinstance(value, int | float | complex | Decimal) and not isinstance(
+        value, bool
+    )
 
 
 def is_boolean(value: Any) -> bool:
     """Check if value is a boolean.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a boolean, False otherwise
-        
+
     Examples:
         >>> is_boolean(True)
         True
@@ -90,13 +92,13 @@ def is_boolean(value: Any) -> bool:
 
 def is_null(value: Any) -> bool:
     """Check if value is None (null in JavaScript).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is None, False otherwise
-        
+
     Examples:
         >>> is_null(None)
         True
@@ -110,15 +112,15 @@ def is_null(value: Any) -> bool:
 
 def is_undefined(value: Any) -> bool:
     """Check if value is undefined (similar to JavaScript undefined).
-    
+
     In Python context, this checks for None or missing attributes.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is None, False otherwise
-        
+
     Examples:
         >>> is_undefined(None)
         True
@@ -130,13 +132,13 @@ def is_undefined(value: Any) -> bool:
 
 def is_function(value: Any) -> bool:
     """Check if value is a function or callable.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is callable, False otherwise
-        
+
     Examples:
         >>> is_function(lambda x: x)
         True
@@ -150,13 +152,13 @@ def is_function(value: Any) -> bool:
 
 def is_object(value: Any) -> bool:
     """Check if value is an object (dict in Python).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a dict, False otherwise
-        
+
     Examples:
         >>> is_object({'key': 'value'})
         True
@@ -170,13 +172,13 @@ def is_object(value: Any) -> bool:
 
 def is_date(value: Any) -> bool:
     """Check if value is a date/datetime object.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a date or datetime, False otherwise
-        
+
     Examples:
         >>> import datetime
         >>> is_date(datetime.datetime.now())
@@ -187,18 +189,19 @@ def is_date(value: Any) -> bool:
         False
     """
     import datetime
-    return isinstance(value, (datetime.date, datetime.datetime))
+
+    return isinstance(value, datetime.date | datetime.datetime)
 
 
 def is_regex(value: Any) -> bool:
     r"""Check if value is a compiled regular expression.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a compiled regex, False otherwise
-        
+
     Examples:
         >>> import re
         >>> is_regex(re.compile(r'\d+'))
@@ -211,13 +214,13 @@ def is_regex(value: Any) -> bool:
 
 def is_empty(value: Any) -> bool:
     """Check if value is empty (like JavaScript's concept of empty).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is empty, False otherwise
-        
+
     Examples:
         >>> is_empty('')
         True
@@ -236,20 +239,20 @@ def is_empty(value: Any) -> bool:
     """
     if value is None:
         return True
-    if isinstance(value, (str, list, tuple, dict, set, frozenset)):
+    if isinstance(value, str | list | tuple | dict | set | frozenset):
         return len(value) == 0
     return False
 
 
 def is_nan(value: Any) -> bool:
     """Check if value is NaN (Not a Number).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is NaN, False otherwise
-        
+
     Examples:
         >>> is_nan(float('nan'))
         True
@@ -266,13 +269,13 @@ def is_nan(value: Any) -> bool:
 
 def is_finite(value: Any) -> bool:
     """Check if value is a finite number.
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is a finite number, False otherwise
-        
+
     Examples:
         >>> is_finite(123)
         True
@@ -285,8 +288,9 @@ def is_finite(value: Any) -> bool:
     """
     import math
     from decimal import Decimal
+
     try:
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return math.isfinite(value)
         elif isinstance(value, Decimal):
             return value.is_finite()
@@ -297,13 +301,13 @@ def is_finite(value: Any) -> bool:
 
 def is_integer(value: Any) -> bool:
     """Check if value is an integer (like JavaScript Number.isInteger).
-    
+
     Args:
         value: Value to check
-        
+
     Returns:
         True if value is an integer, False otherwise
-        
+
     Examples:
         >>> is_integer(123)
         True
@@ -325,13 +329,13 @@ def is_integer(value: Any) -> bool:
 
 def to_string(value: Any) -> str:
     """Convert value to string (like JavaScript String() constructor).
-    
+
     Args:
         value: Value to convert
-        
+
     Returns:
         String representation of value
-        
+
     Examples:
         >>> to_string(123)
         '123'
@@ -341,19 +345,19 @@ def to_string(value: Any) -> str:
         '[1, 2, 3]'
     """
     if value is None:
-        return 'None'
+        return "None"
     return str(value)
 
 
-def to_number(value: Any) -> Union[int, float]:
+def to_number(value: Any) -> int | float:
     """Convert value to number (like JavaScript Number() constructor).
-    
+
     Args:
         value: Value to convert
-        
+
     Returns:
         Number representation of value, or NaN if conversion fails
-        
+
     Examples:
         >>> to_number('123')
         123
@@ -365,7 +369,7 @@ def to_number(value: Any) -> Union[int, float]:
         >>> to_number(True)
         1
     """
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return value
     if isinstance(value, bool):
         return 1 if value else 0
@@ -375,23 +379,23 @@ def to_number(value: Any) -> Union[int, float]:
             return 0
         try:
             # Try integer first
-            if '.' not in value and 'e' not in value.lower():
+            if "." not in value and "e" not in value.lower():
                 return int(value)
             return float(value)
         except ValueError:
-            return float('nan')
-    return float('nan')
+            return float("nan")
+    return float("nan")
 
 
 def to_boolean(value: Any) -> bool:
     """Convert value to boolean (like JavaScript Boolean() constructor).
-    
+
     Args:
         value: Value to convert
-        
+
     Returns:
         Boolean representation of value
-        
+
     Examples:
         >>> to_boolean(1)
         True
@@ -408,25 +412,25 @@ def to_boolean(value: Any) -> bool:
         return False
     if isinstance(value, bool):
         return value
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return value != 0 and not is_nan(value)
     if isinstance(value, str):
         return len(value) > 0
-    if isinstance(value, (list, tuple, dict, set)):
+    if isinstance(value, list | tuple | dict | set):
         return len(value) > 0
     return bool(value)
 
 
-def parse_int(value: str, radix: int = 10) -> Union[int, float]:
+def parse_int(value: Any, radix: int = 10) -> int | float:
     """Parse string to integer (like JavaScript parseInt).
-    
+
     Args:
         value: String to parse
         radix: Base for parsing (2-36), defaults to 10
-        
+
     Returns:
         Parsed integer or NaN if parsing fails
-        
+
     Examples:
         >>> parse_int('123')
         123
@@ -439,50 +443,50 @@ def parse_int(value: str, radix: int = 10) -> Union[int, float]:
         True
     """
     if not isinstance(value, str):
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return int(value)
-        value = str(value)
-    
+        return float("nan")
+
     value = value.strip()
     if not value:
-        return float('nan')
-    
+        return float("nan")
+
     # Handle sign
     sign = 1
-    if value.startswith('-'):
+    if value.startswith("-"):
         sign = -1
         value = value[1:]
-    elif value.startswith('+'):
+    elif value.startswith("+"):
         value = value[1:]
-    
+
     # Extract valid characters for the given radix
-    valid_chars = '0123456789abcdefghijklmnopqrstuvwxyz'[:radix]
-    result = ''
-    
+    valid_chars = "0123456789abcdefghijklmnopqrstuvwxyz"[:radix]
+    result = ""
+
     for char in value.lower():
         if char in valid_chars:
             result += char
         else:
             break
-    
+
     if not result:
-        return float('nan')
-    
+        return float("nan")
+
     try:
         return sign * int(result, radix)
     except ValueError:
-        return float('nan')
+        return float("nan")
 
 
-def parse_float(value: str) -> float:
+def parse_float(value: Any) -> float:
     """Parse string to float (like JavaScript parseFloat).
-    
+
     Args:
         value: String to parse
-        
+
     Returns:
         Parsed float or NaN if parsing fails
-        
+
     Examples:
         >>> parse_float('3.14')
         3.14
@@ -493,37 +497,38 @@ def parse_float(value: str) -> float:
         True
     """
     if not isinstance(value, str):
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return float(value)
-        value = str(value)
-    
+        return float("nan")
+
     value = value.strip()
     if not value:
-        return float('nan')
-    
+        return float("nan")
+
     # Extract valid float characters from the beginning
     import re
-    match = re.match(r'^[+-]?\d*\.?\d*([eE][+-]?\d+)?', value)
+
+    match = re.match(r"^[+-]?\d*\.?\d*([eE][+-]?\d+)?", value)
     if match:
         float_str = match.group(0)
-        if float_str and float_str not in ['+', '-', '.']:
+        if float_str and float_str not in ["+", "-", "."]:
             try:
                 return float(float_str)
             except ValueError:
                 pass
-    
-    return float('nan')
+
+    return float("nan")
 
 
 def typeof(value: Any) -> str:
     """Get type of value (like JavaScript typeof operator).
-    
+
     Args:
         value: Value to check type of
-        
+
     Returns:
         Type string
-        
+
     Examples:
         >>> typeof('hello')
         'string'
@@ -541,14 +546,15 @@ def typeof(value: Any) -> str:
         'function'
     """
     from decimal import Decimal
+
     if value is None:
-        return 'undefined'
+        return "undefined"
     if isinstance(value, bool):
-        return 'boolean'
+        return "boolean"
     if isinstance(value, str):
-        return 'string'
-    if isinstance(value, (int, float, complex, Decimal)):
-        return 'number'
+        return "string"
+    if isinstance(value, int | float | complex | Decimal):
+        return "number"
     if callable(value):
-        return 'function'
-    return 'object'
+        return "function"
+    return "object"

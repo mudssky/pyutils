@@ -5,8 +5,6 @@ import math
 import re
 from decimal import Decimal
 
-import pytest
-
 from pyutils.type_utils import (
     is_array,
     is_boolean,
@@ -39,12 +37,12 @@ class TestTypeChecking:
         # Arrays/lists
         assert is_array([]) is True
         assert is_array([1, 2, 3]) is True
-        assert is_array(list()) is True
-        
+        assert is_array([]) is True
+
         # Tuples (also considered arrays)
         assert is_array(()) is True
         assert is_array((1, 2, 3)) is True
-        
+
         # Not arrays
         assert is_array("string") is False
         assert is_array({}) is False
@@ -57,8 +55,8 @@ class TestTypeChecking:
         # Strings
         assert is_string("") is True
         assert is_string("hello") is True
-        assert is_string(str()) is True
-        
+        assert is_string("") is True
+
         # Not strings
         assert is_string(123) is False
         assert is_string([]) is False
@@ -74,13 +72,13 @@ class TestTypeChecking:
         assert is_number(-456) is True
         assert is_number(3.14) is True
         assert is_number(-2.5) is True
-        assert is_number(Decimal('10.5')) is True
-        
+        assert is_number(Decimal("10.5")) is True
+
         # Special numeric values
-        assert is_number(float('inf')) is True
-        assert is_number(float('-inf')) is True
-        assert is_number(float('nan')) is True
-        
+        assert is_number(float("inf")) is True
+        assert is_number(float("-inf")) is True
+        assert is_number(float("nan")) is True
+
         # Not numbers
         assert is_number("123") is False
         assert is_number([]) is False
@@ -93,7 +91,7 @@ class TestTypeChecking:
         # Booleans
         assert is_boolean(True) is True
         assert is_boolean(False) is True
-        
+
         # Not booleans
         assert is_boolean(1) is False
         assert is_boolean(0) is False
@@ -105,7 +103,7 @@ class TestTypeChecking:
         """Test is_null function."""
         # Null values
         assert is_null(None) is True
-        
+
         # Not null
         assert is_null(0) is False
         assert is_null("") is False
@@ -116,7 +114,7 @@ class TestTypeChecking:
         """Test is_undefined function."""
         # In Python, we consider None as undefined
         assert is_undefined(None) is True
-        
+
         # Everything else is defined
         assert is_undefined(0) is False
         assert is_undefined("") is False
@@ -125,15 +123,16 @@ class TestTypeChecking:
 
     def test_is_function(self):
         """Test is_function function."""
+
         # Functions
         def test_func():
             pass
-        
+
         assert is_function(test_func) is True
         assert is_function(lambda x: x) is True
         assert is_function(len) is True
         assert is_function(print) is True
-        
+
         # Not functions
         assert is_function("function") is False
         assert is_function(123) is False
@@ -146,8 +145,8 @@ class TestTypeChecking:
         # Objects (dictionaries)
         assert is_object({}) is True
         assert is_object({"key": "value"}) is True
-        assert is_object(dict()) is True
-        
+        assert is_object({}) is True
+
         # Not objects
         assert is_object([]) is False
         assert is_object("string") is False
@@ -161,7 +160,7 @@ class TestTypeChecking:
         assert is_date(datetime.datetime.now()) is True
         assert is_date(datetime.date.today()) is True
         assert is_date(datetime.datetime(2023, 1, 1)) is True
-        
+
         # Not dates
         assert is_date("2023-01-01") is False
         assert is_date(1672531200) is False  # timestamp
@@ -172,11 +171,11 @@ class TestTypeChecking:
     def test_is_regex(self):
         """Test is_regex function."""
         # Regex objects
-        assert is_regex(re.compile(r'\d+')) is True
-        assert is_regex(re.compile(r'[a-z]+', re.IGNORECASE)) is True
-        
+        assert is_regex(re.compile(r"\d+")) is True
+        assert is_regex(re.compile(r"[a-z]+", re.IGNORECASE)) is True
+
         # Not regex
-        assert is_regex(r'\d+') is False  # string pattern
+        assert is_regex(r"\d+") is False  # string pattern
         assert is_regex("pattern") is False
         assert is_regex([]) is False
         assert is_regex({}) is False
@@ -191,7 +190,7 @@ class TestTypeChecking:
         assert is_empty({}) is True
         assert is_empty(set()) is True
         assert is_empty(()) is True
-        
+
         # Non-empty values
         assert is_empty("hello") is False
         assert is_empty([1, 2, 3]) is False
@@ -204,14 +203,14 @@ class TestTypeChecking:
     def test_is_nan(self):
         """Test is_nan function."""
         # NaN values
-        assert is_nan(float('nan')) is True
+        assert is_nan(float("nan")) is True
         assert is_nan(math.nan) is True
-        
+
         # Not NaN
         assert is_nan(0) is False
         assert is_nan(123) is False
         assert is_nan(3.14) is False
-        assert is_nan(float('inf')) is False
+        assert is_nan(float("inf")) is False
         assert is_nan("nan") is False
         assert is_nan(None) is False
 
@@ -223,12 +222,12 @@ class TestTypeChecking:
         assert is_finite(-456) is True
         assert is_finite(3.14) is True
         assert is_finite(-2.5) is True
-        
+
         # Infinite and NaN
-        assert is_finite(float('inf')) is False
-        assert is_finite(float('-inf')) is False
-        assert is_finite(float('nan')) is False
-        
+        assert is_finite(float("inf")) is False
+        assert is_finite(float("-inf")) is False
+        assert is_finite(float("nan")) is False
+
         # Non-numbers
         assert is_finite("123") is False
         assert is_finite(None) is False
@@ -240,11 +239,11 @@ class TestTypeChecking:
         assert is_integer(0) is True
         assert is_integer(123) is True
         assert is_integer(-456) is True
-        
+
         # Float integers
         assert is_integer(123.0) is True
         assert is_integer(-456.0) is True
-        
+
         # Non-integers
         assert is_integer(3.14) is False
         assert is_integer(-2.5) is False
@@ -266,7 +265,7 @@ class TestTypeConversion:
         assert to_string(None) == "None"
         assert to_string([1, 2, 3]) == "[1, 2, 3]"
         assert to_string({"key": "value"}) == "{'key': 'value'}"
-        
+
         # Already string
         assert to_string("hello") == "hello"
         assert to_string("") == ""
@@ -278,15 +277,15 @@ class TestTypeConversion:
         assert to_number("3.14") == 3.14
         assert to_number("-456") == -456
         assert to_number("0") == 0
-        
+
         # Boolean to number
         assert to_number(True) == 1
         assert to_number(False) == 0
-        
+
         # Already number
         assert to_number(123) == 123
         assert to_number(3.14) == 3.14
-        
+
         # Invalid conversions
         assert math.isnan(to_number("invalid"))
         assert math.isnan(to_number(None))
@@ -303,7 +302,7 @@ class TestTypeConversion:
         assert to_boolean("false") is True  # non-empty string
         assert to_boolean([1, 2, 3]) is True
         assert to_boolean({"key": "value"}) is True
-        
+
         # Falsy values
         assert to_boolean(False) is False
         assert to_boolean(0) is False
@@ -318,21 +317,21 @@ class TestTypeConversion:
         assert parse_int("123") == 123
         assert parse_int("-456") == -456
         assert parse_int("0") == 0
-        
+
         # With different bases
         assert parse_int("1010", 2) == 10  # binary
         assert parse_int("FF", 16) == 255  # hexadecimal
         assert parse_int("77", 8) == 63  # octal
-        
+
         # Float strings (should truncate)
         assert parse_int("123.45") == 123
         assert parse_int("-456.78") == -456
-        
+
         # Invalid strings
         assert math.isnan(parse_int("invalid"))
         assert math.isnan(parse_int(""))
         assert math.isnan(parse_int("abc"))
-        
+
         # Non-string inputs
         assert parse_int(123) == 123
         assert parse_int(123.45) == 123
@@ -346,16 +345,16 @@ class TestTypeConversion:
         assert parse_float("-456.78") == -456.78
         assert parse_float("0.0") == 0.0
         assert parse_float("123") == 123.0
-        
+
         # Scientific notation
         assert parse_float("1.23e2") == 123.0
         assert parse_float("1.23E-2") == 0.0123
-        
+
         # Invalid strings
         assert math.isnan(parse_float("invalid"))
         assert math.isnan(parse_float(""))
         assert math.isnan(parse_float("abc"))
-        
+
         # Non-string inputs
         assert parse_float(123) == 123.0
         assert parse_float(123.45) == 123.45
@@ -371,31 +370,31 @@ class TestTypeConversion:
         assert typeof(True) == "boolean"
         assert typeof(False) == "boolean"
         assert typeof(None) == "undefined"
-        
+
         # Complex types
         assert typeof([1, 2, 3]) == "object"
         assert typeof({"key": "value"}) == "object"
         assert typeof(lambda x: x) == "function"
         assert typeof(len) == "function"
-        
+
         # Special cases
         assert typeof(datetime.datetime.now()) == "object"
-        assert typeof(re.compile(r'\d+')) == "object"
+        assert typeof(re.compile(r"\d+")) == "object"
 
     def test_edge_cases(self):
         """Test edge cases for type utilities."""
         # Empty collections
         assert is_empty(set()) is True
         assert is_empty(frozenset()) is True
-        
+
         # Complex numbers
         assert is_number(complex(1, 2)) is True
         assert typeof(complex(1, 2)) == "number"
-        
+
         # Decimal numbers
-        assert is_number(Decimal('10.5')) is True
-        assert is_finite(Decimal('10.5')) is True
-        
+        assert is_number(Decimal("10.5")) is True
+        assert is_finite(Decimal("10.5")) is True
+
         # Very large numbers
         large_num = 10**100
         assert is_number(large_num) is True

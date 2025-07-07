@@ -1,10 +1,9 @@
 """Tests for encoding utility functions."""
 
 import base64
-import hashlib
 import json
 import re
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 
 import pytest
 
@@ -36,8 +35,8 @@ class TestBase64Encoding:
     def test_btoa(self):
         """Test btoa function."""
         # Basic encoding
-        assert btoa("hello") == base64.b64encode("hello".encode()).decode()
-        assert btoa("Hello, World!") == base64.b64encode("Hello, World!".encode()).decode()
+        assert btoa("hello") == base64.b64encode(b"hello").decode()
+        assert btoa("Hello, World!") == base64.b64encode(b"Hello, World!").decode()
 
         # Empty string
         assert btoa("") == ""
@@ -90,8 +89,14 @@ class TestHTMLEncoding:
     def test_escape_html(self):
         """Test escape_html function."""
         # Basic HTML entities
-        assert escape_html("<div>Hello & goodbye</div>") == "&lt;div&gt;Hello &amp; goodbye&lt;/div&gt;"
-        assert escape_html('Say "hello" to \'world\'') == "Say &quot;hello&quot; to &#x27;world&#x27;"
+        assert (
+            escape_html("<div>Hello & goodbye</div>")
+            == "&lt;div&gt;Hello &amp; goodbye&lt;/div&gt;"
+        )
+        assert (
+            escape_html("Say \"hello\" to 'world'")
+            == "Say &quot;hello&quot; to &#x27;world&#x27;"
+        )
 
         # Empty string
         assert escape_html("") == ""
@@ -100,13 +105,19 @@ class TestHTMLEncoding:
         assert escape_html("Hello World") == "Hello World"
 
         # All special characters
-        assert escape_html('<>&"\'') == "&lt;&gt;&amp;&quot;&#x27;"
+        assert escape_html("<>&\"'") == "&lt;&gt;&amp;&quot;&#x27;"
 
     def test_unescape_html(self):
         """Test unescape_html function."""
         # Basic HTML entities
-        assert unescape_html("&lt;div&gt;Hello &amp; goodbye&lt;/div&gt;") == "<div>Hello & goodbye</div>"
-        assert unescape_html("Say &quot;hello&quot; to &#x27;world&#x27;") == 'Say "hello" to \'world\''
+        assert (
+            unescape_html("&lt;div&gt;Hello &amp; goodbye&lt;/div&gt;")
+            == "<div>Hello & goodbye</div>"
+        )
+        assert (
+            unescape_html("Say &quot;hello&quot; to &#x27;world&#x27;")
+            == "Say \"hello\" to 'world'"
+        )
 
         # Empty string
         assert unescape_html("") == ""
@@ -127,8 +138,8 @@ class TestHexEncoding:
     def test_encode_hex(self):
         """Test encode_hex function."""
         # Basic encoding
-        assert encode_hex("hello") == "hello".encode().hex()
-        assert encode_hex("Hello, World!") == "Hello, World!".encode().hex()
+        assert encode_hex("hello") == b"hello".hex()
+        assert encode_hex("Hello, World!") == b"Hello, World!".hex()
 
         # Empty string
         assert encode_hex("") == ""
@@ -168,11 +179,11 @@ class TestJSONFunctions:
         """Test json_stringify function."""
         # Basic objects
         assert json_stringify({"key": "value"}) == '{"key": "value"}'
-        assert json_stringify([1, 2, 3]) == '[1, 2, 3]'
+        assert json_stringify([1, 2, 3]) == "[1, 2, 3]"
         assert json_stringify("hello") == '"hello"'
-        assert json_stringify(123) == '123'
-        assert json_stringify(True) == 'true'
-        assert json_stringify(None) == 'null'
+        assert json_stringify(123) == "123"
+        assert json_stringify(True) == "true"
+        assert json_stringify(None) == "null"
 
         # Complex object
         obj = {
@@ -180,7 +191,7 @@ class TestJSONFunctions:
             "age": 30,
             "active": True,
             "scores": [85, 90, 78],
-            "address": None
+            "address": None,
         }
         result = json_stringify(obj)
         # Parse it back to verify it's valid JSON
@@ -191,11 +202,11 @@ class TestJSONFunctions:
         """Test json_parse function."""
         # Basic parsing
         assert json_parse('{"key": "value"}') == {"key": "value"}
-        assert json_parse('[1, 2, 3]') == [1, 2, 3]
+        assert json_parse("[1, 2, 3]") == [1, 2, 3]
         assert json_parse('"hello"') == "hello"
-        assert json_parse('123') == 123
-        assert json_parse('true') is True
-        assert json_parse('null') is None
+        assert json_parse("123") == 123
+        assert json_parse("true") is True
+        assert json_parse("null") is None
 
         # Invalid JSON
         with pytest.raises(ValueError):
@@ -285,7 +296,7 @@ class TestUtilityFunctions:
         assert hash1 != hash3
 
         # Hash should be hexadecimal string
-        assert all(c in '0123456789abcdef' for c in hash1)
+        assert all(c in "0123456789abcdef" for c in hash1)
 
         # Hash should be 64 characters (SHA-256)
         assert len(hash1) == 64
@@ -306,7 +317,10 @@ class TestUtilityFunctions:
         # Default length
         random_str = generate_random_string()
         assert len(random_str) == 16
-        assert all(c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' for c in random_str)
+        assert all(
+            c in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+            for c in random_str
+        )
 
         # Custom length
         random_str = generate_random_string(32)
@@ -315,7 +329,7 @@ class TestUtilityFunctions:
         # Custom characters
         random_str = generate_random_string(10, "abc123")
         assert len(random_str) == 10
-        assert all(c in 'abc123' for c in random_str)
+        assert all(c in "abc123" for c in random_str)
 
         # Two calls should produce different strings
         str1 = generate_random_string()
@@ -360,11 +374,11 @@ class TestValidationFunctions:
         """Test is_json function."""
         # Valid JSON
         assert is_json('{"key": "value"}') is True
-        assert is_json('[1, 2, 3]') is True
+        assert is_json("[1, 2, 3]") is True
         assert is_json('"hello"') is True
-        assert is_json('123') is True
-        assert is_json('true') is True
-        assert is_json('null') is True
+        assert is_json("123") is True
+        assert is_json("true") is True
+        assert is_json("null") is True
 
         # Invalid JSON
         assert is_json("invalid json") is False
