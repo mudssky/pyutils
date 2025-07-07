@@ -191,7 +191,7 @@ def is_date(value: Any) -> bool:
 
 
 def is_regex(value: Any) -> bool:
-    """Check if value is a compiled regular expression.
+    r"""Check if value is a compiled regular expression.
     
     Args:
         value: Value to check
@@ -224,6 +224,10 @@ def is_empty(value: Any) -> bool:
         >>> is_empty([])
         True
         >>> is_empty({})
+        True
+        >>> is_empty(set())
+        True
+        >>> is_empty(frozenset())
         True
         >>> is_empty(None)
         True

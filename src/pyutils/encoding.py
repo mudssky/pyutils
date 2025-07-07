@@ -385,6 +385,10 @@ def is_base64(text: str) -> bool:
 def is_hex(text: str) -> bool:
     """Check if a string is valid hexadecimal.
     
+    Note:
+        This function does not accept hex strings with '0x' or '0X' prefixes.
+        Use int(text, 16) if you need to handle prefixed hex strings.
+    
     Args:
         text: String to check
         
@@ -398,6 +402,8 @@ def is_hex(text: str) -> bool:
         False
         >>> is_hex('123abc')
         True
+        >>> is_hex('0x123')  # Prefixed hex strings are rejected
+        False
     """
     if not text:
         return False
