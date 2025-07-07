@@ -90,8 +90,76 @@ build: clean ## builds source and wheel package with uv
 	uv build
 	ls -l dist
 
-release: build ## package and upload a release
+release: build ## package and upload a release (manual)
 	uv run twine upload dist/*
+
+# Release automation commands
+changelog: ## generate changelog from git commits
+	python scripts/generate-changelog.py
+
+changelog-file: ## generate changelog and save to CHANGELOG.md
+	python scripts/generate-changelog.py --all --output CHANGELOG.md
+	@echo "Changelog saved to CHANGELOG.md"
+
+release-dry: ## dry run release (patch version)
+	@echo "Dry run release (patch version)..."
+	python scripts/create-release.py --patch --dry-run
+
+release-patch: ## release patch version (x.x.X) and push tag
+	@echo "Releasing patch version..."
+	python scripts/create-release.py --patch --push
+	@echo "Patch release completed!"
+
+release-minor: ## release minor version (x.X.0) and push tag
+	@echo "Releasing minor version..."
+	python scripts/create-release.py --minor --push
+	@echo "Minor release completed!"
+
+release-major: ## release major version (X.0.0) and push tag
+	@echo "Releasing major version..."
+	python scripts/create-release.py --major --push
+	@echo "Major release completed!"
+
+release-version: ## release specific version (usage: make release-version VERSION=1.2.3)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Error: VERSION is required. Usage: make release-version VERSION=1.2.3"; \
+		exit 1; \
+	fi
+	@echo "Releasing version $(VERSION)..."
+	python scripts/create-release.py --version $(VERSION) --push
+	@echo "Version $(VERSION) release completed!"
+
+# Git and CI helpers
+version: ## show current version
+	@echo "Current version:"
+	@grep 'version =' pyproject.toml | head -1
+	@grep '__version__' src/pyutils/__init__.py
+
+ci-status: ## show CI/CD status
+	@echo "CI/CD runs:"
+	gh run list --limit 5
+
+ci-logs: ## show latest CI/CD logs
+	@echo "Latest CI/CD logs:"
+	gh run view
+
+tags: ## show git tags
+	@echo "Git tags:"
+	git tag --sort=-version:refname
+
+release-help: ## show release command help
+	@echo "Release Commands:"
+	@echo "  make release-dry     - Preview what will be released (patch)"
+	@echo "  make release-patch   - Release patch version (1.0.0 -> 1.0.1)"
+	@echo "  make release-minor   - Release minor version (1.0.0 -> 1.1.0)"
+	@echo "  make release-major   - Release major version (1.0.0 -> 2.0.0)"
+	@echo "  make release-version VERSION=x.y.z - Release specific version"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make release-version VERSION=1.2.3"
+	@echo "  make release-patch"
+	@echo ""
+	@echo "Note: All release commands will push tags and trigger CI/CD"
 
 install: ## install the package and dependencies with uv
 	uv sync --all-extras --dev

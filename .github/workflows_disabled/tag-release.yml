@@ -1,0 +1,191 @@
+name: Tag Release
+
+# 当推送tag时自动触发发布
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'  # 支持预发布版本如 v1.0.0-beta.1
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  release:
+    name: Auto Release from Tag
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/mudssky-pyutils
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Extract version info
+      id: version
+      run: |
+        TAG_NAME="${{ github.ref_name }}"
+        VERSION=${TAG_NAME#v}  # 移除v前缀
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+        echo "is_prerelease=$([[ $TAG_NAME =~ -[a-zA-Z] ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION, Tag: $TAG_NAME"
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+
+    - name: Set up Python
+      run: uv python install ${{ env.PYTHON_VERSION }}
+
+    - name: Install dependencies
+      run: uv sync --dev
+
+    - name: Run tests
+      run: |
+        echo "Running tests before release..."
+        uv run pytest tests/ -v --tb=short
+
+    - name: Run quality checks
+      run: |
+        echo "Running code quality checks..."
+        uv run ruff check src/ tests/
+        uv run mypy src/
+
+    - name: Update version in files
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        echo "Updating version to: $VERSION"
+        
+        # 更新 pyproject.toml
+        sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+        
+        # 更新 __init__.py
+        sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" src/pyutils/__init__.py
+        
+        # 验证更改
+        echo "Updated files:"
+        grep 'version =' pyproject.toml
+        grep '__version__' src/pyutils/__init__.py
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # 获取上一个tag
+        CURRENT_TAG="${{ steps.version.outputs.tag }}"
+        PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v "$CURRENT_TAG" | head -n1)
+        
+        if [ -z "$PREVIOUS_TAG" ]; then
+          # 如果是第一个tag，从第一个commit开始
+          PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+          echo "First release, comparing from initial commit"
+        else
+          echo "Comparing $PREVIOUS_TAG to $CURRENT_TAG"
+        fi
+        
+        # 生成changelog
+        echo "## 🚀 Release ${{ steps.version.outputs.version }}" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        
+        # 获取commit信息并分类
+        echo "### 📋 Changes in this release:" >> RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        
+        # 新功能
+        FEATURES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^feat" --grep="^feature" 2>/dev/null || true)
+        if [ -n "$FEATURES" ]; then
+          echo "#### ✨ New Features" >> RELEASE_NOTES.md
+          echo "$FEATURES" >> RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+        fi
+        
+        # Bug修复
+        FIXES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^fix" --grep="^bugfix" 2>/dev/null || true)
+        if [ -n "$FIXES" ]; then
+          echo "#### 🐛 Bug Fixes" >> RELEASE_NOTES.md
+          echo "$FIXES" >> RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+        fi
+        
+        # 文档更新
+        DOCS=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^docs" 2>/dev/null || true)
+        if [ -n "$DOCS" ]; then
+          echo "#### 📚 Documentation" >> RELEASE_NOTES.md
+          echo "$DOCS" >> RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+        fi
+        
+        # 其他更改
+        OTHER_CHANGES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --invert-grep --grep="^feat" --grep="^feature" --grep="^fix" --grep="^bugfix" --grep="^docs" 2>/dev/null | head -10 || true)
+        if [ -n "$OTHER_CHANGES" ]; then
+          echo "#### 🔧 Other Changes" >> RELEASE_NOTES.md
+          echo "$OTHER_CHANGES" >> RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+        fi
+        
+        # 安装信息
+        echo "### 📦 Installation" >> RELEASE_NOTES.md
+        echo "\`\`\`bash" >> RELEASE_NOTES.md
+        echo "pip install mudssky-pyutils==${{ steps.version.outputs.version }}" >> RELEASE_NOTES.md
+        echo "\`\`\`" >> RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        
+        # 完整更改日志
+        if [ "$PREVIOUS_TAG" != "$(git rev-list --max-parents=0 HEAD)" ]; then
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$CURRENT_TAG" >> RELEASE_NOTES.md
+        else
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/$CURRENT_TAG" >> RELEASE_NOTES.md
+        fi
+        
+        echo "Generated release notes:"
+        cat RELEASE_NOTES.md
+
+    - name: Build package
+      run: |
+        echo "Building package..."
+        uv build
+        
+        echo "Built packages:"
+        ls -la dist/
+
+    - name: Verify package
+      run: |
+        echo "Verifying package..."
+        uv run twine check dist/*
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: Release ${{ steps.version.outputs.version }}
+        body_path: RELEASE_NOTES.md
+        files: |
+          dist/*
+        prerelease: ${{ steps.version.outputs.is_prerelease }}
+        generate_release_notes: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        packages-dir: dist/
+        verbose: true
+
+    - name: Success notification
+      run: |
+        echo "🎉 Release ${{ steps.version.outputs.version }} completed successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📦 **PyPI**: https://pypi.org/project/mudssky-pyutils/${{ steps.version.outputs.version }}/" >> $GITHUB_STEP_SUMMARY
+        echo "🏷️ **GitHub Release**: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Installation" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+        echo "pip install mudssky-pyutils==${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
