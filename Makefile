@@ -148,7 +148,13 @@ tags: ## show git tags
 	git tag --sort=-version:refname
 
 release-help: ## show release command help
-	@echo "Release Commands:"
+	@echo "🚀 发布命令帮助:"
+	@echo ""
+	@echo "📦 Semantic Release (推荐):"
+	@echo "  make semantic-release     - 使用semantic-release自动发布"
+	@echo "  make semantic-release-dry - 预览semantic-release发布"
+	@echo ""
+	@echo "🔧 传统发布方式:"
 	@echo "  make release-dry     - Preview what will be released (patch)"
 	@echo "  make release-patch   - Release patch version (1.0.0 -> 1.0.1)"
 	@echo "  make release-minor   - Release minor version (1.0.0 -> 1.1.0)"
@@ -158,8 +164,35 @@ release-help: ## show release command help
 	@echo "Examples:"
 	@echo "  make release-version VERSION=1.2.3"
 	@echo "  make release-patch"
+	@echo "  make semantic-release"
 	@echo ""
 	@echo "Note: All release commands will push tags and trigger CI/CD"
+
+semantic-release: ## run semantic-release for automated versioning and publishing
+	@echo "🚀 使用semantic-release自动发布..."
+	@if ! command -v npm >/dev/null 2>&1; then \
+		echo "❌ 错误: npm未安装，请先安装Node.js和npm"; \
+		exit 1; \
+	fi
+	@if [ ! -f package.json ]; then \
+		echo "❌ 错误: package.json不存在"; \
+		exit 1; \
+	fi
+	npm install
+	npx semantic-release
+
+semantic-release-dry: ## preview semantic-release without publishing
+	@echo "🔍 预览semantic-release发布..."
+	@if ! command -v npm >/dev/null 2>&1; then \
+		echo "❌ 错误: npm未安装，请先安装Node.js和npm"; \
+		exit 1; \
+	fi
+	@if [ ! -f package.json ]; then \
+		echo "❌ 错误: package.json不存在"; \
+		exit 1; \
+	fi
+	npm install
+	npx semantic-release --dry-run
 
 install: ## install the package and dependencies with uv
 	uv sync --all-extras --dev

@@ -1,0 +1,35 @@
+# <type>[optional scope]: <description>
+# 
+# [optional body]
+# 
+# [optional footer(s)]
+# 
+# Types:
+#   feat:     A new feature
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing tests or correcting existing tests
+#   chore:    Changes to the build process or auxiliary tools
+#   ci:       Changes to CI configuration files and scripts
+#
+# Scope examples: auth, parser, cli, api, docs, tests
+#
+# Examples:
+#   feat(auth): add OAuth2 authentication support
+#   fix(parser): handle timeout errors properly
+#   docs: update installation guide
+#   style: fix code formatting
+#   refactor(api): simplify error handling logic
+#   perf: improve query performance
+#   test: add unit tests for user service
+#   chore: update dependencies
+#   ci: add Python 3.13 to test matrix
+#
+# Breaking changes:
+#   feat!: remove deprecated API
+#   feat(api)!: change response format
+#   
+#   BREAKING CHANGE: remove support for Node 12

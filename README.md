@@ -70,14 +70,74 @@ make ci
 
 ## 🚀 发布
 
-本项目提供了完整的自动化发布工具，支持多种发布方式。
+本项目支持两种发布方式：**Semantic Release（推荐）** 和传统发布方式。
 
-### 快速发布
+### 🎯 Semantic Release（推荐）
+
+使用 [semantic-release](https://github.com/semantic-release/semantic-release) 进行完全自动化的版本管理和发布。
+
+#### 特性
+
+- ✅ **完全自动化**：基于commit消息自动确定版本号
+- 📋 **自动生成Changelog**：从commit历史自动生成
+- 🏷️ **自动创建Tag和Release**：GitHub自动发布
+- 📦 **自动发布到PyPI**：无需手动操作
+- 📚 **自动部署文档**：自动构建并部署到GitHub Pages
+- 🔄 **CI/CD集成**：推送到main分支自动触发
+
+#### 快速开始
 
 ```bash
 # 查看发布命令帮助
 make release-help
 
+# 预览semantic-release发布
+make semantic-release-dry
+
+# 执行semantic-release发布
+make semantic-release
+```
+
+#### Commit规范
+
+项目使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
+
+```bash
+# 新功能 (minor版本)
+feat: add new utility function
+feat(auth): add OAuth2 support
+
+# Bug修复 (patch版本)
+fix: handle null response
+fix(api): resolve timeout issue
+
+# 重大更改 (major版本)
+feat!: remove deprecated API
+fix!: change function signature
+
+# 其他类型 (不影响版本)
+docs: update README
+style: fix formatting
+refactor: improve code structure
+test: add unit tests
+chore: update dependencies
+```
+
+#### 自动化流程
+
+1. **提交代码**：使用规范的commit消息
+2. **推送到main**：触发GitHub Actions
+3. **代码检查**：运行linting和测试
+4. **构建文档**：使用Sphinx生成HTML文档
+5. **自动分析**：semantic-release分析commit确定版本
+6. **自动发布**：更新版本、生成changelog、创建tag、发布到PyPI
+7. **部署文档**：自动部署到GitHub Pages
+
+### 🔧 传统发布方式
+
+如果需要手动控制版本号，可以使用传统发布方式：
+
+```bash
 # 预览发布（不实际执行）
 make release-dry
 
@@ -145,7 +205,10 @@ git commit -m "feat!: remove deprecated API"
 
 - [发布指南](docs/RELEASE.md) - 详细的发布流程和工具说明
 - [发布示例](examples/release-example.md) - 实际使用示例
-- [API文档](https://mudssky.github.io/pyutils/) - 完整的API参考
+- [API文档](https://mudssky.github.io/pyutils/) - 完整的API参考（自动部署）
+- [Semantic Release指南](docs/SEMANTIC_RELEASE.md) - 自动化发布配置和使用
+- [迁移指南](docs/MIGRATION_GUIDE.md) - 从传统发布迁移到semantic-release
+- [GitHub Pages设置](docs/GITHUB_PAGES_SETUP.md) - 文档自动部署配置
 - [贡献指南](CONTRIBUTING.md) - 如何参与项目开发
 
 ## 🔧 项目结构
