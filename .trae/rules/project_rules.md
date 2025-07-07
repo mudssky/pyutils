@@ -124,30 +124,35 @@
 ### 文件组织原则
 
 #### 源代码组织
+
 - **主要源代码**：所有源代码放在`src/pyutils/`目录下
 - **模块化设计**：每个功能领域独立成模块（如array.py、string.py等）
 - **公共API**：通过`__init__.py`暴露公共接口，遵循最小暴露原则
 - **命名规范**：模块名使用小写字母和下划线，清晰表达功能
 
 #### 测试代码组织
+
 - **测试目录**：所有测试文件放在`tests/`目录下
 - **测试命名**：测试文件以`test_`前缀命名，与对应模块保持一致
 - **测试覆盖**：每个源代码模块都应有对应的测试文件
 - **测试结构**：测试文件内部按功能分组，使用清晰的测试类和方法名
 
 #### 文档组织
+
 - **API文档**：使用Sphinx自动生成，配置在`docs/conf.py`
 - **用户文档**：包含安装、使用、贡献等指南
 - **变更记录**：维护详细的changelog.rst
 - **示例代码**：在`examples/`目录提供实用示例
 
 #### 配置文件管理
+
 - **项目配置**：`pyproject.toml`作为主要配置文件
 - **工具配置**：各工具独立配置文件（ruff.toml、pytest.ini等）
 - **环境配置**：使用`.env.template`提供环境变量模板
 - **编辑器配置**：`.editorconfig`确保代码风格一致性
 
 #### 构建和部署
+
 - **构建脚本**：提供跨平台构建脚本（Makefile、PowerShell脚本）
 - **CI/CD配置**：GitHub Actions工作流在`.github/workflows/`
 - **发布配置**：语义化发布配置`.releaserc.json`
@@ -240,6 +245,7 @@
 - 新需求开发在dev分支（从main拉取），或者从main拉取feature分支开发
 - 先编写测试用例（TDD）
 - 确保所有测试通过
+- 确保make ci 没有报错
 - 更新相关文档
 - 添加使用示例
 
@@ -272,39 +278,43 @@
 
 - **包管理器**：使用`uv`进行依赖管理和虚拟环境管理
 - **环境初始化**：
+
   ```bash
   # 安装uv（如果未安装）
   curl -LsSf https://astral.sh/uv/install.sh | sh
-  
+
   # 同步开发环境
   uv sync --dev
   ```
+
 - **常用开发命令**：
+
   ```bash
   # 运行测试
   uv run pytest
-  
+
   # 运行测试并生成覆盖率报告
   uv run pytest --cov=src/pyutils --cov-report=html
-  
+
   # 代码格式化
   uv run ruff format .
-  
+
   # 代码检查
   uv run ruff check .
-  
+
   # 类型检查
   uv run mypy src/
-  
+
   # 安全检查
   uv run bandit -r src/
-  
+
   # 性能基准测试
   uv run pytest --benchmark-only
-  
+
   # 安装pre-commit钩子
   uv run pre-commit install
   ```
+
 - **IDE配置**：推荐配置编辑器支持ruff和mypy集成
 
 ## 代码审查和质量保证
