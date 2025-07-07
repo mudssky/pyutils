@@ -119,7 +119,7 @@ gh release create v0.2.0 \
 
 ### 常见问题
 
-1. **发布失败**: 
+1. **发布失败**:
    - 检查 PyPI API 令牌是否正确
    - 确认版本号未重复
    - 查看 Actions 日志获取详细错误信息
@@ -140,10 +140,10 @@ gh release create v0.2.0 \
    ```bash
    # 运行完整测试套件
    uv run pytest
-   
+
    # 构建文档
    uv run sphinx-build -b html docs docs/_build/html
-   
+
    # 构建包
    uv build
    ```

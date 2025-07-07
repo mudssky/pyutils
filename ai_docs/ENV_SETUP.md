@@ -95,12 +95,12 @@ TWINE_PASSWORD=pypi-your_default_token_here
    - 检查用户名是否设置为 `__token__`（使用 API Token 时必须）
    - 确认 token 格式正确（以 `pypi-` 开头）
 
-3. **403 Forbidden - Username/Password authentication is no longer supported**: 
+3. **403 Forbidden - Username/Password authentication is no longer supported**:
    - 这表示仍在使用用户名/密码认证而非 API Token
    - 确保 `TWINE_USERNAME` 设置为 `__token__`
    - 确保 `TWINE_PASSWORD` 设置为有效的 API Token
 
-4. **环境变量未加载**: 
+4. **环境变量未加载**:
    - 确认 `.env` 文件存在于项目根目录
    - 检查文件格式（无 BOM，UTF-8 编码）
    - 验证变量名拼写正确

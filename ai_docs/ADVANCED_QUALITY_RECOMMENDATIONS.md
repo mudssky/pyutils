@@ -34,7 +34,7 @@ from .async_utils import *
 __all__ = [
     # Array utilities
     'flatten', 'chunk', 'unique',
-    # String utilities  
+    # String utilities
     'camel_case', 'snake_case', 'kebab_case',
     # Math utilities
     'clamp', 'lerp', 'map_range',
@@ -113,7 +113,7 @@ def temp_file() -> Generator[str, None, None]:
     """提供临时文件"""
     import tempfile
     import os
-    
+
     fd, path = tempfile.mkstemp()
     try:
         os.close(fd)
@@ -140,16 +140,16 @@ def benchmark(func: Callable, *args, iterations: int = 1000, **kwargs) -> float:
 
 class TestPerformance:
     """性能测试套件"""
-    
+
     def test_array_operations_performance(self):
         from pyutils.array import flatten, chunk
-        
+
         large_nested = [[i] * 100 for i in range(100)]
-        
+
         # 测试 flatten 性能
         flatten_time = benchmark(flatten, large_nested)
         assert flatten_time < 0.001, f"flatten 性能过慢: {flatten_time:.6f}s"
-        
+
         # 测试 chunk 性能
         large_array = list(range(10000))
         chunk_time = benchmark(chunk, large_array, 100)
@@ -164,28 +164,28 @@ class TestPerformance:
 def flatten(nested_list: List[Any]) -> List[Any]:
     """
     将嵌套列表展平为一维列表。
-    
+
     Args:
         nested_list: 要展平的嵌套列表
-        
+
     Returns:
         展平后的一维列表
-        
+
     Examples:
         >>> from pyutils.array import flatten
         >>> flatten([[1, 2], [3, 4], [5]])
         [1, 2, 3, 4, 5]
-        
+
         >>> flatten([1, [2, [3, 4]], 5])
         [1, 2, 3, 4, 5]
-        
+
         >>> flatten([])
         []
-        
+
     Performance:
         - Time Complexity: O(n) where n is total number of elements
         - Space Complexity: O(n) for the result list
-        
+
     Note:
         此函数会递归处理任意深度的嵌套列表。
     """
@@ -213,16 +213,16 @@ def data_processing_pipeline_example():
         {"name": "jane_smith", "age": 25, "scores": [90, 88, 95]},
         {"name": "bob_wilson", "age": 35, "scores": [75, 80, 85]}
     ]
-    
+
     # 数据转换管道
     processed_data = []
     for person in raw_data:
         # 格式化姓名
         formatted_name = camel_case(person["name"])
-        
+
         # 计算平均分
         avg_score = sum(person["scores"]) / len(person["scores"])
-        
+
         # 创建处理后的记录
         processed_person = {
             "displayName": formatted_name,
@@ -230,9 +230,9 @@ def data_processing_pipeline_example():
             "averageScore": round(avg_score, 2),
             "grade": "A" if avg_score >= 90 else "B" if avg_score >= 80 else "C"
         }
-        
+
         processed_data.append(processed_person)
-    
+
     return processed_data
 
 async def async_operations_example():
@@ -241,11 +241,11 @@ async def async_operations_example():
         # 模拟 API 调用
         await asyncio.sleep(0.1)
         return {"id": user_id, "name": f"User {user_id}"}
-    
+
     # 并发获取多个用户数据
     user_ids = [1, 2, 3, 4, 5]
     tasks = [fetch_user_data(uid) for uid in user_ids]
-    
+
     # 使用 pyutils 的并发工具
     results = await run_concurrent(tasks, max_concurrent=3)
     return results
@@ -256,7 +256,7 @@ if __name__ == "__main__":
     result = data_processing_pipeline_example()
     for person in result:
         print(f"  {person}")
-    
+
     print("\n异步操作示例:")
     async_result = asyncio.run(async_operations_example())
     for user in async_result:
@@ -299,7 +299,7 @@ function Invoke-CodeMetrics {
     # 代码行数统计
     $srcLines = (Get-Content -Path "src/**/*.py" -Recurse | Measure-Object -Line).Lines
     $testLines = (Get-Content -Path "tests/**/*.py" -Recurse | Measure-Object -Line).Lines
-    
+
     Write-Host "源代码行数: $srcLines" -ForegroundColor Green
     Write-Host "测试代码行数: $testLines" -ForegroundColor Green
     Write-Host "测试覆盖率: $(($testLines / $srcLines * 100).ToString('F1'))%" -ForegroundColor Green
@@ -323,29 +323,29 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 获取完整历史
-      
+
       - name: Setup Python and uv
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
-      
+
       - name: Install dependencies
         run: uv sync --all-extras --dev
-      
+
       - name: Generate quality report
         run: |
           # 代码复杂度
           uv run radon cc src/ --json > complexity.json
-          
+
           # 代码重复度
           uv run radon raw src/ --json > raw-metrics.json
-          
+
           # 测试覆盖率
           uv run pytest --cov=src --cov-report=json
-          
+
           # 依赖安全检查
           uv run safety check --json > security.json
-      
+
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -376,28 +376,28 @@ def timed_cache(maxsize: int = 128, ttl: float = 300.0):
         cache = {}
         cache_times = {}
         lock = threading.RLock()
-        
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             key = str(args) + str(sorted(kwargs.items()))
             current_time = time.time()
-            
+
             with lock:
                 if key in cache and current_time - cache_times[key] < ttl:
                     return cache[key]
-                
+
                 result = func(*args, **kwargs)
-                
+
                 if len(cache) >= maxsize:
                     # 清理最旧的条目
                     oldest_key = min(cache_times.keys(), key=cache_times.get)
                     del cache[oldest_key]
                     del cache_times[oldest_key]
-                
+
                 cache[key] = result
                 cache_times[key] = current_time
                 return result
-        
+
         wrapper.cache_clear = lambda: cache.clear() or cache_times.clear()
         wrapper.cache_info = lambda: f"Cache size: {len(cache)}/{maxsize}"
         return wrapper
@@ -405,23 +405,23 @@ def timed_cache(maxsize: int = 128, ttl: float = 300.0):
 
 class PerformanceMonitor:
     """性能监控工具"""
-    
+
     def __init__(self):
         self.metrics = defaultdict(list)
         self.lock = threading.Lock()
-    
+
     def record(self, operation: str, duration: float):
         """记录操作耗时"""
         with self.lock:
             self.metrics[operation].append(duration)
-    
+
     def get_stats(self, operation: str) -> dict:
         """获取操作统计信息"""
         with self.lock:
             durations = self.metrics[operation]
             if not durations:
                 return {}
-            
+
             return {
                 "count": len(durations),
                 "total": sum(durations),
@@ -463,19 +463,19 @@ class ValidationError(Exception):
 
 class Validator:
     """输入验证器"""
-    
+
     @staticmethod
     def not_none(value: Any, name: str = "value") -> Any:
         if value is None:
             raise ValidationError(f"{name} cannot be None")
         return value
-    
+
     @staticmethod
     def not_empty(value: Union[str, list, dict], name: str = "value") -> Any:
         if not value:
             raise ValidationError(f"{name} cannot be empty")
         return value
-    
+
     @staticmethod
     def instance_of(value: Any, expected_type: Type, name: str = "value") -> Any:
         if not isinstance(value, expected_type):
@@ -484,9 +484,9 @@ class Validator:
                 f"got {type(value).__name__}"
             )
         return value
-    
+
     @staticmethod
-    def in_range(value: Union[int, float], min_val: float, max_val: float, 
+    def in_range(value: Union[int, float], min_val: float, max_val: float,
                 name: str = "value") -> Union[int, float]:
         if not min_val <= value <= max_val:
             raise ValidationError(
@@ -504,7 +504,7 @@ def validate_args(**validators):
             sig = inspect.signature(func)
             bound_args = sig.bind(*args, **kwargs)
             bound_args.apply_defaults()
-            
+
             # 验证参数
             for param_name, validator_func in validators.items():
                 if param_name in bound_args.arguments:
@@ -513,7 +513,7 @@ def validate_args(**validators):
                         validator_func(value, param_name)
                     except ValidationError as e:
                         raise ValidationError(f"In function {func.__name__}: {e}")
-            
+
             return func(*args, **kwargs)
         return wrapper
     return decorator
@@ -535,27 +535,27 @@ def setup_logging(
     format_string: Optional[str] = None
 ) -> logging.Logger:
     """设置统一的日志系统"""
-    
+
     if format_string is None:
         format_string = (
             "%(asctime)s - %(name)s - %(levelname)s - "
             "%(filename)s:%(lineno)d - %(message)s"
         )
-    
+
     # 创建根日志器
     logger = logging.getLogger("pyutils")
     logger.setLevel(getattr(logging, level.upper()))
-    
+
     # 清除现有处理器
     logger.handlers.clear()
-    
+
     # 控制台处理器
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_formatter = logging.Formatter(format_string)
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
-    
+
     # 文件处理器（如果指定）
     if log_file:
         log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -564,7 +564,7 @@ def setup_logging(
         file_formatter = logging.Formatter(format_string)
         file_handler.setFormatter(file_formatter)
         logger.addHandler(file_handler)
-    
+
     return logger
 
 # 默认日志器

@@ -15,7 +15,7 @@ try {
     $env:TWINE_REPOSITORY_URL = $env:TWINE_REPOSITORY_URL_TESTPYPI
     $env:TWINE_USERNAME = $env:TWINE_USERNAME_TESTPYPI
     $env:TWINE_PASSWORD = $env:TWINE_PASSWORD_TESTPYPI
-    
+
     uv run twine upload dist/*
     Write-Host "✓ 成功发布到 TestPyPI" -ForegroundColor Green  # 这行在catch块外执行
     $testPypiSuccess = $true
@@ -35,7 +35,7 @@ try {
     $env:TWINE_REPOSITORY_URL = $env:TWINE_REPOSITORY_URL_TESTPYPI
     $env:TWINE_USERNAME = $env:TWINE_USERNAME_TESTPYPI
     $env:TWINE_PASSWORD = $env:TWINE_PASSWORD_TESTPYPI
-    
+
     $uploadResult = uv run twine upload dist/* 2>&1
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✓ 成功发布到 TestPyPI" -ForegroundColor Green
@@ -116,7 +116,7 @@ Describe "Publish Script Tests" {
             # 测试环境变量加载
         }
     }
-    
+
     Context "Error Handling" {
         It "Should handle TestPyPI upload failures correctly" {
             # 模拟上传失败场景
@@ -138,12 +138,12 @@ from pathlib import Path
 def test_build_and_check_workflow():
     """测试构建和检查流程"""
     result = subprocess.run(
-        ["uv", "build"], 
-        capture_output=True, 
+        ["uv", "build"],
+        capture_output=True,
         text=True
     )
     assert result.returncode == 0
-    
+
     # 验证构建产物
     dist_path = Path("dist")
     assert dist_path.exists()
@@ -192,21 +192,21 @@ function Test-RequiredEnvironmentVariables {
         "TWINE_USERNAME_PYPI",
         "TWINE_PASSWORD_PYPI"
     )
-    
+
     $missing = @()
     foreach ($var in $required) {
         if (-not (Get-Item "env:$var" -ErrorAction SilentlyContinue)) {
             $missing += $var
         }
     }
-    
+
     if ($missing.Count -gt 0) {
         Write-Host "✗ 缺少必需的环境变量：" -ForegroundColor Red
         $missing | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
         Write-Host "请检查 .env 文件配置" -ForegroundColor Yellow
         return $false
     }
-    
+
     return $true
 }
 ```
@@ -224,7 +224,7 @@ function Write-StructuredLog {
         [string]$Message,
         [hashtable]$Data = @{}
     )
-    
+
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logEntry = @{
         timestamp = $timestamp
@@ -232,7 +232,7 @@ function Write-StructuredLog {
         message = $Message
         data = $Data
     } | ConvertTo-Json -Compress
-    
+
     # 输出到控制台和日志文件
     Write-Host "[$timestamp] $Level: $Message" -ForegroundColor $(Get-LogColor $Level)
     Add-Content -Path "logs/publish.log" -Value $logEntry
@@ -249,10 +249,10 @@ function Measure-ScriptSection {
         [string]$SectionName,
         [scriptblock]$ScriptBlock
     )
-    
+
     Write-Host "开始 $SectionName..." -ForegroundColor Blue
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-    
+
     try {
         & $ScriptBlock
         $stopwatch.Stop()
@@ -296,34 +296,34 @@ jobs:
   publish:
     runs-on: windows-latest
     environment: publishing
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
+
     - name: Install uv
       run: pip install uv
-    
+
     - name: Run tests
       run: uv run pytest tests/ -v --cov=src --cov-report=xml
-    
+
     - name: Upload coverage
       uses: codecov/codecov-action@v3
-    
+
     - name: Build package
       run: uv build
-    
+
     - name: Publish to TestPyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
         TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
       run: uv run twine upload dist/*
-    
+
     - name: Publish to PyPI
       if: github.event_name == 'release' && !inputs.test_only
       env:
@@ -395,14 +395,14 @@ if (-not $SkipTests) {
 # 检查是否需要重新构建
 function Test-NeedRebuild {
     $sourceFiles = Get-ChildItem -Recurse src/ -Include "*.py"
-    $lastBuildTime = if (Test-Path "dist") { 
-        (Get-ChildItem "dist" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime 
-    } else { 
-        [DateTime]::MinValue 
+    $lastBuildTime = if (Test-Path "dist") {
+        (Get-ChildItem "dist" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
+    } else {
+        [DateTime]::MinValue
     }
-    
+
     $latestSourceTime = ($sourceFiles | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
-    
+
     return $latestSourceTime -gt $lastBuildTime
 }
 ```
@@ -525,6 +525,6 @@ if ($Clean) {
 
 ---
 
-**文档版本**: 1.0  
-**创建时间**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')  
+**文档版本**: 1.0
+**创建时间**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 **状态**: 📋 待实施
