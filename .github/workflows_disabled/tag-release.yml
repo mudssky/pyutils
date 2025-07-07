@@ -21,7 +21,7 @@ jobs:
       contents: write
       id-token: write
       pull-requests: read
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -62,13 +62,13 @@ jobs:
       run: |
         VERSION="${{ steps.version.outputs.version }}"
         echo "Updating version to: $VERSION"
-        
+
         # 更新 pyproject.toml
         sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
-        
+
         # 更新 __init__.py
         sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" src/pyutils/__init__.py
-        
+
         # 验证更改
         echo "Updated files:"
         grep 'version =' pyproject.toml
@@ -80,7 +80,7 @@ jobs:
         # 获取上一个tag
         CURRENT_TAG="${{ steps.version.outputs.tag }}"
         PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v "$CURRENT_TAG" | head -n1)
-        
+
         if [ -z "$PREVIOUS_TAG" ]; then
           # 如果是第一个tag，从第一个commit开始
           PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
@@ -88,15 +88,15 @@ jobs:
         else
           echo "Comparing $PREVIOUS_TAG to $CURRENT_TAG"
         fi
-        
+
         # 生成changelog
         echo "## 🚀 Release ${{ steps.version.outputs.version }}" > RELEASE_NOTES.md
         echo "" >> RELEASE_NOTES.md
-        
+
         # 获取commit信息并分类
         echo "### 📋 Changes in this release:" >> RELEASE_NOTES.md
         echo "" >> RELEASE_NOTES.md
-        
+
         # 新功能
         FEATURES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^feat" --grep="^feature" 2>/dev/null || true)
         if [ -n "$FEATURES" ]; then
@@ -104,7 +104,7 @@ jobs:
           echo "$FEATURES" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
         fi
-        
+
         # Bug修复
         FIXES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^fix" --grep="^bugfix" 2>/dev/null || true)
         if [ -n "$FIXES" ]; then
@@ -112,7 +112,7 @@ jobs:
           echo "$FIXES" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
         fi
-        
+
         # 文档更新
         DOCS=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^docs" 2>/dev/null || true)
         if [ -n "$DOCS" ]; then
@@ -120,7 +120,7 @@ jobs:
           echo "$DOCS" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
         fi
-        
+
         # 其他更改
         OTHER_CHANGES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --invert-grep --grep="^feat" --grep="^feature" --grep="^fix" --grep="^bugfix" --grep="^docs" 2>/dev/null | head -10 || true)
         if [ -n "$OTHER_CHANGES" ]; then
@@ -128,21 +128,21 @@ jobs:
           echo "$OTHER_CHANGES" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
         fi
-        
+
         # 安装信息
         echo "### 📦 Installation" >> RELEASE_NOTES.md
         echo "\`\`\`bash" >> RELEASE_NOTES.md
         echo "pip install mudssky-pyutils==${{ steps.version.outputs.version }}" >> RELEASE_NOTES.md
         echo "\`\`\`" >> RELEASE_NOTES.md
         echo "" >> RELEASE_NOTES.md
-        
+
         # 完整更改日志
         if [ "$PREVIOUS_TAG" != "$(git rev-list --max-parents=0 HEAD)" ]; then
           echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$CURRENT_TAG" >> RELEASE_NOTES.md
         else
           echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/$CURRENT_TAG" >> RELEASE_NOTES.md
         fi
-        
+
         echo "Generated release notes:"
         cat RELEASE_NOTES.md
 
@@ -150,7 +150,7 @@ jobs:
       run: |
         echo "Building package..."
         uv build
-        
+
         echo "Built packages:"
         ls -la dist/
 

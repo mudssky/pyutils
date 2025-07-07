@@ -66,62 +66,62 @@ jobs:
       run: |
         CURRENT_TAG="${{ steps.version.outputs.tag }}"
         PREVIOUS_TAG="${{ steps.previous_tag.outputs.tag }}"
-        
+
         echo "Generating changelog from $PREVIOUS_TAG to $CURRENT_TAG"
-        
+
         # 生成changelog
         CHANGELOG="## 🚀 Release ${{ steps.version.outputs.version }}\n\n"
-        
+
         # 获取commit信息并分类
         FEATURES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^feat" --grep="^feature" | head -20)
         FIXES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^fix" --grep="^bugfix" | head -20)
         DOCS=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^docs" | head -10)
         CHORES=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --grep="^chore" --grep="^ci" --grep="^build" | head -10)
         OTHERS=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..$CURRENT_TAG --invert-grep --grep="^feat" --grep="^feature" --grep="^fix" --grep="^bugfix" --grep="^docs" --grep="^chore" --grep="^ci" --grep="^build" | head -10)
-        
+
         # 添加新功能
         if [ -n "$FEATURES" ]; then
           CHANGELOG="${CHANGELOG}### ✨ New Features\n$FEATURES\n\n"
         fi
-        
+
         # 添加bug修复
         if [ -n "$FIXES" ]; then
           CHANGELOG="${CHANGELOG}### 🐛 Bug Fixes\n$FIXES\n\n"
         fi
-        
+
         # 添加文档更新
         if [ -n "$DOCS" ]; then
           CHANGELOG="${CHANGELOG}### 📚 Documentation\n$DOCS\n\n"
         fi
-        
+
         # 添加其他更改
         if [ -n "$CHORES" ]; then
           CHANGELOG="${CHANGELOG}### 🔧 Maintenance\n$CHORES\n\n"
         fi
-        
+
         # 添加其他提交
         if [ -n "$OTHERS" ]; then
           CHANGELOG="${CHANGELOG}### 📦 Other Changes\n$OTHERS\n\n"
         fi
-        
+
         # 添加贡献者信息
         CONTRIBUTORS=$(git log --pretty=format:"%an" $PREVIOUS_TAG..$CURRENT_TAG | sort | uniq | tr '\n' ', ' | sed 's/, $//')
         if [ -n "$CONTRIBUTORS" ]; then
           CHANGELOG="${CHANGELOG}### 👥 Contributors\nThanks to: $CONTRIBUTORS\n\n"
         fi
-        
+
         # 添加安装信息
         CHANGELOG="${CHANGELOG}### 📦 Installation\n\`\`\`bash\npip install mudssky-pyutils==${{ steps.version.outputs.version }}\n\`\`\`\n\n"
-        
+
         # 添加完整更改日志链接
         CHANGELOG="${CHANGELOG}**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$CURRENT_TAG"
-        
+
         # 保存到文件和输出
         echo -e "$CHANGELOG" > changelog.md
         echo "changelog<<EOF" >> $GITHUB_OUTPUT
         echo -e "$CHANGELOG" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
-        
+
         echo "Generated changelog:"
         cat changelog.md
 
@@ -214,13 +214,13 @@ jobs:
       run: |
         VERSION="${{ needs.generate-changelog.outputs.version }}"
         echo "Updating version to: $VERSION"
-        
+
         # 更新 pyproject.toml
         sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
-        
+
         # 更新 __init__.py
         sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" src/pyutils/__init__.py
-        
+
         # 验证更改
         echo "Updated pyproject.toml:"
         grep 'version =' pyproject.toml
@@ -231,7 +231,7 @@ jobs:
       run: |
         echo "Building package..."
         uv build
-        
+
         echo "Built packages:"
         ls -la dist/
 
@@ -278,25 +278,25 @@ jobs:
         echo "**Version**: ${{ needs.generate-changelog.outputs.version }}" >> $GITHUB_STEP_SUMMARY
         echo "**Tag**: ${{ needs.generate-changelog.outputs.version && format('v{0}', needs.generate-changelog.outputs.version) || github.ref_name }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        
+
         if [ "${{ needs.test.result }}" = "success" ]; then
           echo "✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
         else
           echo "❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
         fi
-        
+
         if [ "${{ needs.create-release.result }}" = "success" ]; then
           echo "✅ **GitHub Release**: Created" >> $GITHUB_STEP_SUMMARY
         else
           echo "❌ **GitHub Release**: Failed" >> $GITHUB_STEP_SUMMARY
         fi
-        
+
         if [ "${{ needs.publish.result }}" = "success" ]; then
           echo "✅ **PyPI Publication**: Success" >> $GITHUB_STEP_SUMMARY
         else
           echo "❌ **PyPI Publication**: Failed" >> $GITHUB_STEP_SUMMARY
         fi
-        
+
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**Release URL**: https://github.com/${{ github.repository }}/releases/tag/${{ needs.generate-changelog.outputs.version && format('v{0}', needs.generate-changelog.outputs.version) || github.ref_name }}" >> $GITHUB_STEP_SUMMARY
         echo "**PyPI URL**: https://pypi.org/project/mudssky-pyutils/${{ needs.generate-changelog.outputs.version }}/" >> $GITHUB_STEP_SUMMARY
