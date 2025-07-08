@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -99,13 +99,8 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'Deploy documentation to GitHub Pages'
 
-      - name: Upload build artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-files
-          path: dist/
-          retention-days: 30
+      # Build artifacts are automatically uploaded to GitHub Release by @semantic-release/github
+      # No need for separate artifact upload
 
       - name: Notify on success
         if: success()
