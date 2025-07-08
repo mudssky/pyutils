@@ -8,7 +8,7 @@ app = typer.Typer()
 console = Console()
 
 
-@app.command()  # type: ignore[misc]
+@app.command()
 def main() -> None:
     """Console script for pyutils."""
     console.print("Replace this message by putting your code into pyutils.cli.main")

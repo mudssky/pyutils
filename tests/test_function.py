@@ -375,7 +375,7 @@ class TestWithRetry:
 
         assert call_count == 2  # Should stop on TypeError
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_retry_async_function(self):
         """Test retry with async function."""
         call_count = 0
@@ -396,7 +396,7 @@ class TestWithRetry:
 class TestPollingController:
     """Test PollingController and create_polling."""
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_polling_basic(self):
         """Test basic polling functionality."""
         call_count = 0
@@ -421,7 +421,7 @@ class TestPollingController:
         # Controller should be stopped after reaching max_executions
         assert status["status"] == "stopped"
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_polling_with_stop_condition(self):
         """Test polling with stop condition."""
         call_count = 0
@@ -444,7 +444,7 @@ class TestPollingController:
         assert status["execution_count"] == 2
         assert call_count == 2
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_polling_with_error_handling(self):
         """Test polling with error handling."""
         call_count = 0
@@ -479,7 +479,7 @@ class TestPollingController:
         assert status["execution_count"] >= 1  # At least one successful execution
         assert call_count >= 3  # At least 3 attempts (2 failures + 1 success)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_polling_stop_manually(self):
         """Test manually stopping polling."""
         call_count = 0
@@ -507,7 +507,7 @@ class TestPollingController:
         status = controller.status()
         assert status["status"] == "stopped"
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_polling_with_progress_callback(self):
         """Test polling with progress callback."""
         call_count = 0

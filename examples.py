@@ -13,8 +13,15 @@ import sys
 # 添加 src 目录到 Python 路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-# ruff: noqa: E402
-from pyutils import array, async_utils, bytes, function, math, object, string
+from pyutils import (
+    array,
+    async_utils,
+    bytes,
+    function,
+    math,
+    object,
+    string,
+)
 
 
 def demo_array_functions():
