@@ -262,7 +262,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const comment = "## 📚 Documentation Preview\n\n✅ Documentation has been built successfully!\n\n**Preview URL**: ${{ steps.deployment.outputs.page_url }}\n\n*Documentation will be available at the above URL once this PR is merged to main.*";
+          const comment = "## 📚 Documentation Preview\n\n✅ Documentation has been built successfully!\n\n📁 **Artifact**: The documentation has been uploaded as an artifact named `documentation`\n\n*Documentation will be deployed to GitHub Pages once this PR is merged to main.*\n\n🔗 **Live URL**: https://mudssky.github.io/pyutils/ (available after merge)";
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
