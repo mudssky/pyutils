@@ -64,6 +64,9 @@ test-cov: ## run tests with coverage
 	uv run pytest --cov=src --cov-report=html --cov-report=term
 	$(BROWSER) htmlcov/index.html
 
+test-cov-console:
+	uv run pytest --cov=src --cov-report=term
+
 benchmark: ## run performance benchmarks
 	uv run python benchmark.py
 
@@ -196,7 +199,7 @@ semantic-release-dry: ## preview semantic-release without publishing
 install: ## install the package and dependencies with uv
 	uv sync --all-extras --dev
 
-ci: type-check format lint security test-cov ## run all CI checks
+ci: type-check format lint security test-cov-console ## run all CI checks
 	@echo "All CI checks passed!"
 
 dev-setup: install pre-commit ## setup development environment
