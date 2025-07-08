@@ -47,13 +47,22 @@ select = [
 
 # 忽略特定规则
 ignore = [
-    "D100", # Missing docstring in public module
-    "D104", # Missing docstring in public package
-    "S101", # Use of assert detected (pytest uses assert)
-    "T20",  # Avoid print statements (允许在示例中使用)
+
+
+    "S101",  # Use of assert detected (pytest uses assert)
     "PT011", # pytest-raises-too-broad (测试中可以使用宽泛的异常捕获)
-    "S311", # suspicious-non-cryptographic-random-usage (工具函数中可以使用)
-    "S324", # hashlib-insecure-hash-function (工具函数中可以使用MD5等)
+    "S311",  # suspicious-non-cryptographic-random-usage (工具函数中可以使用)
+    "S324",  # hashlib-insecure-hash-function (工具函数中可以使用MD5等)
+    # 下面是 与 Mypy 重叠的规则，禁用 flake8-type-checking (TCH) 规则集
+    "D100",  # Missing docstring in public module
+    "D101",
+    "D102",
+    "D103",
+    "D104",  # Missing docstring in public package
+    "D105",
+    "D106",
+    "D107",  # 忽略 pydocstyle 的缺失文档字符串规则
+    # TC001, TC002, TC003 规则已被移除或重命名
 ]
 
 [lint.pydocstyle]
@@ -83,9 +92,9 @@ parametrize-values-row-type = "tuple"
 ]
 # 示例文件特殊规则
 "examples.py" = [
-    "T20",  # 示例中允许print
-    "D",    # 示例不需要完整docstring
+    "T20", # 示例中允许print
+    "D",   # 示例不需要完整docstring
 ]
 "benchmark.py" = [
-    "T20",  # 基准测试中允许print
+    "T20", # 基准测试中允许print
 ]

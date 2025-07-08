@@ -24,7 +24,7 @@
 
     # Windows
     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-    
+
     # macOS/Linux
     curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -55,13 +55,13 @@
 
     # 代码格式化
     uv run ruff format src/ tests/
-    
+
     # 代码检查和自动修复
     uv run ruff check --fix src/ tests/
-    
+
     # 类型检查
     uv run mypy src/
-    
+
     # 安全检查
     uv run bandit -r src/
 
@@ -72,13 +72,13 @@
 
     # 运行所有测试
     uv run pytest tests/
-    
+
     # 运行测试并生成覆盖率报告
     uv run pytest --cov=src --cov-report=html --cov-report=term
-    
+
     # 运行特定测试
     uv run pytest tests/test_string.py
-    
+
     # 运行性能基准测试
     uv run python benchmark.py
 
@@ -91,13 +91,13 @@
 
     # 查看所有可用命令
     make help
-    
+
     # 快速检查（格式化 + 检查 + 类型检查）
     make quick-check
-    
+
     # 运行所有 CI 检查
     make ci
-    
+
     # 设置开发环境
     make dev-setup
 
@@ -146,9 +146,9 @@
 .. code-block::
 
     <type>[optional scope]: <description>
-    
+
     [optional body]
-    
+
     [optional footer(s)]
 
 类型说明：
@@ -167,11 +167,11 @@
 .. code-block::
 
     feat(string): add fuzzy matching function
-    
+
     fix(array): handle empty array in chunk function
-    
+
     docs: update installation guide for uv
-    
+
     test(math): add tests for clamp function edge cases
 
 代码规范
@@ -197,29 +197,29 @@
 .. code-block:: python
 
     from typing import List, Optional, TypeVar, Union
-    
+
     T = TypeVar('T')
-    
+
     def chunk(array: List[T], size: int) -> List[List[T]]:
         """将数组分割成指定大小的块。
-        
+
         Args:
             array: 要分割的数组
             size: 每块的大小
-            
+
         Returns:
             分割后的数组列表
-            
+
         Raises:
             ValueError: 当 size 小于等于 0 时
-            
+
         Examples:
             >>> chunk([1, 2, 3, 4, 5], 2)
             [[1, 2], [3, 4], [5]]
         """
         if size <= 0:
             raise ValueError("Size must be positive")
-        
+
         return [array[i:i + size] for i in range(0, len(array), size)]
 
 文档规范
@@ -247,20 +247,20 @@
 
     import pytest
     from pyutils.array import chunk
-    
+
     class TestChunk:
         """测试 chunk 函数。"""
-        
+
         def test_chunk_normal_case(self):
             """测试正常情况。"""
             result = chunk([1, 2, 3, 4, 5], 2)
             assert result == [[1, 2], [3, 4], [5]]
-        
+
         def test_chunk_empty_array(self):
             """测试空数组。"""
             result = chunk([], 2)
             assert result == []
-        
+
         @pytest.mark.parametrize("array,size,expected", [
             ([1, 2, 3, 4], 2, [[1, 2], [3, 4]]),
             ([1, 2, 3, 4, 5], 3, [[1, 2, 3], [4, 5]]),
@@ -269,7 +269,7 @@
         def test_chunk_parametrized(self, array, size, expected):
             """参数化测试。"""
             assert chunk(array, size) == expected
-        
+
         def test_chunk_invalid_size(self):
             """测试无效的 size 参数。"""
             with pytest.raises(ValueError, match="Size must be positive"):
@@ -312,7 +312,7 @@
 
     # 构建 HTML 文档
     make docs
-    
+
     # 或者直接使用 Sphinx
     cd docs
     uv run sphinx-build -b html . _build/html
@@ -343,7 +343,7 @@
 
     # 构建发布包
     make build
-    
+
     # 发布到 PyPI
     make release
 

@@ -51,15 +51,15 @@ pyutils 文档
 基本使用示例::
 
     from pyutils import array, string, math
-    
+
     # 数组操作
     chunks = array.chunk([1, 2, 3, 4, 5, 6], 2)
     # [[1, 2], [3, 4], [5, 6]]
-    
+
     # 字符串处理
     camel = string.camel_case("hello_world")
     # "helloWorld"
-    
+
     # 数学计算
     clamped = math.clamp(150, 0, 100)
     # 100

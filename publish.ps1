@@ -45,7 +45,7 @@ function Test-RequiredEnvironmentVariables {
         "TWINE_USERNAME_PYPI",
         "TWINE_PASSWORD_PYPI"
     )
-    
+
     $missing = @()
     foreach ($var in $required) {
         $value = [Environment]::GetEnvironmentVariable($var)
@@ -53,14 +53,14 @@ function Test-RequiredEnvironmentVariables {
             $missing += $var
         }
     }
-    
+
     if ($missing.Count -gt 0) {
         Write-Host "✗ 缺少必需的环境变量：" -ForegroundColor Red
         $missing | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
         Write-Host "请检查 .env 文件配置，参考 .env.template 文件" -ForegroundColor Yellow
         return $false
     }
-    
+
     # 验证用户名是否正确设置为 __token__
     $usernameVars = @("TWINE_USERNAME", "TWINE_USERNAME_TESTPYPI", "TWINE_USERNAME_PYPI")
     foreach ($var in $usernameVars) {
@@ -71,7 +71,7 @@ function Test-RequiredEnvironmentVariables {
             return $false
         }
     }
-    
+
     Write-Host "✓ 环境变量验证通过" -ForegroundColor Green
     return $true
 }
@@ -212,7 +212,7 @@ if ($TestOnly) {
         $env:TWINE_REPOSITORY_URL = $env:TWINE_REPOSITORY_URL_TESTPYPI
         $env:TWINE_USERNAME = $env:TWINE_USERNAME_TESTPYPI
         $env:TWINE_PASSWORD = $env:TWINE_PASSWORD_TESTPYPI
-        
+
         uv run twine upload dist/*
         Write-Host "✓ 成功发布到 TestPyPI" -ForegroundColor Green
         Write-Host "测试安装命令：" -ForegroundColor Yellow
@@ -231,7 +231,7 @@ if ($TestOnly) {
         $env:TWINE_REPOSITORY_URL = $env:TWINE_REPOSITORY_URL_TESTPYPI
         $env:TWINE_USERNAME = $env:TWINE_USERNAME_TESTPYPI
         $env:TWINE_PASSWORD = $env:TWINE_PASSWORD_TESTPYPI
-        
+
         $uploadResult = uv run twine upload dist/* 2>&1
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✓ 成功发布到 TestPyPI" -ForegroundColor Green
@@ -277,7 +277,7 @@ if ($TestOnly) {
         $env:TWINE_REPOSITORY_URL = $env:TWINE_REPOSITORY_URL_PYPI
         $env:TWINE_USERNAME = $env:TWINE_USERNAME_PYPI
         $env:TWINE_PASSWORD = $env:TWINE_PASSWORD_PYPI
-        
+
         $uploadResult = uv run twine upload dist/* 2>&1
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✓ 成功发布到正式 PyPI" -ForegroundColor Green

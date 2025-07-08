@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: T201
 """Performance benchmark for collection module functions."""
 
 import time
@@ -7,13 +8,11 @@ from typing import Any
 from src.pyutils.collection import (
     at,
     every,
-    fill,
     find_index,
     flat_map,
     group_by,
     includes,
     some,
-    splice,
     to_reversed,
     to_sorted,
 )
@@ -36,7 +35,7 @@ def main() -> None:
     # Test data
     small_list = list(range(100))
     medium_list = list(range(1000))
-    large_list = list(range(10000))
+    list(range(10000))
 
     benchmarks = [
         ("includes (small)", includes, small_list, 50),

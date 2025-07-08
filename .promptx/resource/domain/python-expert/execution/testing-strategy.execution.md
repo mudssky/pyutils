@@ -27,13 +27,13 @@
 
 <process>
   ## Python测试策略实施
-  
+
   ### 测试环境搭建
   ```bash
   # 1. 安装测试框架和工具
   pip install pytest pytest-cov pytest-mock pytest-xdist
   pip install factory-boy faker hypothesis
-  
+
   # 2. 创建测试配置文件
   # pytest.ini 或 pyproject.toml
   [tool.pytest.ini_options]
@@ -42,7 +42,7 @@
   python_classes = ["Test*"]
   python_functions = ["test_*"]
   addopts = "--cov=src --cov-report=html --cov-report=term"
-  
+
   # 3. 设置测试目录结构
   tests/
   ├── unit/           # 单元测试
@@ -51,29 +51,29 @@
   ├── fixtures/      # 测试数据
   └── conftest.py    # 测试配置
   ```
-  
+
   ### 单元测试编写
   ```python
   # 1. 基础单元测试
   import pytest
   from unittest.mock import Mock, patch
-  
+
   def test_function_with_valid_input():
       # Given
       input_data = "valid_input"
       expected_result = "expected_output"
-      
+
       # When
       result = my_function(input_data)
-      
+
       # Then
       assert result == expected_result
-  
+
   # 2. 异常测试
   def test_function_with_invalid_input():
       with pytest.raises(ValueError, match="Invalid input"):
           my_function("invalid_input")
-  
+
   # 3. 参数化测试
   @pytest.mark.parametrize("input_val,expected", [
       ("input1", "output1"),
@@ -82,7 +82,7 @@
   ])
   def test_function_with_multiple_inputs(input_val, expected):
       assert my_function(input_val) == expected
-  
+
   # 4. Mock测试
   @patch('module.external_service')
   def test_function_with_external_dependency(mock_service):
@@ -91,7 +91,7 @@
       assert result == "expected_result"
       mock_service.assert_called_once()
   ```
-  
+
   ### 集成测试策略
   ```python
   # 1. 数据库集成测试
@@ -102,13 +102,13 @@
       yield db
       # 清理测试数据库
       db.drop_all()
-  
+
   def test_user_creation_integration(test_db):
       user_service = UserService(test_db)
       user = user_service.create_user("test@example.com")
       assert user.email == "test@example.com"
       assert user.id is not None
-  
+
   # 2. API集成测试
   def test_api_endpoint_integration(test_client):
       response = test_client.post("/api/users", json={
@@ -118,57 +118,57 @@
       assert response.status_code == 201
       assert response.json()["email"] == "test@example.com"
   ```
-  
+
   ### 测试数据管理
   ```python
   # 1. 使用Factory Boy创建测试数据
   import factory
   from factory import Faker
-  
+
   class UserFactory(factory.Factory):
       class Meta:
           model = User
-      
+
       email = Faker('email')
       name = Faker('name')
       age = Faker('random_int', min=18, max=80)
-  
+
   # 2. 使用Fixture提供测试数据
   @pytest.fixture
   def sample_user():
       return UserFactory()
-  
+
   @pytest.fixture
   def user_list():
       return UserFactory.create_batch(5)
-  
+
   # 3. 使用Hypothesis进行属性测试
   from hypothesis import given, strategies as st
-  
+
   @given(st.text(min_size=1, max_size=100))
   def test_string_processing(input_string):
       result = process_string(input_string)
       assert isinstance(result, str)
       assert len(result) >= 0
   ```
-  
+
   ### 测试执行和报告
   ```bash
   # 1. 运行所有测试
   pytest
-  
+
   # 2. 运行特定测试
   pytest tests/unit/test_user.py::test_user_creation
-  
+
   # 3. 并行执行测试
   pytest -n auto
-  
+
   # 4. 生成覆盖率报告
   pytest --cov=src --cov-report=html
-  
+
   # 5. 运行性能测试
   pytest --benchmark-only
-  
+
   # 6. 生成测试报告
   pytest --html=report.html --self-contained-html
   ```
@@ -176,25 +176,25 @@
 
 <criteria>
   ## 测试质量标准
-  
+
   ### 覆盖率要求
   - **语句覆盖率** ≥ 90%
   - **分支覆盖率** ≥ 85%
   - **函数覆盖率** = 100%
   - **关键路径覆盖率** = 100%
-  
+
   ### 测试性能指标
   - **单元测试执行时间** ≤ 10秒
   - **集成测试执行时间** ≤ 2分钟
   - **测试成功率** ≥ 99%
   - **测试稳定性** 无随机失败
-  
+
   ### 测试代码质量
   - **测试可读性** 清晰易懂
   - **测试维护性** 易于修改
   - **测试独立性** 无相互依赖
   - **测试完整性** 覆盖所有场景
-  
+
   ### 测试文档要求
   - **测试计划** 明确测试策略
   - **测试用例** 详细测试场景

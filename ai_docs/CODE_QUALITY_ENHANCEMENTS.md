@@ -173,26 +173,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
         version: "latest"
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       run: uv python install ${{ matrix.python-version }}
-    
+
     - name: Install dependencies
       run: uv sync --group dev
-    
+
     - name: Run tests
       run: uv run pytest
-    
+
     - name: Run linting
       run: |
         uv run ruff check src/
         uv run mypy src/
-    
+
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
@@ -234,17 +234,17 @@ P = ParamSpec('P')
 
 def chunk(array: List[T], size: int) -> List[List[T]]:
     """将数组分块。
-    
+
     Args:
         array: 要分块的数组
         size: 每块的大小
-        
+
     Returns:
         分块后的二维数组
-        
+
     Raises:
         ValueError: 当size <= 0时
-        
+
     Example:
         >>> chunk([1, 2, 3, 4, 5], 2)
         [[1, 2], [3, 4], [5]]
@@ -315,7 +315,7 @@ def benchmark(func: Callable, *args, iterations: int = 1000) -> dict:
         func(*args)
         end = time.perf_counter()
         times.append(end - start)
-    
+
     return {
         'mean': statistics.mean(times),
         'median': statistics.median(times),

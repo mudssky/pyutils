@@ -30,42 +30,42 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
-        
+
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
         version: "latest"
-        
+
     - name: Set up Python
       run: uv python install 3.11
-      
+
     - name: Install dependencies
       run: uv sync --dev
-      
+
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        
+
     - name: Get current version
       id: current_version
       run: |
         CURRENT_VERSION=$(uv run python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
         echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
         echo "Current version: $CURRENT_VERSION"
-        
+
     - name: Calculate new version
       id: new_version
       run: |
         CURRENT="${{ steps.current_version.outputs.current }}"
         TYPE="${{ github.event.inputs.version_type }}"
-        
+
         # Parse version components
         IFS='.' read -ra VERSION_PARTS <<< "$CURRENT"
         MAJOR=${VERSION_PARTS[0]}
         MINOR=${VERSION_PARTS[1]}
         PATCH=${VERSION_PARTS[2]}
-        
+
         # Bump version based on type
         case $TYPE in
           "major")
@@ -81,42 +81,42 @@ jobs:
             PATCH=$((PATCH + 1))
             ;;
         esac
-        
+
         NEW_VERSION="$MAJOR.$MINOR.$PATCH"
         echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
         echo "New version: $NEW_VERSION"
-        
+
     - name: Update pyproject.toml
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         sed -i "s/version = \".*\"/version = \"$NEW_VERSION\"/" pyproject.toml
-        
+
     - name: Update __init__.py
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/pyutils/__init__.py
-        
+
     - name: Run tests to verify changes
       run: |
         uv run pytest tests/ -v --tb=short
-        
+
     - name: Create version bump branch
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         BRANCH_NAME="version-bump-v$NEW_VERSION"
         git checkout -b "$BRANCH_NAME"
         echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
-        
+
     - name: Commit version bump
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         git add pyproject.toml src/pyutils/__init__.py
         git commit -m "chore: bump version to $NEW_VERSION"
-        
+
     - name: Push version bump branch
       run: |
         git push origin "${{ env.branch_name }}"
-        
+
     - name: Create Pull Request
       id: create_pr
       uses: actions/github-script@v7
@@ -126,7 +126,7 @@ jobs:
           const currentVersion = '${{ steps.current_version.outputs.current }}';
           const versionType = '${{ github.event.inputs.version_type }}';
           const branchName = process.env.branch_name;
-          
+
           const prTitle = 'chore: bump version to v' + newVersion;
           const prBody = '## Version Bump to v' + newVersion + '\n\n' +
                         'This PR bumps the version from ' + currentVersion + ' to ' + newVersion + '.\n\n' +
@@ -136,7 +136,7 @@ jobs:
                         '### Type\n' +
                         '- **Bump Type**: ' + versionType + '\n\n' +
                         'This PR will automatically trigger CI checks. Once merged, a GitHub release will be created if enabled.';
-          
+
           const { data: pr } = await github.rest.pulls.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -146,12 +146,12 @@ jobs:
             body: prBody,
             draft: false
           });
-          
+
           console.log('Created PR #' + pr.number + ': ' + pr.html_url);
           core.setOutput('pr_number', pr.number);
           core.setOutput('pr_url', pr.html_url);
           return pr.number;
-          
+
     - name: Wait for CI checks
       uses: actions/github-script@v7
       with:
@@ -160,43 +160,43 @@ jobs:
           const maxWaitTime = 10 * 60 * 1000; // 10 minutes
           const checkInterval = 30 * 1000; // 30 seconds
           let waitTime = 0;
-          
+
           console.log('Waiting for CI checks on PR #' + prNumber + '...');
-          
+
           while (waitTime < maxWaitTime) {
             const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber
             });
-            
+
             const { data: checks } = await github.rest.checks.listForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: pr.head.sha
             });
-            
+
             const requiredChecks = ['test', 'lint', 'docs'];
             const checkStatuses = {};
-            
+
             for (const check of checks.check_runs) {
               if (requiredChecks.includes(check.name)) {
                 checkStatuses[check.name] = check.status;
               }
             }
-            
+
             console.log('Check statuses:', checkStatuses);
-            
-            const allCompleted = requiredChecks.every(name => 
+
+            const allCompleted = requiredChecks.every(name =>
               checkStatuses[name] === 'completed'
             );
-            
+
             if (allCompleted) {
               const allPassed = requiredChecks.every(name => {
                 const check = checks.check_runs.find(c => c.name === name);
                 return check && check.conclusion === 'success';
               });
-              
+
               if (allPassed) {
                 console.log('All required checks passed!');
                 break;
@@ -204,21 +204,21 @@ jobs:
                 throw new Error('Some required checks failed. Please check the PR for details.');
               }
             }
-            
+
             await new Promise(resolve => setTimeout(resolve, checkInterval));
             waitTime += checkInterval;
           }
-          
+
           if (waitTime >= maxWaitTime) {
             throw new Error('Timeout waiting for CI checks to complete');
           }
-          
+
     - name: Auto-merge PR
       uses: actions/github-script@v7
       with:
         script: |
           const prNumber = ${{ steps.create_pr.outputs.pr_number }};
-          
+
           try {
             await github.rest.pulls.merge({
               owner: context.repo.owner,
@@ -227,46 +227,46 @@ jobs:
               commit_title: 'chore: bump version to v${{ steps.new_version.outputs.new }}',
               merge_method: 'squash'
             });
-            
+
             console.log('Successfully merged PR #' + prNumber);
           } catch (error) {
             console.error('Failed to merge PR:', error.message);
             throw error;
           }
-          
+
     - name: Create and push tag
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         # Switch back to main and pull the merged changes
         git checkout main
         git pull origin main
-        
+
         # Create and push tag
         git tag "v$NEW_VERSION"
         git push origin "v$NEW_VERSION"
-        
+
     - name: Generate changelog
       id: changelog
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
-        
+
         # Get commits since last version
         CHANGELOG=$(git log --pretty=format:"- %s" v$CURRENT_VERSION..HEAD --no-merges | head -20)
-        
+
         # Create changelog content
         cat > CHANGELOG_TEMP.md << EOF
         ## What's Changed
-        
+
         $CHANGELOG
-        
+
         **Full Changelog**: https://github.com/${{ github.repository }}/compare/v$CURRENT_VERSION...v$NEW_VERSION
         EOF
-        
+
         echo "content<<EOF" >> $GITHUB_OUTPUT
         cat CHANGELOG_TEMP.md >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
-        
+
     - name: Create GitHub Release
       if: github.event.inputs.create_release == 'true'
       uses: actions/create-release@v1
@@ -278,7 +278,7 @@ jobs:
         body: ${{ steps.changelog.outputs.content }}
         draft: false
         prerelease: false
-        
+
     - name: Summary
       run: |
         echo "## Version Bump Summary" >> $GITHUB_STEP_SUMMARY

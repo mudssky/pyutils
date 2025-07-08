@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+      pages: write
+      actions: read
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/mudssky-pyutils
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install semantic-release dependencies
+        run: |
+          npm install -g semantic-release
+          npm install -g @semantic-release/changelog
+          npm install -g @semantic-release/exec
+          npm install -g @semantic-release/git
+          npm install -g @semantic-release/github
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+
+      - name: Install Python dependencies
+        run: |
+          uv sync --dev
+          uv pip install build twine
+
+      - name: Run linting
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy .
+
+      - name: Run tests
+        run: |
+          uv run pytest tests/ -v --tb=short
+
+      - name: Build documentation
+        run: |
+          cd docs
+          uv run sphinx-build -b html . _build/html
+          # Create .nojekyll file to allow files with underscores
+          touch _build/html/.nojekyll
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          # Configure git for semantic-release
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Configure PyPI authentication
+          echo "[pypi]" > ~/.pypirc
+          echo "username = __token__" >> ~/.pypirc
+          echo "password = $PYPI_TOKEN" >> ~/.pypirc
+
+          # Run semantic-release
+          npx semantic-release
+
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build/html
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy documentation to GitHub Pages'
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist/
+          retention-days: 30
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "🎉 Release completed successfully!"
+          echo "📦 Package published to PyPI"
+          echo "🏷️ Git tag created"
+          echo "📝 Changelog updated"
+          echo "📚 Documentation deployed to GitHub Pages"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Release failed!"
+          echo "Please check the logs for details."

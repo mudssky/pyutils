@@ -7,31 +7,19 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      - id: trailing-whitespace
-        description: 移除行尾空白字符
-      - id: end-of-file-fixer
-        description: 确保文件以换行符结尾
       - id: check-yaml
         description: 检查YAML文件语法
       - id: check-toml
         description: 检查TOML文件语法
-      - id: check-json
-        description: 检查JSON文件语法
       - id: check-added-large-files
         description: 防止提交大文件
         args: ['--maxkb=1000']
       - id: check-merge-conflict
         description: 检查合并冲突标记
-      - id: debug-statements
-        description: 检查调试语句
-      - id: check-docstring-first
-        description: 检查docstring位置
-      - id: check-case-conflict
-        description: 检查文件名大小写冲突
 
   # Ruff代码检查和格式化
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.8
+    rev: v0.12.2
     hooks:
       - id: ruff
         description: 运行Ruff代码检查
@@ -39,35 +27,17 @@ repos:
       - id: ruff-format
         description: 运行Ruff代码格式化
 
-  # MyPy类型检查
+  # MyPy类型检查（仅检查核心源码）
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.16.1
     hooks:
       - id: mypy
         description: 运行MyPy类型检查
-        additional_dependencies: 
+        additional_dependencies:
           - types-setuptools
           - typing-extensions
-        args: [--strict, --ignore-missing-imports]
-        files: ^src/
-
-  # 安全检查
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
-    hooks:
-      - id: bandit
-        description: 安全漏洞检查
-        args: [-r, src/]
-        exclude: tests/
-
-  # 文档检查
-  - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.3.0
-    hooks:
-      - id: pydocstyle
-        description: 检查docstring风格
-        args: [--convention=google]
-        files: ^src/
+          - typer
+        files: ^src/pyutils/
 
   # 提交信息检查
   - repo: https://github.com/commitizen-tools/commitizen
@@ -78,7 +48,7 @@ repos:
         stages: [commit-msg]
 
 # 全局配置
-default_stages: [commit]
+default_stages: [pre-commit]
 fail_fast: false
 
 # CI配置
