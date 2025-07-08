@@ -1,6 +1,5 @@
 """Console script for pyutils."""
 
-
 import typer
 from rich.console import Console
 
