@@ -67,9 +67,12 @@ test-cov: ## run tests with coverage
 benchmark: ## run performance benchmarks
 	uv run python benchmark.py
 
-pre-commit: ## install pre-commit hooks
+pre-commit-install: ## install pre-commit hooks
 	uv run pre-commit install
 	uv run pre-commit install --hook-type commit-msg
+
+pre-commit: ## run pre-commit hooks
+	uv run pre-commit run --all-files
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/pyutils.rst
@@ -193,7 +196,7 @@ semantic-release-dry: ## preview semantic-release without publishing
 install: ## install the package and dependencies with uv
 	uv sync --all-extras --dev
 
-ci: format lint type-check security test-cov ## run all CI checks
+ci: type-check format lint security test-cov ## run all CI checks
 	@echo "All CI checks passed!"
 
 dev-setup: install pre-commit ## setup development environment
