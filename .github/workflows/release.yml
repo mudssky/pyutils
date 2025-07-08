@@ -74,17 +74,13 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           # Configure git for semantic-release
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Configure PyPI authentication
-          echo "[pypi]" > ~/.pypirc
-          echo "username = __token__" >> ~/.pypirc
-          echo "password = $PYPI_TOKEN" >> ~/.pypirc
-
+          
           # Run semantic-release
           npx semantic-release
 
