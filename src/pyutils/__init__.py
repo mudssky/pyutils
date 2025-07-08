@@ -9,7 +9,7 @@ Ported from the jsutils JavaScript library to provide similar functionality in P
 
 __author__ = """mudssky"""
 __email__ = "mudssky@gmail.com"
-__version__ = "0.1.0"
+__version__ = "0.3.0"
 
 # Import all modules
 from . import (
