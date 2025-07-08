@@ -353,113 +353,114 @@ jobs:
     - name: Minimize uv cache
       run: uv cache prune --ci
 
-  publish:
-    name: Publish to PyPI
-    runs-on: ubuntu-latest
-    needs: [test, lint]
-    if: github.event_name == 'release' && github.event.action == 'published'
-    environment:
-      name: pypi
-      url: https://pypi.org/p/mudssky-pyutils
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@v2
-
-    - name: Set up Python
-      run: uv python install 3.11
-
-    - name: Install dependencies
-      run: uv sync --dev
-
-    - name: Extract version from tag
-      id: version
-      run: |
-        TAG_NAME="${{ github.ref_name }}"
-        VERSION=${TAG_NAME#v}  # Remove 'v' prefix
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Publishing version: $VERSION"
-
-    - name: Update version in files
-      run: |
-        VERSION="${{ steps.version.outputs.version }}"
-        echo "Updating version to: $VERSION"
-
-        # Update pyproject.toml
-        sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
-
-        # Update __init__.py
-        sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" src/pyutils/__init__.py
-
-        # Verify changes
-        echo "Updated pyproject.toml:"
-        grep 'version =' pyproject.toml
-        echo "Updated __init__.py:"
-        grep '__version__' src/pyutils/__init__.py
-
-    - name: Run final tests
-      run: |
-        echo "Running final tests before publication..."
-        uv run pytest tests/ -v --tb=short
-
-    - name: Build package
-      run: |
-        echo "Building package..."
-        uv build
-
-        # List built packages
-        echo "Built packages:"
-        ls -la dist/
-
-    - name: Verify package
-      run: |
-        echo "Verifying package integrity..."
-        uv run twine check dist/*
-
-        # Check package contents
-        echo "Package contents:"
-        uv run python -m tarfile -l dist/*.tar.gz
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist-${{ steps.version.outputs.version }}
-        path: dist/
-        retention-days: 90
-
-    - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        packages-dir: dist/
-        verbose: true
-
-    - name: Verify PyPI publication
-      run: |
-        VERSION="${{ steps.version.outputs.version }}"
-        echo "Package published to PyPI!"
-        echo "Version: $VERSION"
-        echo "PyPI URL: https://pypi.org/project/mudssky-pyutils/$VERSION/"
-        echo "Install command: pip install mudssky-pyutils==$VERSION"
-
-        # Wait a bit for PyPI to propagate
-        sleep 30
-
-        # Try to install the published package
-        pip install "mudssky-pyutils==$VERSION" --no-deps
-        python -c "import pyutils; print(f'Successfully installed version: {pyutils.__version__}')"
+  # Disabled: Publication is now handled by semantic-release in release.yml
+  # publish:
+  #   name: Publish to PyPI
+  #   runs-on: ubuntu-latest
+  #   needs: [test, lint]
+  #   if: github.event_name == 'release' && github.event.action == 'published'
+  #   environment:
+  #     name: pypi
+  #     url: https://pypi.org/p/mudssky-pyutils
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #     with:
+  #       fetch-depth: 0
+  #
+  #   - name: Install uv
+  #     uses: astral-sh/setup-uv@v2
+  #
+  #   - name: Set up Python
+  #     run: uv python install 3.11
+  #
+  #   - name: Install dependencies
+  #     run: uv sync --dev
+  #
+  #   - name: Extract version from tag
+  #     id: version
+  #     run: |
+  #       TAG_NAME="${{ github.ref_name }}"
+  #       VERSION=${TAG_NAME#v}  # Remove 'v' prefix
+  #       echo "version=$VERSION" >> $GITHUB_OUTPUT
+  #       echo "Publishing version: $VERSION"
+  #
+  #   - name: Update version in files
+  #     run: |
+  #       VERSION="${{ steps.version.outputs.version }}"
+  #       echo "Updating version to: $VERSION"
+  #
+  #       # Update pyproject.toml
+  #       sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+  #
+  #       # Update __init__.py
+  #       sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" src/pyutils/__init__.py
+  #
+  #       # Verify changes
+  #       echo "Updated pyproject.toml:"
+  #       grep 'version =' pyproject.toml
+  #       echo "Updated __init__.py:"
+  #       grep '__version__' src/pyutils/__init__.py
+  #
+  #   - name: Run final tests
+  #     run: |
+  #       echo "Running final tests before publication..."
+  #       uv run pytest tests/ -v --tb=short
+  #
+  #   - name: Build package
+  #     run: |
+  #       echo "Building package..."
+  #       uv build
+  #
+  #       # List built packages
+  #       echo "Built packages:"
+  #       ls -la dist/
+  #
+  #   - name: Verify package
+  #     run: |
+  #       echo "Verifying package integrity..."
+  #       uv run twine check dist/*
+  #
+  #       # Check package contents
+  #       echo "Package contents:"
+  #       uv run python -m tarfile -l dist/*.tar.gz
+  #
+  #   - name: Upload build artifacts
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: dist-${{ steps.version.outputs.version }}
+  #       path: dist/
+  #       retention-days: 90
+  #
+  #   - name: Publish to PyPI
+  #     uses: pypa/gh-action-pypi-publish@release/v1
+  #     with:
+  #       packages-dir: dist/
+  #       verbose: true
+  #
+  #   - name: Verify PyPI publication
+  #     run: |
+  #       VERSION="${{ steps.version.outputs.version }}"
+  #       echo "Package published to PyPI!"
+  #       echo "Version: $VERSION"
+  #       echo "PyPI URL: https://pypi.org/project/mudssky-pyutils/$VERSION/"
+  #       echo "Install command: pip install mudssky-pyutils==$VERSION"
+  #
+  #       # Wait a bit for PyPI to propagate
+  #       sleep 30
+  #
+  #       # Try to install the published package
+  #       pip install "mudssky-pyutils==$VERSION" --no-deps
+  #       python -c "import pyutils; print(f'Successfully installed version: {pyutils.__version__}')"
 
   notify:
     name: Notification
     runs-on: ubuntu-latest
-    needs: [test, lint, docs, performance, publish]
+    needs: [test, lint, docs, performance]
     if: always() && (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release')
 
     steps:
@@ -521,18 +522,8 @@ jobs:
           echo "⏭️ **Performance**: Skipped" >> $GITHUB_STEP_SUMMARY
         fi
 
-        # Publication status is handled separately for release events
-        if [ "${{ github.event_name }}" = "release" ]; then
-          if [ "${{ needs.publish.result }}" = "success" ]; then
-            echo "🚀 **Publication**: Successfully published to PyPI" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ needs.publish.result }}" = "failure" ]; then
-            echo "❌ **Publication**: Failed to publish" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⏭️ **Publication**: Skipped" >> $GITHUB_STEP_SUMMARY
-          fi
-        else
-          echo "⏭️ **Publication**: Not applicable for ${{ github.event_name }} events" >> $GITHUB_STEP_SUMMARY
-        fi
+        # Publication is now handled by semantic-release in release.yml
+        echo "📦 **Publication**: Handled by semantic-release workflow" >> $GITHUB_STEP_SUMMARY
 
   # Summary job for branch protection rules
   test-summary:

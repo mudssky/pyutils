@@ -19,8 +19,8 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "python scripts/update-version.py ${nextRelease.version}",
-        "publishCmd": "python -m build && python -m twine upload dist/*"
+        "prepareCmd": "uv run python scripts/update-version.py ${nextRelease.version}",
+        "publishCmd": "uv build && uv run twine upload dist/*"
       }
     ],
     [
