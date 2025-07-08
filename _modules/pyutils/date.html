@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.date &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.date</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.date</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Date and time utility functions.</span>
+
+<span class="sd">This module provides utility functions for working with dates and times,</span>
+<span class="sd">porting JavaScript Date object methods and other date utilities to Python.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+
+<div class="viewcode-block" id="now">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.now">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">now</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current timestamp in milliseconds.</span>
+
+<span class="sd">    Similar to JavaScript Date.now().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Current timestamp in milliseconds</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; timestamp = now()</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(timestamp, int)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; timestamp &gt; 0</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_date">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.parse_date">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_date</span><span class="p">(</span><span class="n">date_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a date string into a datetime object (like JavaScript Date.parse()).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        date_string: Date string to parse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed datetime object</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If date string cannot be parsed</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parse_date(&#39;2023-01-01&#39;)</span>
+<span class="sd">        datetime.datetime(2023, 1, 1, 0, 0)</span>
+<span class="sd">        &gt;&gt;&gt; parse_date(&#39;2023-01-01T12:30:45&#39;)</span>
+<span class="sd">        datetime.datetime(2023, 1, 1, 12, 30, 45)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Try common date formats</span>
+    <span class="n">formats</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y/%m/</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to parse date string: </span><span class="si">{</span><span class="n">date_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_iso_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.to_iso_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_iso_string</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert datetime to ISO string (like JavaScript Date.toISOString()).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Datetime object to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ISO format string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1, 12, 30, 45)</span>
+<span class="sd">        &gt;&gt;&gt; to_iso_string(dt)</span>
+<span class="sd">        &#39;2023-01-01T12:30:45&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="to_date_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.to_date_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_date_string</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert datetime to date string (like JavaScript Date.toDateString()).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Datetime object to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Date string in format &#39;YYYY-MM-DD&#39;</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1, 12, 30, 45)</span>
+<span class="sd">        &gt;&gt;&gt; to_date_string(dt)</span>
+<span class="sd">        &#39;2023-01-01&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_time_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.to_time_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_time_string</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert datetime to time string (like JavaScript Date.toTimeString()).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Datetime object to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Time string in format &#39;HH:MM:SS&#39;</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1, 12, 30, 45)</span>
+<span class="sd">        &gt;&gt;&gt; to_time_string(dt)</span>
+<span class="sd">        &#39;12:30:45&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_time">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.get_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_time</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get timestamp in milliseconds from datetime (like JavaScript Date.getTime()).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Datetime object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Timestamp in milliseconds</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1, 0, 0, 0)</span>
+<span class="sd">        &gt;&gt;&gt; timestamp = get_time(dt)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(timestamp, int)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_days">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.add_days">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_days</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add days to a datetime object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Base datetime</span>
+<span class="sd">        days: Number of days to add (can be negative)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New datetime with days added</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1)</span>
+<span class="sd">        &gt;&gt;&gt; add_days(dt, 5)</span>
+<span class="sd">        datetime.datetime(2023, 1, 6, 0, 0)</span>
+<span class="sd">        &gt;&gt;&gt; add_days(dt, -1)</span>
+<span class="sd">        datetime.datetime(2022, 12, 31, 0, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_hours">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.add_hours">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_hours</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">hours</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add hours to a datetime object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Base datetime</span>
+<span class="sd">        hours: Number of hours to add (can be negative)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New datetime with hours added</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1, 12, 0, 0)</span>
+<span class="sd">        &gt;&gt;&gt; add_hours(dt, 3)</span>
+<span class="sd">        datetime.datetime(2023, 1, 1, 15, 0)</span>
+<span class="sd">        &gt;&gt;&gt; add_hours(dt, -2)</span>
+<span class="sd">        datetime.datetime(2023, 1, 1, 10, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">hours</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_minutes">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.add_minutes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_minutes</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">minutes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add minutes to a datetime object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Base datetime</span>
+<span class="sd">        minutes: Number of minutes to add (can be negative)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New datetime with minutes added</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(2023, 1, 1, 12, 30, 0)</span>
+<span class="sd">        &gt;&gt;&gt; add_minutes(dt, 15)</span>
+<span class="sd">        datetime.datetime(2023, 1, 1, 12, 45)</span>
+<span class="sd">        &gt;&gt;&gt; add_minutes(dt, -10)</span>
+<span class="sd">        datetime.datetime(2023, 1, 1, 12, 20)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minutes</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_relative_time">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.format_relative_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_relative_time</span><span class="p">(</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">base_dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format datetime as relative time string (like &#39;X minutes ago&#39;).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Datetime to format</span>
+<span class="sd">        base_dt: Base datetime to compare against (defaults to now)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Relative time string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import datetime</span>
+<span class="sd">        &gt;&gt;&gt; now = datetime.datetime.now()</span>
+<span class="sd">        &gt;&gt;&gt; past = now - datetime.timedelta(minutes=5)</span>
+<span class="sd">        &gt;&gt;&gt; format_relative_time(past, now)</span>
+<span class="sd">        &#39;5 minutes ago&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base_dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">base_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">base_dt</span> <span class="o">-</span> <span class="n">dt</span>
+    <span class="n">total_seconds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">total_seconds</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Future time</span>
+        <span class="n">total_seconds</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total_seconds</span><span class="p">)</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;from now&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;ago&quot;</span>
+
+    <span class="k">if</span> <span class="n">total_seconds</span> <span class="o">&lt;</span> <span class="mi">60</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">total_seconds</span><span class="si">}</span><span class="s2"> seconds </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="n">total_seconds</span> <span class="o">&lt;</span> <span class="mi">3600</span><span class="p">:</span>
+        <span class="n">minutes</span> <span class="o">=</span> <span class="n">total_seconds</span> <span class="o">//</span> <span class="mi">60</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">}</span><span class="s2"> minutes </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="n">total_seconds</span> <span class="o">&lt;</span> <span class="mi">86400</span><span class="p">:</span>
+        <span class="n">hours</span> <span class="o">=</span> <span class="n">total_seconds</span> <span class="o">//</span> <span class="mi">3600</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hours</span><span class="si">}</span><span class="s2"> hours </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="n">total_seconds</span> <span class="o">//</span> <span class="mi">86400</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">days</span><span class="si">}</span><span class="s2"> days </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="is_valid_date">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.date.is_valid_date">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_valid_date</span><span class="p">(</span><span class="n">date_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a string represents a valid date.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        date_string: String to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if valid date, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_valid_date(&#39;2023-01-01&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_valid_date(&#39;invalid-date&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_valid_date(&#39;2023-13-01&#39;)  # Invalid month</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">parse_date</span><span class="p">(</span><span class="n">date_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

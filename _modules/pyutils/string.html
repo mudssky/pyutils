@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.string &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.string</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.string</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;String utility functions.</span>
+
+<span class="sd">This module provides utility functions for working with strings,</span>
+<span class="sd">ported from the jsutils library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">string_module</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+
+<div class="viewcode-block" id="gen_all_cases_combination">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.gen_all_cases_combination">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_all_cases_combination</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all common case combinations of a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary with different case styles</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; result = gen_all_cases_combination(&#39;hello_world&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; result[&#39;camelCase&#39;]</span>
+<span class="sd">        &#39;helloWorld&#39;</span>
+<span class="sd">        &gt;&gt;&gt; result[&#39;PascalCase&#39;]</span>
+<span class="sd">        &#39;HelloWorld&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;camelCase&quot;</span><span class="p">:</span> <span class="n">camel_case</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+        <span class="s2">&quot;snake_case&quot;</span><span class="p">:</span> <span class="n">snake_case</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+        <span class="s2">&quot;PascalCase&quot;</span><span class="p">:</span> <span class="n">pascal_case</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+        <span class="s2">&quot;dash-case&quot;</span><span class="p">:</span> <span class="n">dash_case</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="generate_uuid">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.generate_uuid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_uuid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a UUID string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        UUID string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; uuid_str = generate_uuid()</span>
+<span class="sd">        &gt;&gt;&gt; len(uuid_str)</span>
+<span class="sd">        36</span>
+<span class="sd">        &gt;&gt;&gt; &#39;-&#39; in uuid_str</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="generate_base62_code">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.generate_base62_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_base62_code</span><span class="p">(</span><span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random Base62 string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        length: Length of the generated string, defaults to 8</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Random Base62 string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; code = generate_base62_code(10)</span>
+<span class="sd">        &gt;&gt;&gt; len(code)</span>
+<span class="sd">        10</span>
+<span class="sd">        &gt;&gt;&gt; all(c in string_module.ascii_letters + string_module.digits for c in code)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+
+    <span class="n">chars</span> <span class="o">=</span> <span class="n">string_module</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string_module</span><span class="o">.</span><span class="n">digits</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="fuzzy_match">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.fuzzy_match">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fuzzy_match</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate fuzzy match score between pattern and text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pattern: Pattern to match</span>
+<span class="sd">        text: Text to search in</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Similarity score between 0.0 and 1.0</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; fuzzy_match(&#39;hello&#39;, &#39;hello&#39;)</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &gt;&gt;&gt; fuzzy_match(&#39;hello&#39;, &#39;world&#39;)</span>
+<span class="sd">        0.0</span>
+<span class="sd">        &gt;&gt;&gt; fuzzy_match(&#39;hello&#39;, &#39;helo&#39;)</span>
+<span class="sd">        0.8</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">pattern</span> <span class="o">==</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+
+    <span class="c1"># Simple character-based similarity</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pattern_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pattern_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="ow">and</span> <span class="n">char</span> <span class="o">==</span> <span class="n">pattern</span><span class="p">[</span><span class="n">pattern_idx</span><span class="p">]:</span>
+            <span class="n">matches</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">pattern_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Calculate similarity based on matched characters vs pattern length</span>
+    <span class="k">return</span> <span class="n">matches</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+
+
+
+<div class="viewcode-block" id="get_file_ext">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.get_file_ext">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_file_ext</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get file extension from filename.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename: Filename to extract extension from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        File extension (without dot)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; get_file_ext(&#39;document.pdf&#39;)</span>
+<span class="sd">        &#39;pdf&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get_file_ext(&#39;archive.tar.gz&#39;)</span>
+<span class="sd">        &#39;gz&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get_file_ext(&#39;README&#39;)</span>
+<span class="sd">        &#39;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get_file_ext(&#39;.gitignore&#39;)</span>
+<span class="sd">        &#39;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get_file_ext(&#39;.config.json&#39;)</span>
+<span class="sd">        &#39;json&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Extract just the filename from path</span>
+    <span class="n">basename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Handle hidden files (starting with .)</span>
+    <span class="k">if</span> <span class="n">basename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+        <span class="c1"># Count dots to determine if there&#39;s an extension</span>
+        <span class="n">dot_count</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dot_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Only one dot at the beginning, no extension</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Multiple dots, last part is extension</span>
+            <span class="k">return</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Regular files</span>
+    <span class="k">return</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="capitalize">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.capitalize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">capitalize</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capitalize the first letter of each word in a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        String with first letter of each word capitalized</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; capitalize(&#39;hello world&#39;)</span>
+<span class="sd">        &#39;Hello World&#39;</span>
+<span class="sd">        &gt;&gt;&gt; capitalize(&#39;HELLO&#39;)</span>
+<span class="sd">        &#39;Hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; capitalize(&#39;   &#39;)</span>
+<span class="sd">        &#39;   &#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">text</span>
+    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="camel_case">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.camel_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">camel_case</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert string to camelCase.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        camelCase string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; camel_case(&#39;hello world&#39;)</span>
+<span class="sd">        &#39;helloWorld&#39;</span>
+<span class="sd">        &gt;&gt;&gt; camel_case(&#39;hello-world-test&#39;)</span>
+<span class="sd">        &#39;helloWorldTest&#39;</span>
+<span class="sd">        &gt;&gt;&gt; camel_case(&#39;hello_world_test&#39;)</span>
+<span class="sd">        &#39;helloWorldTest&#39;</span>
+<span class="sd">        &gt;&gt;&gt; camel_case(&#39;helloWorld&#39;)</span>
+<span class="sd">        &#39;helloWorld&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># First, split on camelCase boundaries</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-z])([A-Z])&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1 \2&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Then split on spaces, hyphens, underscores</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s\-_]+&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">word</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">words</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># First word lowercase, rest title case</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">word</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="snake_case">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.snake_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">snake_case</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert string to snake_case.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        snake_case string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; snake_case(&#39;Hello World&#39;)</span>
+<span class="sd">        &#39;hello_world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; snake_case(&#39;helloWorld&#39;)</span>
+<span class="sd">        &#39;hello_world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; snake_case(&#39;hello-world&#39;)</span>
+<span class="sd">        &#39;hello_world&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Insert underscore before uppercase letters that follow lowercase letters</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-z])([A-Z])&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1_\2&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Replace spaces and hyphens with underscores</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s\-]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Convert to lowercase</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="dash_case">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.dash_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dash_case</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert string to dash-case (kebab-case).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dash-case string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dash_case(&#39;Hello World&#39;)</span>
+<span class="sd">        &#39;hello-world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; dash_case(&#39;helloWorld&#39;)</span>
+<span class="sd">        &#39;hello-world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; dash_case(&#39;hello_world&#39;)</span>
+<span class="sd">        &#39;hello-world&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Insert hyphen before uppercase letters that follow lowercase letters</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-z])([A-Z])&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1-\2&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Replace spaces and underscores with hyphens</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s_]+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Convert to lowercase</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="pascal_case">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.pascal_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pascal_case</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert string to PascalCase.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PascalCase string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; pascal_case(&#39;hello world&#39;)</span>
+<span class="sd">        &#39;HelloWorld&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pascal_case(&#39;hello-world-test&#39;)</span>
+<span class="sd">        &#39;HelloWorldTest&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pascal_case(&#39;hello_world_test&#39;)</span>
+<span class="sd">        &#39;HelloWorldTest&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pascal_case(&#39;helloWorld&#39;)</span>
+<span class="sd">        &#39;HelloWorld&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># First, split on camelCase boundaries</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-z])([A-Z])&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1 \2&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Then split on spaces, hyphens, underscores</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s\-_]+&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">word</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">words</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Capitalize each word</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_template">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.parse_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_template</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse template string with variable substitution.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        template: Template string with {variable} placeholders</span>
+<span class="sd">        variables: Dictionary of variable values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed string with variables substituted</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parse_template(&#39;Hello {name}!&#39;, {&#39;name&#39;: &#39;World&#39;})</span>
+<span class="sd">        &#39;Hello World!&#39;</span>
+<span class="sd">        &gt;&gt;&gt; parse_template(&#39;{greeting} {name}, you are {age} years old&#39;,</span>
+<span class="sd">        ...                {&#39;greeting&#39;: &#39;Hi&#39;, &#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25})</span>
+<span class="sd">        &#39;Hi Alice, you are 25 years old&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">template</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">placeholder</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="trim">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.trim">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">trim</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chars</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove specified characters from both ends of string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        chars: Characters to remove, defaults to whitespace</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Trimmed string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; trim(&#39;  hello  &#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; trim(&#39;...hello...&#39;, &#39;.&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; trim(&#39;abcHELLOcba&#39;, &#39;abc&#39;)</span>
+<span class="sd">        &#39;HELLO&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="trim_start">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.trim_start">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_start</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chars</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove specified characters from the start of string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        chars: Characters to remove, defaults to whitespace</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Left-trimmed string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; trim_start(&#39;  hello  &#39;)</span>
+<span class="sd">        &#39;hello  &#39;</span>
+<span class="sd">        &gt;&gt;&gt; trim_start(&#39;...hello...&#39;, &#39;.&#39;)</span>
+<span class="sd">        &#39;hello...&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="trim_end">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.trim_end">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_end</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chars</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove specified characters from the end of string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        chars: Characters to remove, defaults to whitespace</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Right-trimmed string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; trim_end(&#39;  hello  &#39;)</span>
+<span class="sd">        &#39;  hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; trim_end(&#39;...hello...&#39;, &#39;.&#39;)</span>
+<span class="sd">        &#39;...hello&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_prefix">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.remove_prefix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_prefix</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove prefix from string if present.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        prefix: Prefix to remove</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        String with prefix removed</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; remove_prefix(&#39;hello world&#39;, &#39;hello &#39;)</span>
+<span class="sd">        &#39;world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; remove_prefix(&#39;test string&#39;, &#39;hello&#39;)</span>
+<span class="sd">        &#39;test string&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">text</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="p">:]</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="remove_suffix">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.remove_suffix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_suffix</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove suffix from string if present.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        suffix: Suffix to remove</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        String with suffix removed</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; remove_suffix(&#39;hello world&#39;, &#39; world&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; remove_suffix(&#39;test string&#39;, &#39;hello&#39;)</span>
+<span class="sd">        &#39;test string&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">suffix</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span>
+    <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">text</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="generate_merge_paths">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.generate_merge_paths">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_merge_paths</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a merged path from a list of path segments.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        paths: List of path segments</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Merged path</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; generate_merge_paths([&#39;path1&#39;, &#39;path2&#39;, &#39;file.txt&#39;])</span>
+<span class="sd">        &#39;path1/path2/file.txt&#39;</span>
+<span class="sd">        &gt;&gt;&gt; generate_merge_paths([&#39;C:&#39;, &#39;Users&#39;, &#39;Alice&#39;])</span>
+<span class="sd">        &#39;C:/Users/Alice&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Filter out empty segments and clean up slashes</span>
+    <span class="n">clean_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">:</span>  <span class="c1"># Skip empty strings</span>
+            <span class="c1"># Remove leading and trailing slashes</span>
+            <span class="n">clean_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">clean_path</span><span class="p">:</span>
+                <span class="n">clean_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clean_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clean_paths</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="slugify">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.slugify">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">slugify</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert string to URL-friendly slug.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        separator: Separator character, defaults to &#39;-&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        URL-friendly slug</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; slugify(&#39;Hello World!&#39;)</span>
+<span class="sd">        &#39;hello-world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; slugify(&#39;This is a Test!&#39;, &#39;_&#39;)</span>
+<span class="sd">        &#39;this_is_a_test&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert to lowercase</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="c1"># Replace non-alphanumeric characters with separator</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^a-z0-9]+&quot;</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Remove leading/trailing separators</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="truncate">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.truncate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">truncate</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Truncate string to specified length with optional suffix.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+<span class="sd">        length: Maximum length</span>
+<span class="sd">        suffix: Suffix to add if truncated, defaults to &#39;...&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Truncated string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; truncate(&#39;Hello World&#39;, 5)</span>
+<span class="sd">        &#39;Hello...&#39;</span>
+<span class="sd">        &gt;&gt;&gt; truncate(&#39;Hello World&#39;, 20)</span>
+<span class="sd">        &#39;Hello World&#39;</span>
+<span class="sd">        &gt;&gt;&gt; truncate(&#39;Hello World&#39;, 8, &#39;...&#39;)</span>
+<span class="sd">        &#39;Hello...&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">length</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">suffix</span>
+
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">suffix</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">text</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span> <span class="o">+</span> <span class="n">suffix</span></div>
+
+
+
+<div class="viewcode-block" id="word_count">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.word_count">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">word_count</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count words in a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Number of words</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; word_count(&#39;Hello world&#39;)</span>
+<span class="sd">        2</span>
+<span class="sd">        &gt;&gt;&gt; word_count(&#39;  Hello   world  test  &#39;)</span>
+<span class="sd">        3</span>
+<span class="sd">        &gt;&gt;&gt; word_count(&#39;&#39;)</span>
+<span class="sd">        0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="reverse">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.string.reverse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reverse</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reverse a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Input string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Reversed string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; reverse(&#39;hello&#39;)</span>
+<span class="sd">        &#39;olleh&#39;</span>
+<span class="sd">        &gt;&gt;&gt; reverse(&#39;Python&#39;)</span>
+<span class="sd">        &#39;nohtyP&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">text</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

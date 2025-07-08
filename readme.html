@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="prev" title="History" href="history.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pyutils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python通用工具库 - 提供丰富的实用函数和工具类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">快速开始</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uv">使用uv进行开发</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">主要功能模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">使用示例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">开发和贡献</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">许可证</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">致谢</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyutils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/readme.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyutils">
+<h1>pyutils<a class="headerlink" href="#pyutils" title="Link to this heading"></a></h1>
+<a class="reference external image-reference" href="https://pypi.python.org/pypi/pyutils"><img alt="https://img.shields.io/pypi/v/pyutils.svg" src="https://img.shields.io/pypi/v/pyutils.svg" />
+</a>
+<a class="reference external image-reference" href="https://travis-ci.com/mudssky/pyutils"><img alt="https://img.shields.io/travis/mudssky/pyutils.svg" src="https://img.shields.io/travis/mudssky/pyutils.svg" />
+</a>
+<a class="reference external image-reference" href="https://pyutils.readthedocs.io/en/latest/?version=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/pyutils/badge/?version=latest" />
+</a>
+<section id="python">
+<h2>Python通用工具库 - 提供丰富的实用函数和工具类<a class="headerlink" href="#python" title="Link to this heading"></a></h2>
+<p>pyutils是一个功能丰富的Python工具库，提供了大量常用的实用函数，涵盖数组操作、字符串处理、数学计算、对象操作、函数工具、异步编程和字节处理等多个领域。</p>
+<ul class="simple">
+<li><p>免费开源: MIT许可证</p></li>
+<li><p>文档地址: <a class="reference external" href="https://pyutils.readthedocs.io">https://pyutils.readthedocs.io</a></p></li>
+<li><p>支持Python 3.6+</p></li>
+</ul>
+<section id="id1">
+<h3>快速开始<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>安装方式</strong></p>
+<p>使用pip安装（传统方式）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyutils</span>
+</pre></div>
+</div>
+<p>使用uv安装（推荐，更快更现代）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装uv</span>
+<span class="n">powershell</span> <span class="o">-</span><span class="n">ExecutionPolicy</span> <span class="n">ByPass</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span>
+
+<span class="c1"># 使用uv安装pyutils</span>
+<span class="n">uv</span> <span class="n">add</span> <span class="n">pyutils</span>
+</pre></div>
+</div>
+</section>
+<section id="uv">
+<h3>使用uv进行开发<a class="headerlink" href="#uv" title="Link to this heading"></a></h3>
+<p><cite>uv</cite> 是一个高性能的Python包管理器，比传统pip快10-100倍，提供统一的项目管理体验。本项目已完全迁移到uv包管理器。</p>
+<p><strong>安装 uv</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Windows (PowerShell)</span>
+powershell<span class="w"> </span>-ExecutionPolicy<span class="w"> </span>ByPass<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span>
+
+<span class="c1"># macOS/Linux</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+</pre></div>
+</div>
+<p><strong>项目环境设置</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 克隆项目</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/mudssky/pyutils.git
+<span class="nb">cd</span><span class="w"> </span>pyutils
+
+<span class="c1"># 同步项目环境（自动创建虚拟环境并安装所有依赖）</span>
+uv<span class="w"> </span>sync<span class="w"> </span>--group<span class="w"> </span>dev
+</pre></div>
+</div>
+<p><strong>常用开发命令</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 运行测试</span>
+uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/
+
+<span class="c1"># 代码质量检查</span>
+uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/
+uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/
+
+<span class="c1"># 添加新依赖</span>
+uv<span class="w"> </span>add<span class="w"> </span>package-name<span class="w">              </span><span class="c1"># 生产依赖</span>
+uv<span class="w"> </span>add<span class="w"> </span>--group<span class="w"> </span>dev<span class="w"> </span>package-name<span class="w">  </span><span class="c1"># 开发依赖</span>
+
+<span class="c1"># 运行Python脚本</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>script.py
+
+<span class="c1"># 更新依赖</span>
+uv<span class="w"> </span>lock<span class="w"> </span>--upgrade
+</pre></div>
+</div>
+<p><strong>uv的优势</strong></p>
+<ul class="simple">
+<li><p>⚡ <strong>极快速度</strong>: 依赖解析和安装比pip快10-100倍</p></li>
+<li><p>🔒 <strong>版本锁定</strong>: uv.lock文件确保依赖版本一致性</p></li>
+<li><p>🛠️ <strong>统一管理</strong>: 项目、依赖、环境一体化管理</p></li>
+<li><p>🐍 <strong>Python版本管理</strong>: 内置多版本Python支持</p></li>
+<li><p>🔄 <strong>自动化</strong>: 无需手动管理虚拟环境</p></li>
+<li><p>📦 <strong>现代标准</strong>: 完全兼容PEP标准</p></li>
+</ul>
+<p>基本使用:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">math</span>
+
+<span class="c1"># 数组操作</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">chunk</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># [[1, 2], [3, 4], [5]]</span>
+
+<span class="c1"># 字符串处理</span>
+<span class="n">camel</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">camel_case</span><span class="p">(</span><span class="s2">&quot;hello_world&quot;</span><span class="p">)</span>  <span class="c1"># &quot;helloWorld&quot;</span>
+
+<span class="c1"># 数学计算</span>
+<span class="n">random_num</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">random_int</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># 1-100之间的随机整数</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id2">
+<h2>主要功能模块<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p><strong>数组工具 (array)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk</span></code> - 将数组分块</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unique</span></code> - 数组去重</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle</span></code> - 数组随机排序</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diff</span></code> - 数组差集</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fork</span></code> - 数组分组</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zip_object</span></code> - 创建对象映射</p></li>
+<li><p>更多数组操作函数…</p></li>
+</ul>
+<p><strong>字符串工具 (string)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">camel_case</span></code> - 转换为驼峰命名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">snake_case</span></code> - 转换为下划线命名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pascal_case</span></code> - 转换为帕斯卡命名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slugify</span></code> - 生成URL友好字符串</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fuzzy_match</span></code> - 模糊匹配</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_uuid</span></code> - 生成UUID</p></li>
+<li><p>更多字符串处理函数…</p></li>
+</ul>
+<p><strong>数学工具 (math)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">clamp</span></code> - 数值限制</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lerp</span></code> - 线性插值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">normalize</span></code> - 数值归一化</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fibonacci</span></code> - 斐波那契数列</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_prime</span></code> - 质数判断</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gcd/lcm</span></code> - 最大公约数/最小公倍数</p></li>
+<li><p>更多数学计算函数…</p></li>
+</ul>
+<p><strong>对象工具 (object)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pick/omit</span></code> - 对象属性选择/排除</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">merge</span></code> - 深度合并对象</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flatten_dict</span></code> - 扁平化字典</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_nested_value</span></code> - 获取嵌套值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deep_copy</span></code> - 深度复制</p></li>
+<li><p>更多对象操作函数…</p></li>
+</ul>
+<p><strong>函数工具 (function)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">memoize</span></code> - 函数记忆化</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">debounce</span></code> - 防抖装饰器</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">throttle</span></code> - 节流装饰器</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">with_retry</span></code> - 重试装饰器</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">once</span></code> - 单次执行装饰器</p></li>
+<li><p>更多函数增强工具…</p></li>
+</ul>
+<p><strong>异步工具 (async_utils)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sleep_async</span></code> - 异步延迟</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timeout</span></code> - 超时控制</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">race</span></code> - 竞态执行</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gather_with_concurrency</span></code> - 并发控制</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">map_async</span></code> - 异步映射</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_process</span></code> - 批量处理</p></li>
+<li><p>更多异步编程工具…</p></li>
+</ul>
+<p><strong>字节工具 (bytes)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Bytes</span></code> - 字节处理类</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">humanize_bytes</span></code> - 人性化字节显示</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parse_bytes</span></code> - 字节字符串解析</p></li>
+<li><p>字节单位转换工具</p></li>
+</ul>
+<section id="id3">
+<h3>使用示例<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p><strong>数组操作示例</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">array</span>
+
+<span class="c1"># 数组分块</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">chunk</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="c1"># 结果: [[1, 2], [3, 4], [5, 6]]</span>
+
+<span class="c1"># 数组去重并保持顺序</span>
+<span class="n">unique_items</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="c1"># 结果: [1, 2, 3, 4]</span>
+
+<span class="c1"># 根据条件分组</span>
+<span class="n">evens</span><span class="p">,</span> <span class="n">odds</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">fork</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># evens: [2, 4], odds: [1, 3, 5]</span>
+</pre></div>
+</div>
+<p><strong>字符串处理示例</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">string</span>
+
+<span class="c1"># 命名风格转换</span>
+<span class="n">camel</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">camel_case</span><span class="p">(</span><span class="s2">&quot;hello_world_example&quot;</span><span class="p">)</span>  <span class="c1"># &quot;helloWorldExample&quot;</span>
+<span class="n">snake</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">snake_case</span><span class="p">(</span><span class="s2">&quot;HelloWorldExample&quot;</span><span class="p">)</span>   <span class="c1"># &quot;hello_world_example&quot;</span>
+<span class="n">pascal</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">pascal_case</span><span class="p">(</span><span class="s2">&quot;hello-world&quot;</span><span class="p">)</span>       <span class="c1"># &quot;HelloWorld&quot;</span>
+
+<span class="c1"># URL友好字符串</span>
+<span class="n">slug</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">slugify</span><span class="p">(</span><span class="s2">&quot;Hello World! 你好世界&quot;</span><span class="p">)</span>    <span class="c1"># &quot;hello-world&quot;</span>
+
+<span class="c1"># 模糊匹配</span>
+<span class="n">score</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">fuzzy_match</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="s2">&quot;helo&quot;</span><span class="p">)</span>      <span class="c1"># 0.8</span>
+</pre></div>
+</div>
+<p><strong>异步编程示例</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">async_utils</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">():</span>
+    <span class="c1"># 异步延迟</span>
+    <span class="k">await</span> <span class="n">async_utils</span><span class="o">.</span><span class="n">sleep_async</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># 竞态执行，返回最快完成的结果</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fast</span><span class="p">():</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;fast&quot;</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">slow</span><span class="p">():</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;slow&quot;</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_utils</span><span class="o">.</span><span class="n">race</span><span class="p">(</span><span class="n">fast</span><span class="p">(),</span> <span class="n">slow</span><span class="p">())</span>  <span class="c1"># &quot;fast&quot;</span>
+
+    <span class="c1"># 带并发限制的异步映射</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_utils</span><span class="o">.</span><span class="n">map_async</span><span class="p">(</span>
+        <span class="n">process</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">concurrency</span><span class="o">=</span><span class="mi">2</span>
+    <span class="p">)</span>  <span class="c1"># [2, 4, 6, 8, 10]</span>
+</pre></div>
+</div>
+<p><strong>函数增强示例</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyutils.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">memoize</span><span class="p">,</span> <span class="n">debounce</span><span class="p">,</span> <span class="n">with_retry</span>
+
+<span class="c1"># 记忆化缓存</span>
+<span class="nd">@memoize</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">expensive_calculation</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+<span class="c1"># 防抖处理</span>
+<span class="nd">@debounce</span><span class="p">(</span><span class="n">delay</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_handler</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Searching for: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 自动重试</span>
+<span class="nd">@with_retry</span><span class="p">(</span><span class="n">max_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unreliable_api_call</span><span class="p">():</span>
+    <span class="c1"># 可能失败的API调用</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>开发和贡献<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p><strong>环境准备</strong></p>
+<p>克隆项目并设置开发环境:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mudssky</span><span class="o">/</span><span class="n">pyutils</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">pyutils</span>
+
+<span class="c1"># 使用uv同步开发环境（推荐）</span>
+<span class="n">uv</span> <span class="n">sync</span> <span class="o">--</span><span class="n">group</span> <span class="n">dev</span>
+
+<span class="c1"># 或使用传统pip方式</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="n">dev</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>开发工作流</strong></p>
+<p>运行测试:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 使用uv（推荐）</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span>
+
+<span class="c1"># 或传统方式</span>
+<span class="n">pytest</span>
+
+<span class="c1"># 运行基础测试</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">test_basic</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>代码质量检查:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 使用uv（推荐）</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">ruff</span> <span class="n">check</span> <span class="n">src</span><span class="o">/</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">mypy</span> <span class="n">src</span><span class="o">/</span>
+
+<span class="c1"># 或传统方式</span>
+<span class="n">ruff</span> <span class="n">check</span> <span class="o">.</span>
+<span class="n">mypy</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p><strong>添加新功能</strong></p>
+<ol class="arabic">
+<li><p>创建功能分支</p></li>
+<li><p>编写代码和测试</p></li>
+<li><p>运行完整测试套件:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">src</span><span class="o">/</span><span class="n">pyutils</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span><span class="o">=</span><span class="n">html</span>
+</pre></div>
+</div>
+</li>
+<li><p>检查代码质量:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">run</span> <span class="n">ruff</span> <span class="n">check</span> <span class="n">src</span><span class="o">/</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">mypy</span> <span class="n">src</span><span class="o">/</span>
+</pre></div>
+</div>
+</li>
+<li><p>提交代码并创建Pull Request</p></li>
+</ol>
+<p><strong>依赖管理</strong></p>
+<p>添加新依赖:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 生产依赖</span>
+<span class="n">uv</span> <span class="n">add</span> <span class="n">package</span><span class="o">-</span><span class="n">name</span>
+
+<span class="c1"># 开发依赖</span>
+<span class="n">uv</span> <span class="n">add</span> <span class="o">--</span><span class="n">group</span> <span class="n">dev</span> <span class="n">package</span><span class="o">-</span><span class="n">name</span>
+</pre></div>
+</div>
+<p>更新依赖:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">lock</span> <span class="o">--</span><span class="n">upgrade</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>许可证<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>本项目采用MIT许可证 - 详见 <a class="reference external" href="LICENSE">LICENSE</a> 文件。</p>
+</section>
+<section id="id6">
+<h3>致谢<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>本项目使用 <a class="reference external" href="https://github.com/audreyr/cookiecutter">Cookiecutter</a> 和 <a class="reference external" href="https://github.com/audreyr/cookiecutter-pypackage">audreyr/cookiecutter-pypackage</a> 项目模板创建。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="history.html" class="btn btn-neutral float-left" title="History" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

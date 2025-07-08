@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils 文档 &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="安装指南" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyutils 文档</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyutils">
+<h1>pyutils 文档<a class="headerlink" href="#pyutils" title="Link to this heading"></a></h1>
+<p>欢迎使用 pyutils！这是一个功能丰富的 Python 实用工具库，提供了各种常用的函数和类。</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id2">系统要求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#uv">推荐安装方式 (uv)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#pip">传统安装方式 (pip)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id6">开发环境安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id9">验证安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id10">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id11">故障排除</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id13">获取帮助</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速开始</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id2">基本导入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id3">数组操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id4">字符串处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id5">数学计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id6">对象操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id7">函数式编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id8">异步编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id9">实际应用示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#id12">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyutils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyutils.html">pyutils package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">贡献指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id2">开发环境设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id3">开发工作流</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id6">提交代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id10">代码规范</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id14">测试规范</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id18">文档贡献</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id21">发布流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id25">问题报告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#id27">获取帮助</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">变更日志</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#tbd">[未发布] - TBD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#xx">[1.0.0] - 2024-01-XX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#xx-xx">[0.1.0] - 2023-XX-XX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id9">版本说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id12">迁移指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id14">贡献者</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#development-lead">Development Lead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#contributors">Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="history.html#id1">0.1.0 (2025-07-04)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">pyutils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#python">Python通用工具库 - 提供丰富的实用函数和工具类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#id2">主要功能模块</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+</ul>
+</div>
+<section id="id1">
+<h2>特性<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>🚀 <strong>高性能</strong>: 优化的算法和数据结构</p></li>
+<li><p>🔧 <strong>易用性</strong>: 简洁直观的 API 设计</p></li>
+<li><p>📦 <strong>模块化</strong>: 按功能组织的模块结构</p></li>
+<li><p>🧪 <strong>测试完备</strong>: 高覆盖率的测试套件</p></li>
+<li><p>📚 <strong>文档完整</strong>: 详细的文档和示例</p></li>
+<li><p>🔒 <strong>类型安全</strong>: 完整的类型注解支持</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>主要模块<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>array</strong>: 数组和列表操作工具</p></li>
+<li><p><strong>string</strong>: 字符串处理和格式化工具</p></li>
+<li><p><strong>math</strong>: 数学计算和统计函数</p></li>
+<li><p><strong>object</strong>: 对象操作和反射工具</p></li>
+<li><p><strong>function</strong>: 函数式编程工具</p></li>
+<li><p><strong>async_utils</strong>: 异步编程辅助工具</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>快速开始<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>使用 uv 安装（推荐）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">add</span> <span class="n">pyutils</span>
+</pre></div>
+</div>
+<p>或使用 pip 安装:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyutils</span>
+</pre></div>
+</div>
+<p>基本使用示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">math</span>
+
+<span class="c1"># 数组操作</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">chunk</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="c1"># [[1, 2], [3, 4], [5, 6]]</span>
+
+<span class="c1"># 字符串处理</span>
+<span class="n">camel</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">camel_case</span><span class="p">(</span><span class="s2">&quot;hello_world&quot;</span><span class="p">)</span>
+<span class="c1"># &quot;helloWorld&quot;</span>
+
+<span class="c1"># 数学计算</span>
+<span class="n">clamped</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="c1"># 100</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h1>索引和表格<a class="headerlink" href="#id4" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="安装指南" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

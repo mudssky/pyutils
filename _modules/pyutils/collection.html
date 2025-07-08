@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.collection &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.collection</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.collection</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Collection utility functions.</span>
+
+<span class="sd">This module provides utility functions for working with collections,</span>
+<span class="sd">inspired by JavaScript array and object methods that are commonly used</span>
+<span class="sd">but not directly available in Python.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="flat_map">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.flat_map">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flat_map</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">mapper</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map each element and flatten the result.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.flatMap().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List of items to map and flatten</span>
+<span class="sd">        mapper: Function that maps each item to a list</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flattened list of mapped results</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; flat_map([1, 2, 3], lambda x: [x, x * 2])</span>
+<span class="sd">        [1, 2, 2, 4, 3, 6]</span>
+<span class="sd">        &gt;&gt;&gt; flat_map([&#39;hello&#39;, &#39;world&#39;], lambda x: list(x))</span>
+<span class="sd">        [&#39;h&#39;, &#39;e&#39;, &#39;l&#39;, &#39;l&#39;, &#39;o&#39;, &#39;w&#39;, &#39;o&#39;, &#39;r&#39;, &#39;l&#39;, &#39;d&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="n">mapped</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapped</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mapped</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapped</span><span class="p">)</span>  <span class="c1"># type: ignore[unreachable]</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="includes">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.includes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">includes</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">search_item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">from_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an array includes a certain value.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.includes().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to search in</span>
+<span class="sd">        search_item: Item to search for</span>
+<span class="sd">        from_index: Index to start searching from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if item is found, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; includes([1, 2, 3], 2)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; includes([1, 2, 3], 4)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; includes([1, 2, 3, 2], 2, 2)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">search_item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">[</span><span class="n">from_index</span><span class="p">:]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="find_index">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.find_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_index</span><span class="p">(</span>
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">from_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the index of the first element that satisfies the predicate.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.findIndex().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to search in</span>
+<span class="sd">        predicate: Function to test each element</span>
+<span class="sd">        from_index: Index to start searching from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Index of first matching element, or -1 if not found</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; find_index([1, 2, 3, 4], lambda x: x &gt; 2)</span>
+<span class="sd">        2</span>
+<span class="sd">        &gt;&gt;&gt; find_index([1, 2, 3, 4], lambda x: x &gt; 10)</span>
+<span class="sd">        -1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">from_index</span><span class="p">:],</span> <span class="n">from_index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="find_last_index">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.find_last_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_last_index</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the index of the last element that satisfies the predicate.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.findLastIndex().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to search in</span>
+<span class="sd">        predicate: Function to test each element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Index of last matching element, or -1 if not found</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; find_last_index([1, 2, 3, 2, 4], lambda x: x == 2)</span>
+<span class="sd">        3</span>
+<span class="sd">        &gt;&gt;&gt; find_last_index([1, 2, 3, 4], lambda x: x &gt; 10)</span>
+<span class="sd">        -1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="some">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.some">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">some</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether at least one element passes the test.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.some().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to test</span>
+<span class="sd">        predicate: Function to test each element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if at least one element passes the test</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; some([1, 2, 3, 4], lambda x: x &gt; 3)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; some([1, 2, 3, 4], lambda x: x &gt; 10)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">predicate</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="every">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.every">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">every</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether all elements pass the test.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.every().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to test</span>
+<span class="sd">        predicate: Function to test each element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if all elements pass the test</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; every([2, 4, 6, 8], lambda x: x % 2 == 0)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; every([1, 2, 3, 4], lambda x: x % 2 == 0)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">predicate</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="at">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.at">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">at</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get element at the given index, supporting negative indices.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.at().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to access</span>
+<span class="sd">        index: Index to access (can be negative)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Element at the index, or None if index is out of bounds</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; at([1, 2, 3, 4], 1)</span>
+<span class="sd">        2</span>
+<span class="sd">        &gt;&gt;&gt; at([1, 2, 3, 4], -1)</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; at([1, 2, 3, 4], 10)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="fill">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.fill">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fill</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fill array elements with a static value.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.fill().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to fill (modified in place)</span>
+<span class="sd">        value: Value to fill with</span>
+<span class="sd">        start: Start index</span>
+<span class="sd">        end: End index (exclusive)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The modified list</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; fill([1, 2, 3, 4], 0)</span>
+<span class="sd">        [0, 0, 0, 0]</span>
+<span class="sd">        &gt;&gt;&gt; fill([1, 2, 3, 4], 0, 1, 3)</span>
+<span class="sd">        [1, 0, 0, 4]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))):</span>
+        <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">items</span></div>
+
+
+
+<div class="viewcode-block" id="copy_within">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.copy_within">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">copy_within</span><span class="p">(</span>
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy array elements within the array to another position.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.copyWithin().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to modify (modified in place)</span>
+<span class="sd">        target: Index to copy elements to</span>
+<span class="sd">        start: Index to start copying from</span>
+<span class="sd">        end: Index to stop copying from (exclusive)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The modified list</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; copy_within([1, 2, 3, 4, 5], 0, 3)</span>
+<span class="sd">        [4, 5, 3, 4, 5]</span>
+<span class="sd">        &gt;&gt;&gt; copy_within([1, 2, 3, 4, 5], 2, 0, 2)</span>
+<span class="sd">        [1, 2, 1, 2, 5]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+    <span class="c1"># Create a copy of the slice to avoid issues with overlapping ranges</span>
+    <span class="n">slice_to_copy</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+    <span class="c1"># Copy elements to target position</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">slice_to_copy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="o">+</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+            <span class="n">items</span><span class="p">[</span><span class="n">target</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">items</span></div>
+
+
+
+<div class="viewcode-block" id="group_by">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.group_by">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">group_by</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">key_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">K</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Group array elements by a key function.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Object.groupBy() (proposed).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List of items to group</span>
+<span class="sd">        key_fn: Function to extract grouping key</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary mapping keys to lists of items</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; group_by([&#39;apple&#39;, &#39;banana&#39;, &#39;apricot&#39;], lambda x: x[0])</span>
+<span class="sd">        {&#39;a&#39;: [&#39;apple&#39;, &#39;apricot&#39;], &#39;b&#39;: [&#39;banana&#39;]}</span>
+<span class="sd">        &gt;&gt;&gt; group_by([1, 2, 3, 4, 5], lambda x: x % 2)</span>
+<span class="sd">        {1: [1, 3, 5], 0: [2, 4]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">key_fn</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="to_reversed">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.to_reversed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_reversed</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new array with elements in reversed order.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.toReversed().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to reverse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New list with elements in reversed order</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; to_reversed([1, 2, 3, 4])</span>
+<span class="sd">        [4, 3, 2, 1]</span>
+<span class="sd">        &gt;&gt;&gt; original = [1, 2, 3]</span>
+<span class="sd">        &gt;&gt;&gt; reversed_list = to_reversed(original)</span>
+<span class="sd">        &gt;&gt;&gt; original</span>
+<span class="sd">        [1, 2, 3]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">items</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="to_sorted">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.to_sorted">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_sorted</span><span class="p">(</span>
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new sorted array.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.toSorted().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to sort</span>
+<span class="sd">        key: Function to extract comparison key</span>
+<span class="sd">        reverse: Whether to sort in reverse order</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New sorted list</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; to_sorted([3, 1, 4, 1, 5])</span>
+<span class="sd">        [1, 1, 3, 4, 5]</span>
+<span class="sd">        &gt;&gt;&gt; to_sorted([&#39;banana&#39;, &#39;apple&#39;, &#39;cherry&#39;], key=len)</span>
+<span class="sd">        [&#39;apple&#39;, &#39;banana&#39;, &#39;cherry&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>  <span class="c1"># type: ignore[type-var,arg-type]</span></div>
+
+
+
+<div class="viewcode-block" id="with_item">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.with_item">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">with_item</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new array with one element changed.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.with().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: Original list</span>
+<span class="sd">        index: Index to change</span>
+<span class="sd">        value: New value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New list with the element changed</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; with_item([1, 2, 3, 4], 1, &#39;two&#39;)</span>
+<span class="sd">        [1, &#39;two&#39;, 3, 4]</span>
+<span class="sd">        &gt;&gt;&gt; original = [1, 2, 3]</span>
+<span class="sd">        &gt;&gt;&gt; modified = with_item(original, 0, &#39;one&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; original</span>
+<span class="sd">        [1, 2, 3]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">elif</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="entries">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">entries</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return array of [index, value] pairs.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.entries().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to get entries from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of (index, value) tuples</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; entries([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
+<span class="sd">        [(0, &#39;a&#39;), (1, &#39;b&#39;), (2, &#39;c&#39;)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="keys">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return array of indices.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.keys().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to get keys from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of indices</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; keys([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
+<span class="sd">        [0, 1, 2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="values">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return array of values (copy of the array).</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.values().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to get values from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Copy of the list</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; values([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
+<span class="sd">        [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">items</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="splice">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.collection.splice">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">splice</span><span class="p">(</span>
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">delete_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">insert_items</span><span class="p">:</span> <span class="n">T</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change array contents by removing/replacing existing elements.</span>
+
+<span class="sd">    Also supports adding new elements.</span>
+
+<span class="sd">    Similar to JavaScript&#39;s Array.prototype.splice().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to modify (modified in place)</span>
+<span class="sd">        start: Index to start changing the array</span>
+<span class="sd">        delete_count: Number of elements to remove</span>
+<span class="sd">        *insert_items: Items to insert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of removed elements</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; arr = [1, 2, 3, 4, 5]</span>
+<span class="sd">        &gt;&gt;&gt; removed = splice(arr, 2, 1, &#39;a&#39;, &#39;b&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; arr</span>
+<span class="sd">        [1, 2, &#39;a&#39;, &#39;b&#39;, 4, 5]</span>
+<span class="sd">        &gt;&gt;&gt; removed</span>
+<span class="sd">        [3]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Handle negative start index</span>
+    <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">+</span> <span class="n">start</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+
+    <span class="c1"># Handle delete_count</span>
+    <span class="n">delete_count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">delete_count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+    <span class="c1"># Remove elements and get removed items</span>
+    <span class="n">removed</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">delete_count</span><span class="p">]</span>
+
+    <span class="c1"># Replace with new items</span>
+    <span class="n">items</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">delete_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">insert_items</span>
+
+    <span class="k">return</span> <span class="n">removed</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

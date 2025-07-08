@@ -1,0 +1,736 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.bytes &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.bytes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.bytes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Bytes utility functions.</span>
+
+<span class="sd">This module provides utility functions for working with bytes and byte strings,</span>
+<span class="sd">including parsing and formatting byte values with units,</span>
+<span class="sd">ported from the jsutils library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
+
+
+<div class="viewcode-block" id="Bytes">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Utility class for working with byte values and formatting.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Byte unit mappings</span>
+    <span class="n">UNITS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;byte&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;kb&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+        <span class="s2">&quot;kilobyte&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+        <span class="s2">&quot;kilobytes&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+        <span class="s2">&quot;mb&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;megabyte&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;megabytes&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;gb&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;gigabyte&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;gigabytes&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;tb&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;terabyte&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;terabytes&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;pb&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;petabyte&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;petabytes&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Unit abbreviations for formatting</span>
+    <span class="n">UNIT_ABBR</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">,</span> <span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="s2">&quot;TB&quot;</span><span class="p">,</span> <span class="s2">&quot;PB&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Bytes.convert">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.convert">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert between byte values and formatted strings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value: Either a byte count (int/float) or a byte string (str)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            If input is numeric, returns formatted string</span>
+<span class="sd">            If input is string, returns byte count as int</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.convert(1024)</span>
+<span class="sd">            &#39;1 KB&#39;</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.convert(&#39;1 KB&#39;)</span>
+<span class="sd">            1024</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.convert(1536)</span>
+<span class="sd">            &#39;1.5 KB&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bytes.parse">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">byte_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a byte string into a numeric value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            byte_string: String representation of bytes (e.g., &#39;1 KB&#39;, &#39;500 MB&#39;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of bytes as integer</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the string format is invalid</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.parse(&#39;1 KB&#39;)</span>
+<span class="sd">            1024</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.parse(&#39;1.5 MB&#39;)</span>
+<span class="sd">            1572864</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.parse(&#39;500&#39;)</span>
+<span class="sd">            500</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">byte_string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a string&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Remove extra whitespace and convert to lowercase</span>
+        <span class="n">byte_string</span> <span class="o">=</span> <span class="n">byte_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># If it&#39;s just a number, return as is</span>
+        <span class="k">if</span> <span class="n">byte_string</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">byte_string</span><span class="p">)</span>
+
+        <span class="c1"># Try to parse float</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">byte_string</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Parse with units using regex</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^([0-9]*\.?[0-9]+)\s*([a-z]+)$&quot;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">byte_string</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid byte string format: </span><span class="si">{</span><span class="n">byte_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">number_str</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">number_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid number: </span><span class="si">{</span><span class="n">number_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="k">if</span> <span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">UNITS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown unit: </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">UNITS</span><span class="p">[</span><span class="n">unit</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Bytes.format">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.format">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">byte_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">thousand_separator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a byte count into a human-readable string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            byte_count: Number of bytes</span>
+<span class="sd">            decimals: Number of decimal places to show</span>
+<span class="sd">            thousand_separator: Whether to use thousand separators</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Formatted byte string</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.format(1024)</span>
+<span class="sd">            &#39;1 KB&#39;</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.format(1536, decimals=2)</span>
+<span class="sd">            &#39;1.50 KB&#39;</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.format(1234567, thousand_separator=True)</span>
+<span class="sd">            &#39;1.2 MB&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">byte_count</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Byte count must be a number&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">byte_count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Byte count cannot be negative&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">byte_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;0 B&quot;</span>
+
+        <span class="c1"># Find the appropriate unit</span>
+        <span class="n">unit_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">byte_count</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">size</span> <span class="o">&gt;=</span> <span class="mi">1024</span> <span class="ow">and</span> <span class="n">unit_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">UNIT_ABBR</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">/=</span> <span class="mi">1024</span>
+            <span class="n">unit_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Format the number</span>
+        <span class="k">if</span> <span class="n">decimals</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">formatted_size</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formatted_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">decimals</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="c1"># Remove trailing zeros after decimal point</span>
+            <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">formatted_size</span><span class="p">:</span>
+                <span class="n">formatted_size</span> <span class="o">=</span> <span class="n">formatted_size</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add thousand separator if requested</span>
+        <span class="k">if</span> <span class="n">thousand_separator</span> <span class="ow">and</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">formatted_size</span><span class="p">:</span>
+            <span class="n">integer_part</span><span class="p">,</span> <span class="n">decimal_part</span> <span class="o">=</span> <span class="n">formatted_size</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">integer_part</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">integer_part</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">formatted_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">integer_part</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">decimal_part</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">thousand_separator</span><span class="p">:</span>
+            <span class="n">formatted_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">formatted_size</span><span class="p">))</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">formatted_size</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">UNIT_ABBR</span><span class="p">[</span><span class="n">unit_index</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="Bytes.to_kb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.to_kb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_kb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">byte_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert bytes to kilobytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            byte_count: Number of bytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of kilobytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_kb(1024)</span>
+<span class="sd">            1.0</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_kb(1536)</span>
+<span class="sd">            1.5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">byte_count</span> <span class="o">/</span> <span class="mi">1024</span></div>
+
+
+<div class="viewcode-block" id="Bytes.to_mb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.to_mb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_mb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">byte_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert bytes to megabytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            byte_count: Number of bytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of megabytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_mb(1048576)</span>
+<span class="sd">            1.0</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_mb(1572864)</span>
+<span class="sd">            1.5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">byte_count</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bytes.to_gb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.to_gb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_gb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">byte_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert bytes to gigabytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            byte_count: Number of bytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of gigabytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_gb(1073741824)</span>
+<span class="sd">            1.0</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_gb(1610612736)</span>
+<span class="sd">            1.5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">byte_count</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bytes.to_tb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.to_tb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_tb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">byte_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert bytes to terabytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            byte_count: Number of bytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of terabytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.to_tb(1099511627776)</span>
+<span class="sd">            1.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">byte_count</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bytes.from_kb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.from_kb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_kb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kb_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert kilobytes to bytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kb_count: Number of kilobytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of bytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_kb(1)</span>
+<span class="sd">            1024</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_kb(1.5)</span>
+<span class="sd">            1536</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">kb_count</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bytes.from_mb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.from_mb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_mb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">mb_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert megabytes to bytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mb_count: Number of megabytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of bytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_mb(1)</span>
+<span class="sd">            1048576</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_mb(1.5)</span>
+<span class="sd">            1572864</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">mb_count</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Bytes.from_gb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.from_gb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_gb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gb_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert gigabytes to bytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gb_count: Number of gigabytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of bytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_gb(1)</span>
+<span class="sd">            1073741824</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_gb(1.5)</span>
+<span class="sd">            1610612736</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">gb_count</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Bytes.from_tb">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.from_tb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_tb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tb_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert terabytes to bytes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tb_count: Number of terabytes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Number of bytes</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.from_tb(1)</span>
+<span class="sd">            1099511627776</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">tb_count</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Bytes.compare">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.Bytes.compare">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">value2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two byte values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value1: First value (string or numeric)</span>
+<span class="sd">            value2: Second value (string or numeric)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            -1 if value1 &lt; value2, 0 if equal, 1 if value1 &gt; value2</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.compare(&#39;1 KB&#39;, 1024)</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.compare(&#39;1 MB&#39;, &#39;1 KB&#39;)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; Bytes.compare(512, &#39;1 KB&#39;)</span>
+<span class="sd">            -1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bytes1</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">value1</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value1</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">value1</span><span class="p">)</span>
+        <span class="n">bytes2</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">value2</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value2</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">value2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bytes1</span> <span class="o">&lt;</span> <span class="n">bytes2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">bytes1</span> <span class="o">&gt;</span> <span class="n">bytes2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span></div>
+</div>
+
+
+
+<span class="c1"># Convenience function that mimics the jsutils API</span>
+<div class="viewcode-block" id="bytes_util">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.bytes_util">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bytes_util</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience function for byte conversion.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Either a byte count (int/float) or a byte string (str)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        If input is numeric, returns formatted string</span>
+<span class="sd">        If input is string, returns byte count as int</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; bytes_util(1024)</span>
+<span class="sd">        &#39;1 KB&#39;</span>
+<span class="sd">        &gt;&gt;&gt; bytes_util(&#39;1 KB&#39;)</span>
+<span class="sd">        1024</span>
+<span class="sd">        &gt;&gt;&gt; bytes_util(1536)</span>
+<span class="sd">        &#39;1.5 KB&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Bytes</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Additional utility functions</span>
+<div class="viewcode-block" id="humanize_bytes">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.humanize_bytes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">humanize_bytes</span><span class="p">(</span>
+    <span class="n">byte_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert bytes to human readable format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        byte_count: Number of bytes</span>
+<span class="sd">        decimals: Number of decimal places</span>
+<span class="sd">        binary: Use binary (1024) or decimal (1000) units</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Human readable byte string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; humanize_bytes(1024)</span>
+<span class="sd">        &#39;1 KB&#39;</span>
+<span class="sd">        &gt;&gt;&gt; humanize_bytes(1000, binary=False)</span>
+<span class="sd">        &#39;1 KB&#39;</span>
+<span class="sd">        &gt;&gt;&gt; humanize_bytes(1536, decimals=2)</span>
+<span class="sd">        &#39;1.50 KB&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Bytes</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">byte_count</span><span class="p">,</span> <span class="n">decimals</span><span class="p">)</span>
+
+    <span class="c1"># Decimal units (1000-based)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">,</span> <span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="s2">&quot;TB&quot;</span><span class="p">,</span> <span class="s2">&quot;PB&quot;</span><span class="p">]</span>
+    <span class="n">unit_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">byte_count</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">size</span> <span class="o">&gt;=</span> <span class="mi">1000</span> <span class="ow">and</span> <span class="n">unit_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">/=</span> <span class="mi">1000</span>
+        <span class="n">unit_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">decimals</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">formatted_size</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">formatted_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">decimals</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">formatted_size</span><span class="p">:</span>
+            <span class="n">formatted_size</span> <span class="o">=</span> <span class="n">formatted_size</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">formatted_size</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">units</span><span class="p">[</span><span class="n">unit_index</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="parse_bytes">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.parse_bytes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_bytes</span><span class="p">(</span><span class="n">byte_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse byte string to integer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        byte_string: String representation of bytes</span>
+<span class="sd">        binary: Use binary (1024) or decimal (1000) units</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Number of bytes</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parse_bytes(&#39;1 KB&#39;)</span>
+<span class="sd">        1024</span>
+<span class="sd">        &gt;&gt;&gt; parse_bytes(&#39;1 KB&#39;, binary=False)</span>
+<span class="sd">        1000</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Bytes</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">byte_string</span><span class="p">)</span>
+
+    <span class="c1"># Handle decimal units</span>
+    <span class="n">byte_string</span> <span class="o">=</span> <span class="n">byte_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">byte_string</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">byte_string</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">byte_string</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^([0-9]*\.?[0-9]+)\s*([a-z]+)$&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">byte_string</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid byte string format: </span><span class="si">{</span><span class="n">byte_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">number_str</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">number_str</span><span class="p">)</span>
+
+    <span class="c1"># Decimal units (1000-based)</span>
+    <span class="n">decimal_units</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;byte&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;kb&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;kilobyte&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;kilobytes&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;mb&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;megabyte&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;megabytes&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;gb&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;gigabyte&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;gigabytes&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;tb&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;terabyte&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;terabytes&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;pb&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;petabyte&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;petabytes&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">decimal_units</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown unit: </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span> <span class="o">*</span> <span class="n">decimal_units</span><span class="p">[</span><span class="n">unit</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="get_hash">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.get_hash">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_hash</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;md5&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate hash for given data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: String data to hash</span>
+<span class="sd">        algorithm: Hash algorithm to use (&#39;md5&#39;, &#39;sha1&#39;, &#39;sha256&#39;), defaults to &#39;md5&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Hexadecimal hash string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; get_hash(&#39;hello&#39;)</span>
+<span class="sd">        &#39;5d41402abc4b2a76b9719d911017c592&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get_hash(&#39;hello&#39;, &#39;sha256&#39;)</span>
+<span class="sd">        &#39;2cf24dba4f21d4288094e9b9eb4e5f0164e031c02c90b3a8b26f6c8b&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+
+    <span class="c1"># Convert string to bytes</span>
+    <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Select hash algorithm</span>
+    <span class="k">if</span> <span class="n">algorithm</span> <span class="o">==</span> <span class="s2">&quot;md5&quot;</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">usedforsecurity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">algorithm</span> <span class="o">==</span> <span class="s2">&quot;sha1&quot;</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">usedforsecurity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">algorithm</span> <span class="o">==</span> <span class="s2">&quot;sha256&quot;</span><span class="p">:</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported hash algorithm: </span><span class="si">{</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data_bytes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="to_base64">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.to_base64">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_base64</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode string data to base64.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: String data to encode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Base64 encoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; to_base64(&#39;hello&#39;)</span>
+<span class="sd">        &#39;aGVsbG8=&#39;</span>
+<span class="sd">        &gt;&gt;&gt; to_base64(&#39;world&#39;)</span>
+<span class="sd">        &#39;d29ybGQ=&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+
+    <span class="c1"># Convert string to bytes</span>
+    <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Encode to base64</span>
+    <span class="n">encoded_bytes</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data_bytes</span><span class="p">)</span>
+
+    <span class="c1"># Convert back to string</span>
+    <span class="k">return</span> <span class="n">encoded_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="from_base64">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.bytes.from_base64">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_base64</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode base64 string data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Base64 encoded string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from_base64(&#39;aGVsbG8=&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; from_base64(&#39;d29ybGQ=&#39;)</span>
+<span class="sd">        &#39;world&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+
+    <span class="c1"># Convert string to bytes</span>
+    <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Decode from base64</span>
+    <span class="n">decoded_bytes</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">data_bytes</span><span class="p">)</span>
+
+    <span class="c1"># Convert back to string</span>
+    <span class="k">return</span> <span class="n">decoded_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

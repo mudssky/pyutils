@@ -1,0 +1,661 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.async_utils &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.async_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.async_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Async utility functions.</span>
+
+<span class="sd">This module provides utility functions for working with asynchronous operations,</span>
+<span class="sd">including sleep, timeout, and concurrent execution utilities,</span>
+<span class="sd">ported from the jsutils library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sleep_async">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.sleep_async">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">sleep_async</span><span class="p">(</span><span class="n">seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Asynchronously sleep for the specified number of seconds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seconds: Number of seconds to sleep</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import asyncio</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     await sleep_async(0.1)</span>
+<span class="sd">        ...     print(&quot;Slept for 0.1 seconds&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="timeout">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.timeout">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">timeout</span><span class="p">(</span>
+    <span class="n">coro</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute coroutine with timeout.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        coro: Coroutine to execute</span>
+<span class="sd">        timeout_seconds: Timeout in seconds</span>
+<span class="sd">        default: Default value to return on timeout</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Result of coroutine or default value</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        asyncio.TimeoutError: If timeout occurs and no default provided</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def slow_operation():</span>
+<span class="sd">        ...     await asyncio.sleep(2)</span>
+<span class="sd">        ...     return &quot;done&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await timeout(slow_operation(), 1.0, &quot;timeout&quot;)</span>
+<span class="sd">        ...     print(result)  # &quot;timeout&quot;</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">coro</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_seconds</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">raise</span></div>
+
+
+
+<div class="viewcode-block" id="delay">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.delay">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delay</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a value after a delay.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to return after delay</span>
+<span class="sd">        seconds: Delay in seconds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The provided value after delay</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await delay(&quot;hello&quot;, 0.1)</span>
+<span class="sd">        ...     print(result)  # &quot;hello&quot; (after 0.1 seconds)</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="gather_with_concurrency">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.gather_with_concurrency">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">gather_with_concurrency</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">coroutines</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute coroutines with concurrency limit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *coroutines: Coroutines to execute</span>
+<span class="sd">        limit: Maximum number of concurrent executions</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of results in order</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def fetch_data(i):</span>
+<span class="sd">        ...     await asyncio.sleep(0.1)</span>
+<span class="sd">        ...     return f&quot;data_{i}&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     tasks = [fetch_data(i) for i in range(5)]</span>
+<span class="sd">        ...     results = await gather_with_concurrency(*tasks, limit=2)</span>
+<span class="sd">        ...     print(results)  # [&#39;data_0&#39;, &#39;data_1&#39;, &#39;data_2&#39;, &#39;data_3&#39;, &#39;data_4&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">limited_coro</span><span class="p">(</span><span class="n">coro</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">coro</span>
+
+    <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">limited_coro</span><span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="k">for</span> <span class="n">coro</span> <span class="ow">in</span> <span class="n">coroutines</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="race">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.race">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">race</span><span class="p">(</span><span class="o">*</span><span class="n">coroutines</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the result of the first coroutine to complete.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *coroutines: Coroutines to race</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Result of the first completed coroutine</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def slow():</span>
+<span class="sd">        ...     await asyncio.sleep(1)</span>
+<span class="sd">        ...     return &quot;slow&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def fast():</span>
+<span class="sd">        ...     await asyncio.sleep(0.1)</span>
+<span class="sd">        ...     return &quot;fast&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await race(slow(), fast())</span>
+<span class="sd">        ...     print(result)  # &quot;fast&quot;</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert coroutines to tasks explicitly</span>
+    <span class="n">tasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">coro</span> <span class="ow">in</span> <span class="n">coroutines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutine</span><span class="p">(</span><span class="n">coro</span><span class="p">):</span>
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">coro</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Convert awaitable to coroutine</span>
+            <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_wrap</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="n">coro</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+                <span class="k">return</span> <span class="k">await</span> <span class="n">c</span>
+
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">_wrap</span><span class="p">()))</span>
+
+    <span class="n">done</span><span class="p">,</span> <span class="n">pending</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">return_when</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">FIRST_COMPLETED</span><span class="p">)</span>
+
+    <span class="c1"># Cancel pending tasks</span>
+    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">pending</span><span class="p">:</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+    <span class="c1"># Return result of first completed task</span>
+    <span class="n">completed_task</span> <span class="o">=</span> <span class="n">done</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">completed_task</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="retry_async">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.retry_async">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">retry_async</span><span class="p">(</span>
+    <span class="n">coro_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">]],</span>
+    <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">backoff_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">should_retry</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="ne">Exception</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retry an async function with exponential backoff.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        coro_func: Function that returns a coroutine</span>
+<span class="sd">        max_retries: Maximum number of retry attempts</span>
+<span class="sd">        delay: Initial delay between retries in seconds</span>
+<span class="sd">        backoff_factor: Multiplier for delay on each retry</span>
+<span class="sd">        should_retry: Function to determine if error should trigger retry</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Result of successful execution</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: Last exception if all retries failed</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def unreliable_api():</span>
+<span class="sd">        ...     import random</span>
+<span class="sd">        ...     if random.random() &lt; 0.7:</span>
+<span class="sd">        ...         raise Exception(&quot;API Error&quot;)</span>
+<span class="sd">        ...     return &quot;success&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await retry_async(</span>
+<span class="sd">        ...         unreliable_api,</span>
+<span class="sd">        ...         max_retries=3,</span>
+<span class="sd">        ...         delay=0.1,</span>
+<span class="sd">        ...         backoff_factor=2</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ...     print(result)</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">last_error</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">current_delay</span> <span class="o">=</span> <span class="n">delay</span>
+
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">coro_func</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">last_error</span> <span class="o">=</span> <span class="n">error</span>
+
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">max_retries</span> <span class="ow">or</span> <span class="p">(</span><span class="n">should_retry</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">should_retry</span><span class="p">(</span><span class="n">error</span><span class="p">)):</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">current_delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">current_delay</span><span class="p">)</span>
+                <span class="n">current_delay</span> <span class="o">*=</span> <span class="n">backoff_factor</span>
+
+    <span class="k">if</span> <span class="n">last_error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">last_error</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No attempts were made&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="map_async">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.map_async">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">map_async</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">concurrency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply async function to list of items with concurrency control.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func: Async function to apply</span>
+<span class="sd">        items: List of items to process</span>
+<span class="sd">        concurrency: Maximum concurrent executions</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of results in order</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def process_item(item):</span>
+<span class="sd">        ...     await asyncio.sleep(0.1)</span>
+<span class="sd">        ...     return item * 2</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     items = [1, 2, 3, 4, 5]</span>
+<span class="sd">        ...     results = await map_async(process_item, items, concurrency=2)</span>
+<span class="sd">        ...     print(results)  # [2, 4, 6, 8, 10]</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="n">concurrency</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">limited_func</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">limited_func</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="filter_async">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.filter_async">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">filter_async</span><span class="p">(</span>
+    <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="nb">bool</span><span class="p">]],</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">concurrency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter list using async predicate with concurrency control.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        predicate: Async predicate function</span>
+<span class="sd">        items: List of items to filter</span>
+<span class="sd">        concurrency: Maximum concurrent executions</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered list of items</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def is_even_async(n):</span>
+<span class="sd">        ...     await asyncio.sleep(0.01)</span>
+<span class="sd">        ...     return n % 2 == 0</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     numbers = [1, 2, 3, 4, 5, 6]</span>
+<span class="sd">        ...     evens = await filter_async(is_even_async, numbers)</span>
+<span class="sd">        ...     print(evens)  # [2, 4, 6]</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="n">concurrency</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_item</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">predicate</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">item</span><span class="p">,</span> <span class="n">result</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">check_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">passed</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">passed</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="run_in_thread">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.run_in_thread">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_in_thread</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a synchronous function in a thread pool.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func: Synchronous function to run</span>
+<span class="sd">        *args: Positional arguments</span>
+<span class="sd">        **kwargs: Keyword arguments</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Awaitable result</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; def cpu_intensive_task(n):</span>
+<span class="sd">        ...     return sum(i * i for i in range(n))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await run_in_thread(cpu_intensive_task, 1000)</span>
+<span class="sd">        ...     print(result)</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="batch_process">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.batch_process">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">batch_process</span><span class="p">(</span>
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+    <span class="n">processor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">concurrency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process items in batches with concurrency control.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: Items to process</span>
+<span class="sd">        processor: Function to process a batch of items</span>
+<span class="sd">        batch_size: Size of each batch</span>
+<span class="sd">        concurrency: Maximum concurrent batch processing</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flattened list of all results</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def process_batch(batch):</span>
+<span class="sd">        ...     await asyncio.sleep(0.1)</span>
+<span class="sd">        ...     return [item * 2 for item in batch]</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     items = list(range(10))</span>
+<span class="sd">        ...     results = await batch_process(</span>
+<span class="sd">        ...         items, process_batch, batch_size=3, concurrency=2</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ...     print(results)  # [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create batches</span>
+    <span class="n">batches</span> <span class="o">=</span> <span class="p">[</span><span class="n">items</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)]</span>
+
+    <span class="c1"># Process batches with concurrency control</span>
+    <span class="n">batch_results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">gather_with_concurrency</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">[</span><span class="n">processor</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="n">concurrency</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Flatten results</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">batch_result</span> <span class="ow">in</span> <span class="n">batch_results</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch_result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="AsyncContextManager">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncContextManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncContextManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for async context managers.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AsyncContextManager.__aenter__">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncContextManager.__aenter__">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AsyncContextManager&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enter async context.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="AsyncContextManager.__aexit__">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncContextManager.__aexit__">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exit async context.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AsyncTimer">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncTimer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncTimer</span><span class="p">(</span><span class="n">AsyncContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Async context manager for timing operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AsyncTimer.__init__">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncTimer.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize timer.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="AsyncTimer.__aenter__">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncTimer.__aenter__">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AsyncTimer&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start timing.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="AsyncTimer.__aexit__">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.AsyncTimer.__aexit__">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop timing.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="with_timeout_default">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.with_timeout_default">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">with_timeout_default</span><span class="p">(</span>
+    <span class="n">coro</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">T</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute coroutine with timeout, returning default on timeout.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        coro: Coroutine to execute</span>
+<span class="sd">        timeout_seconds: Timeout in seconds</span>
+<span class="sd">        default: Default value to return on timeout</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Result of coroutine or default value</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def slow_task():</span>
+<span class="sd">        ...     await asyncio.sleep(2)</span>
+<span class="sd">        ...     return &quot;completed&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await with_timeout_default(</span>
+<span class="sd">        ...         slow_task(), 1.0, &quot;timed_out&quot;</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ...     print(result)  # &quot;timed_out&quot;</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">coro</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_seconds</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span></div>
+
+
+
+<div class="viewcode-block" id="wait_for_all">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.wait_for_all">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_for_all</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">coroutines</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for all coroutines to complete.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *coroutines: Coroutines to wait for</span>
+<span class="sd">        timeout: Optional timeout in seconds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of results</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        asyncio.TimeoutError: If timeout occurs</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def task1():</span>
+<span class="sd">        ...     await asyncio.sleep(0.1)</span>
+<span class="sd">        ...     return &quot;task1&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def task2():</span>
+<span class="sd">        ...     await asyncio.sleep(0.2)</span>
+<span class="sd">        ...     return &quot;task2&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     results = await wait_for_all(task1(), task2())</span>
+<span class="sd">        ...     print(results)  # [&quot;task1&quot;, &quot;task2&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">coroutines</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">coroutines</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="wait_for_any">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.async_utils.wait_for_any">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_for_any</span><span class="p">(</span><span class="o">*</span><span class="n">coroutines</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for any coroutine to complete.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *coroutines: Coroutines to wait for</span>
+<span class="sd">        timeout: Optional timeout in seconds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Result of first completed coroutine</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        asyncio.TimeoutError: If timeout occurs</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; async def slow_task():</span>
+<span class="sd">        ...     await asyncio.sleep(1)</span>
+<span class="sd">        ...     return &quot;slow&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def fast_task():</span>
+<span class="sd">        ...     await asyncio.sleep(0.1)</span>
+<span class="sd">        ...     return &quot;fast&quot;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; async def main():</span>
+<span class="sd">        ...     result = await wait_for_any(slow_task(), fast_task())</span>
+<span class="sd">        ...     print(result)  # &quot;fast&quot;</span>
+<span class="sd">        &gt;&gt;&gt; # asyncio.run(main())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">race</span><span class="p">(</span><span class="o">*</span><span class="n">coroutines</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">race</span><span class="p">(</span><span class="o">*</span><span class="n">coroutines</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
