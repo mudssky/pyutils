@@ -24,16 +24,22 @@
       }
     ],
     [
-      "@semantic-release/git",
+      "@semantic-release/github",
       {
         "assets": [
-          "CHANGELOG.md",
-          "pyproject.toml",
-          "src/pyutils/__init__.py"
+          {
+            "path": "dist/*.whl",
+            "label": "Python Wheel"
+          },
+          {
+            "path": "dist/*.tar.gz",
+            "label": "Source Distribution"
+          }
         ],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        "successComment": false,
+        "failComment": false,
+        "releasedLabels": false
       }
-    ],
-    "@semantic-release/github"
+    ]
   ]
 }
