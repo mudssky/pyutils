@@ -1,0 +1,603 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.encoding &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.encoding</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.encoding</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Encoding and decoding utility functions.</span>
+
+<span class="sd">This module provides utility functions for encoding and decoding,</span>
+<span class="sd">porting JavaScript encoding methods and other encoding utilities to Python.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">html</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="btoa">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.btoa">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">btoa</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode string to base64 (like JavaScript btoa).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: String to encode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Base64 encoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; btoa(&#39;hello&#39;)</span>
+<span class="sd">        &#39;aGVsbG8=&#39;</span>
+<span class="sd">        &gt;&gt;&gt; btoa(&#39;Hello, World!&#39;)</span>
+<span class="sd">        &#39;SGVsbG8sIFdvcmxkIQ==&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="atob">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.atob">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">atob</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode base64 string (like JavaScript atob).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Base64 string to decode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decoded string</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If input is not valid base64</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; atob(&#39;aGVsbG8=&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; atob(&#39;SGVsbG8sIFdvcmxkIQ==&#39;)</span>
+<span class="sd">        &#39;Hello, World!&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid base64 string: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<div class="viewcode-block" id="escape_html">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.escape_html">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">escape_html</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Escape HTML special characters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: Text to escape</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        HTML escaped text</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; escape_html(&#39;&lt;div&gt;Hello &amp; goodbye&lt;/div&gt;&#39;)</span>
+<span class="sd">        &#39;&amp;lt;div&amp;gt;Hello &amp;amp; goodbye&amp;lt;/div&amp;gt;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; escape_html(&#39;&quot;quoted&quot; text&#39;)</span>
+<span class="sd">        &#39;&amp;quot;quoted&amp;quot; text&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="unescape_html">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.unescape_html">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unescape_html</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unescape HTML entities.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: HTML text to unescape</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Unescaped text</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; unescape_html(&#39;&amp;lt;div&amp;gt;Hello &amp;amp; goodbye&amp;lt;/div&amp;gt;&#39;)</span>
+<span class="sd">        &#39;&lt;div&gt;Hello &amp; goodbye&lt;/div&gt;&#39;</span>
+<span class="sd">        &gt;&gt;&gt; unescape_html(&#39;&amp;quot;quoted&amp;quot; text&#39;)</span>
+<span class="sd">        &#39;&quot;quoted&quot; text&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="encode_base64">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.encode_base64">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_base64</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode data to base64.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Data to encode (string or bytes)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Base64 encoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; encode_base64(&#39;hello world&#39;)</span>
+<span class="sd">        &#39;aGVsbG8gd29ybGQ=&#39;</span>
+<span class="sd">        &gt;&gt;&gt; encode_base64(b&#39;hello world&#39;)</span>
+<span class="sd">        &#39;aGVsbG8gd29ybGQ=&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="decode_base64">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.decode_base64">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_base64</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode base64 string to string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Base64 string to decode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decoded string</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If input is not valid base64</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; decode_base64(&#39;aGVsbG8gd29ybGQ=&#39;)</span>
+<span class="sd">        &#39;hello world&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid base64 string: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<div class="viewcode-block" id="encode_hex">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.encode_hex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_hex</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode data to hexadecimal.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Data to encode (string or bytes)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Hexadecimal encoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; encode_hex(&#39;hello&#39;)</span>
+<span class="sd">        &#39;68656c6c6f&#39;</span>
+<span class="sd">        &gt;&gt;&gt; encode_hex(b&#39;hello&#39;)</span>
+<span class="sd">        &#39;68656c6c6f&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="decode_hex">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.decode_hex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_hex</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode hexadecimal string to string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Hexadecimal string to decode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decoded string</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If input is not valid hexadecimal</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; decode_hex(&#39;68656c6c6f&#39;)</span>
+<span class="sd">        &#39;hello&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid hexadecimal string: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="ne">UnicodeDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid UTF-8 in hexadecimal data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<div class="viewcode-block" id="json_stringify">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.json_stringify">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">json_stringify</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert object to JSON string (like JavaScript JSON.stringify).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Object to convert</span>
+<span class="sd">        indent: Indentation for pretty printing</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; json_stringify({&#39;name&#39;: &#39;John&#39;, &#39;age&#39;: 30})</span>
+<span class="sd">        &#39;{&quot;name&quot;: &quot;John&quot;, &quot;age&quot;: 30}&#39;</span>
+<span class="sd">        &gt;&gt;&gt; json_stringify([1, 2, 3])</span>
+<span class="sd">        &#39;[1, 2, 3]&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="c1"># Handle non-serializable objects</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="json_parse">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.json_parse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">json_parse</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse JSON string to object (like JavaScript JSON.parse).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: JSON string to parse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed object</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If input is not valid JSON</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; json_parse(&#39;{&quot;name&quot;: &quot;John&quot;, &quot;age&quot;: 30}&#39;)</span>
+<span class="sd">        {&#39;name&#39;: &#39;John&#39;, &#39;age&#39;: 30}</span>
+<span class="sd">        &gt;&gt;&gt; json_parse(&#39;[1, 2, 3]&#39;)</span>
+<span class="sd">        [1, 2, 3]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid JSON string: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<div class="viewcode-block" id="url_encode">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.url_encode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">url_encode</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;URL encode a string (like JavaScript encodeURIComponent).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to encode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        URL encoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; url_encode(&#39;hello world&#39;)</span>
+<span class="sd">        &#39;hello%20world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; url_encode(&#39;user@example.com&#39;)</span>
+<span class="sd">        &#39;user%40example.com&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="url_decode">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.url_decode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">url_decode</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;URL decode a string (like JavaScript decodeURIComponent).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to decode</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        URL decoded string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; url_decode(&#39;hello%20world&#39;)</span>
+<span class="sd">        &#39;hello world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; url_decode(&#39;user%40example.com&#39;)</span>
+<span class="sd">        &#39;user@example.com&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="escape_regex">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.escape_regex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">escape_regex</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Escape special regex characters in a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to escape</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Escaped string safe for use in regex</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; escape_regex(&#39;hello.world&#39;)</span>
+<span class="sd">        &#39;hello\\.world&#39;</span>
+<span class="sd">        &gt;&gt;&gt; escape_regex(&#39;$100 (USD)&#39;)</span>
+<span class="sd">        &#39;\\$100 \\(USD\\)&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="hash_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.hash_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hash_string</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate hash of a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to hash</span>
+<span class="sd">        algorithm: Hash algorithm (&#39;md5&#39;, &#39;sha1&#39;, &#39;sha256&#39;, &#39;sha512&#39;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Hexadecimal hash string</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If algorithm is not supported</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; len(hash_string(&#39;hello&#39;, &#39;md5&#39;))</span>
+<span class="sd">        32</span>
+<span class="sd">        &gt;&gt;&gt; len(hash_string(&#39;hello&#39;, &#39;sha256&#39;))</span>
+<span class="sd">        64</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+
+    <span class="n">algorithms</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;md5&quot;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">,</span>
+        <span class="s2">&quot;sha1&quot;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">,</span>
+        <span class="s2">&quot;sha256&quot;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">,</span>
+        <span class="s2">&quot;sha512&quot;</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">algorithms</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported algorithm: </span><span class="si">{</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">. Supported: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">hasher</span> <span class="o">=</span> <span class="n">algorithms</span><span class="p">[</span><span class="n">algorithm</span><span class="p">]()</span>
+    <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="generate_random_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.generate_random_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_random_string</span><span class="p">(</span><span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">charset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;alphanumeric&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        length: Length of the string to generate</span>
+<span class="sd">        charset: Character set to use (&#39;alphanumeric&#39;, &#39;alpha&#39;, &#39;numeric&#39;, &#39;hex&#39;) or</span>
+<span class="sd">            custom string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Random string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; len(generate_random_string(10))</span>
+<span class="sd">        10</span>
+<span class="sd">        &gt;&gt;&gt; all(c.isalnum() for c in generate_random_string(10, &#39;alphanumeric&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+
+    <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">charsets</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;alphanumeric&quot;</span><span class="p">:</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">,</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span><span class="p">,</span>
+        <span class="s2">&quot;numeric&quot;</span><span class="p">:</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">,</span>
+        <span class="s2">&quot;hex&quot;</span><span class="p">:</span> <span class="s2">&quot;0123456789abcdef&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># If charset is a predefined name, use it; otherwise treat as custom charset</span>
+    <span class="k">if</span> <span class="n">charset</span> <span class="ow">in</span> <span class="n">charsets</span><span class="p">:</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="n">charsets</span><span class="p">[</span><span class="n">charset</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="n">charset</span>
+
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="is_base64">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.is_base64">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_base64</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a string is valid base64.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if valid base64, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_base64(&#39;aGVsbG8=&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_base64(&#39;hello&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Check if string is valid base64</span>
+        <span class="n">text_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">text_bytes</span><span class="p">))</span> <span class="o">==</span> <span class="n">text_bytes</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_hex">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.is_hex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_hex</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a string is valid hexadecimal.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function does not accept hex strings with &#39;0x&#39; or &#39;0X&#39; prefixes.</span>
+<span class="sd">        Use int(text, 16) if you need to handle prefixed hex strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if valid hexadecimal, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_hex(&#39;68656c6c6f&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_hex(&#39;hello&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_hex(&#39;123abc&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_hex(&#39;0x123&#39;)  # Prefixed hex strings are rejected</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="c1"># Reject strings with hex prefixes</span>
+    <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;0x&quot;</span><span class="p">,</span> <span class="s2">&quot;0X&quot;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="c1"># Check if all characters are valid hex digits</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">c</span> <span class="ow">in</span> <span class="s2">&quot;0123456789abcdefABCDEF&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_json">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.encoding.is_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_json</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a string is valid JSON.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: String to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if valid JSON, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_json(&#39;{&quot;name&quot;: &quot;John&quot;}&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_json(&#39;[1, 2, 3]&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_json(&#39;hello&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

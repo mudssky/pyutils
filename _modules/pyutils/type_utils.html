@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.type_utils &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.type_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.type_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Type utility functions.</span>
+
+<span class="sd">This module provides utility functions for type checking and conversion,</span>
+<span class="sd">porting JavaScript type checking methods and other type utilities to Python.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="is_array">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_array</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is an array (list or tuple).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a list or tuple, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_array([1, 2, 3])</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_array((1, 2, 3))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_array(&#39;string&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a string, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_string(&#39;hello&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_string(123)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_number">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_number</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is a number (int or float).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a number, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_number(123)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_number(3.14)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_number(&#39;123&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
+
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="n">Decimal</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">,</span> <span class="nb">bool</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_boolean">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_boolean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_boolean</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is a boolean.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a boolean, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_boolean(True)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_boolean(False)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_boolean(1)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_null">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_null">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_null</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is None (null in JavaScript).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is None, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_null(None)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_null(0)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_null(&#39;&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="is_undefined">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_undefined">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_undefined</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is undefined (similar to JavaScript undefined).</span>
+
+<span class="sd">    In Python context, this checks for None or missing attributes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is None, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_undefined(None)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_undefined(0)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="is_function">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_function</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is a function or callable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is callable, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_function(lambda x: x)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_function(print)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_function(&#39;string&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_object">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_object">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_object</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is an object (dict in Python).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a dict, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_object({&#39;key&#39;: &#39;value&#39;})</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_object([])</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_object(&#39;string&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_date">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_date">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_date</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is a date/datetime object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a date or datetime, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import datetime</span>
+<span class="sd">        &gt;&gt;&gt; is_date(datetime.datetime.now())</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_date(datetime.date.today())</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_date(&#39;2023-01-01&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_regex">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_regex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_regex</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Check if value is a compiled regular expression.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a compiled regex, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import re</span>
+<span class="sd">        &gt;&gt;&gt; is_regex(re.compile(r&#39;\d+&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_regex(r&#39;\d+&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_empty">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_empty">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is empty (like JavaScript&#39;s concept of empty).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is empty, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_empty(&#39;&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_empty([])</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_empty({})</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_empty(set())</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_empty(frozenset())</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_empty(None)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_empty(0)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">set</span> <span class="o">|</span> <span class="nb">frozenset</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_nan">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_nan">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_nan</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is NaN (Not a Number).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is NaN, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_nan(float(&#39;nan&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_nan(123)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_nan(&#39;string&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">value</span>  <span class="c1"># NaN != NaN</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_finite">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_finite">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_finite</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is a finite number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a finite number, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_finite(123)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_finite(3.14)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_finite(float(&#39;inf&#39;))</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_finite(float(&#39;nan&#39;))</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">is_finite</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_integer">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.is_integer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_integer</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if value is an integer (like JavaScript Number.isInteger).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is an integer, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_integer(123)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_integer(3.0)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_integer(3.14)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_integer(&#39;123&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="to_string">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.to_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert value to string (like JavaScript String() constructor).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        String representation of value</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; to_string(123)</span>
+<span class="sd">        &#39;123&#39;</span>
+<span class="sd">        &gt;&gt;&gt; to_string(True)</span>
+<span class="sd">        &#39;True&#39;</span>
+<span class="sd">        &gt;&gt;&gt; to_string([1, 2, 3])</span>
+<span class="sd">        &#39;[1, 2, 3]&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;None&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_number">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.to_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_number</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert value to number (like JavaScript Number() constructor).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Number representation of value, or NaN if conversion fails</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; to_number(&#39;123&#39;)</span>
+<span class="sd">        123</span>
+<span class="sd">        &gt;&gt;&gt; to_number(&#39;3.14&#39;)</span>
+<span class="sd">        3.14</span>
+<span class="sd">        &gt;&gt;&gt; import math</span>
+<span class="sd">        &gt;&gt;&gt; math.isnan(to_number(&#39;invalid&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; to_number(True)</span>
+<span class="sd">        1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try integer first</span>
+            <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span> <span class="ow">and</span> <span class="s2">&quot;e&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_boolean">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.to_boolean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_boolean</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert value to boolean (like JavaScript Boolean() constructor).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Boolean representation of value</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; to_boolean(1)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; to_boolean(0)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; to_boolean(&#39;&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; to_boolean(&#39;hello&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; to_boolean([])</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_nan</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_int">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.parse_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">radix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse string to integer (like JavaScript parseInt).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: String to parse</span>
+<span class="sd">        radix: Base for parsing (2-36), defaults to 10</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed integer or NaN if parsing fails</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parse_int(&#39;123&#39;)</span>
+<span class="sd">        123</span>
+<span class="sd">        &gt;&gt;&gt; parse_int(&#39;123.45&#39;)</span>
+<span class="sd">        123</span>
+<span class="sd">        &gt;&gt;&gt; parse_int(&#39;ff&#39;, 16)</span>
+<span class="sd">        255</span>
+<span class="sd">        &gt;&gt;&gt; import math</span>
+<span class="sd">        &gt;&gt;&gt; math.isnan(parse_int(&#39;invalid&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle sign</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="c1"># Extract valid characters for the given radix</span>
+    <span class="n">valid_chars</span> <span class="o">=</span> <span class="s2">&quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;</span><span class="p">[:</span><span class="n">radix</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">valid_chars</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">char</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">radix</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_float">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.parse_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_float</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse string to float (like JavaScript parseFloat).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: String to parse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed float or NaN if parsing fails</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parse_float(&#39;3.14&#39;)</span>
+<span class="sd">        3.14</span>
+<span class="sd">        &gt;&gt;&gt; parse_float(&#39;3.14abc&#39;)</span>
+<span class="sd">        3.14</span>
+<span class="sd">        &gt;&gt;&gt; import math</span>
+<span class="sd">        &gt;&gt;&gt; math.isnan(parse_float(&#39;abc&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Extract valid float characters from the beginning</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[+-]?\d*\.?\d*([eE][+-]?\d+)?&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">float_str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">float_str</span> <span class="ow">and</span> <span class="n">float_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">float_str</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="typeof">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.type_utils.typeof">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">typeof</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get type of value (like JavaScript typeof operator).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check type of</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Type string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; typeof(&#39;hello&#39;)</span>
+<span class="sd">        &#39;string&#39;</span>
+<span class="sd">        &gt;&gt;&gt; typeof(123)</span>
+<span class="sd">        &#39;number&#39;</span>
+<span class="sd">        &gt;&gt;&gt; typeof(True)</span>
+<span class="sd">        &#39;boolean&#39;</span>
+<span class="sd">        &gt;&gt;&gt; typeof(None)</span>
+<span class="sd">        &#39;undefined&#39;</span>
+<span class="sd">        &gt;&gt;&gt; typeof({})</span>
+<span class="sd">        &#39;object&#39;</span>
+<span class="sd">        &gt;&gt;&gt; typeof([])</span>
+<span class="sd">        &#39;object&#39;</span>
+<span class="sd">        &gt;&gt;&gt; typeof(lambda x: x)</span>
+<span class="sd">        &#39;function&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
+
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;undefined&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;boolean&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;string&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="n">Decimal</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;number&quot;</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;function&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;object&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

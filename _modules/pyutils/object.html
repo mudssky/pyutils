@@ -1,0 +1,706 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.object &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.object</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.object</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Object utility functions.</span>
+
+<span class="sd">This module provides utility functions for working with dictionaries and objects,</span>
+<span class="sd">ported from the jsutils library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+
+<span class="n">K</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="pick">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.pick">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pick</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">K</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary with only the specified keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        keys: List of keys to pick</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with only the specified keys</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; pick({&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3}, [&#39;a&#39;, &#39;c&#39;])</span>
+<span class="sd">        {&#39;a&#39;: 1, &#39;c&#39;: 3}</span>
+<span class="sd">        &gt;&gt;&gt; pick({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25, &#39;city&#39;: &#39;NYC&#39;}, [&#39;name&#39;, &#39;age&#39;])</span>
+<span class="sd">        {&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="pick_by">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.pick_by">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pick_by</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">V</span><span class="p">,</span> <span class="n">K</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary with key-value pairs that satisfy the predicate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        predicate: Function that takes (value, key) and returns boolean</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with filtered key-value pairs</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; pick_by({&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3}, lambda v, k: v &gt; 1)</span>
+<span class="sd">        {&#39;b&#39;: 2, &#39;c&#39;: 3}</span>
+<span class="sd">        &gt;&gt;&gt; pick_by({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}, lambda v, k: isinstance(v, str))</span>
+<span class="sd">        {&#39;name&#39;: &#39;Alice&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)}</span></div>
+
+
+
+<div class="viewcode-block" id="omit">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.omit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">omit</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">K</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary without the specified keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        keys: List of keys to omit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary without the specified keys</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; omit({&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3}, [&#39;b&#39;])</span>
+<span class="sd">        {&#39;a&#39;: 1, &#39;c&#39;: 3}</span>
+<span class="sd">        &gt;&gt;&gt; omit({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25, &#39;city&#39;: &#39;NYC&#39;}, [&#39;age&#39;, &#39;city&#39;])</span>
+<span class="sd">        {&#39;name&#39;: &#39;Alice&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="omit_by">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.omit_by">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">omit_by</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">V</span><span class="p">,</span> <span class="n">K</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary without key-value pairs that satisfy the predicate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        predicate: Function that takes (value, key) and returns boolean</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with filtered key-value pairs</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; omit_by({&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3}, lambda v, k: v &gt; 1)</span>
+<span class="sd">        {&#39;a&#39;: 1}</span>
+<span class="sd">        &gt;&gt;&gt; omit_by({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}, lambda v, k: isinstance(v, int))</span>
+<span class="sd">        {&#39;name&#39;: &#39;Alice&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">predicate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)}</span></div>
+
+
+
+<div class="viewcode-block" id="map_keys">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.map_keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_keys</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">mapper</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">K</span><span class="p">],</span> <span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary with transformed keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        mapper: Function to transform keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with transformed keys</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; map_keys({&#39;a&#39;: 1, &#39;b&#39;: 2}, str.upper)</span>
+<span class="sd">        {&#39;A&#39;: 1, &#39;B&#39;: 2}</span>
+<span class="sd">        &gt;&gt;&gt; map_keys({1: &#39;one&#39;, 2: &#39;two&#39;}, lambda x: f&#39;num_{x}&#39;)</span>
+<span class="sd">        {&#39;num_1&#39;: &#39;one&#39;, &#39;num_2&#39;: &#39;two&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">mapper</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+
+<div class="viewcode-block" id="map_values">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.map_values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_values</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">mapper</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">V</span><span class="p">],</span> <span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary with transformed values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        mapper: Function to transform values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with transformed values</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; map_values({&#39;a&#39;: 1, &#39;b&#39;: 2}, lambda x: x * 2)</span>
+<span class="sd">        {&#39;a&#39;: 2, &#39;b&#39;: 4}</span>
+<span class="sd">        &gt;&gt;&gt; map_values({&#39;name&#39;: &#39;alice&#39;, &#39;city&#39;: &#39;nyc&#39;}, str.upper)</span>
+<span class="sd">        {&#39;name&#39;: &#39;ALICE&#39;, &#39;city&#39;: &#39;NYC&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">mapper</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+
+<div class="viewcode-block" id="is_object">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.is_object">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_object</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a value is a dictionary (object-like).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is a dictionary, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_object({&#39;a&#39;: 1})</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_object([1, 2, 3])</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_object(&#39;string&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_object(None)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="merge">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.merge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively merge multiple dictionaries.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *dicts: Dictionaries to merge</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Merged dictionary</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; merge({&#39;a&#39;: 1}, {&#39;b&#39;: 2})</span>
+<span class="sd">        {&#39;a&#39;: 1, &#39;b&#39;: 2}</span>
+<span class="sd">        &gt;&gt;&gt; merge({&#39;a&#39;: {&#39;x&#39;: 1}}, {&#39;a&#39;: {&#39;y&#39;: 2}})</span>
+<span class="sd">        {&#39;a&#39;: {&#39;x&#39;: 1, &#39;y&#39;: 2}}</span>
+<span class="sd">        &gt;&gt;&gt; merge({&#39;a&#39;: 1}, {&#39;a&#39;: 2})</span>
+<span class="sd">        {&#39;a&#39;: 2}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">key</span> <span class="ow">in</span> <span class="n">result</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="remove_non_serializable_props">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.remove_non_serializable_props">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_non_serializable_props</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove properties that cannot be JSON serialized.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Object to clean</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Object with only JSON-serializable properties</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import datetime</span>
+<span class="sd">        &gt;&gt;&gt; data = {&#39;name&#39;: &#39;Alice&#39;, &#39;func&#39;: lambda x: x, &#39;date&#39;: &#39;today&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; cleaned = remove_non_serializable_props(data)</span>
+<span class="sd">        &gt;&gt;&gt; &#39;name&#39; in cleaned</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; &#39;func&#39; in cleaned</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_serializable</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">dict_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># Recursively clean nested structures</span>
+                <span class="n">cleaned_value</span> <span class="o">=</span> <span class="n">remove_non_serializable_props</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cleaned_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">dict_result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleaned_value</span>
+            <span class="k">elif</span> <span class="n">is_serializable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">dict_result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">dict_result</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">list_result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># Recursively clean nested structures</span>
+                <span class="n">cleaned_item</span> <span class="o">=</span> <span class="n">remove_non_serializable_props</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cleaned_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">list_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_item</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">is_serializable</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="n">list_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list_result</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span> <span class="k">if</span> <span class="n">is_serializable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="safe_json_stringify">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.safe_json_stringify">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_json_stringify</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Safely convert object to JSON string, removing non-serializable properties.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Object to stringify</span>
+<span class="sd">        indent: JSON indentation, optional</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; safe_json_stringify({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25})</span>
+<span class="sd">        &#39;{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25}&#39;</span>
+<span class="sd">        &gt;&gt;&gt; import datetime</span>
+<span class="sd">        &gt;&gt;&gt; data = {&#39;name&#39;: &#39;Alice&#39;, &#39;func&#39;: lambda x: x}</span>
+<span class="sd">        &gt;&gt;&gt; result = safe_json_stringify(data)</span>
+<span class="sd">        &gt;&gt;&gt; &#39;name&#39; in result</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; &#39;func&#39; in result</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cleaned_obj</span> <span class="o">=</span> <span class="n">remove_non_serializable_props</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cleaned_obj</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="invert">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.invert">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">V</span><span class="p">,</span> <span class="n">K</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new dictionary with keys and values swapped.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with keys and values swapped</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; invert({&#39;a&#39;: 1, &#39;b&#39;: 2})</span>
+<span class="sd">        {1: &#39;a&#39;, 2: &#39;b&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; invert({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25})</span>
+<span class="sd">        {&#39;Alice&#39;: &#39;name&#39;, 25: &#39;age&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+
+<div class="viewcode-block" id="deep_copy">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.deep_copy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deep_copy</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a deep copy of an object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Object to copy</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Deep copy of the object</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; original = {&#39;a&#39;: {&#39;b&#39;: 1}}</span>
+<span class="sd">        &gt;&gt;&gt; copied = deep_copy(original)</span>
+<span class="sd">        &gt;&gt;&gt; copied[&#39;a&#39;][&#39;b&#39;] = 2</span>
+<span class="sd">        &gt;&gt;&gt; original[&#39;a&#39;][&#39;b&#39;]</span>
+<span class="sd">        1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+    <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="flatten_dict">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.flatten_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_dict</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flatten a nested dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Dictionary to flatten</span>
+<span class="sd">        separator: Separator for nested keys, defaults to &#39;.&#39;</span>
+<span class="sd">        prefix: Prefix for keys, defaults to &#39;&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flattened dictionary</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; flatten_dict({&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: 1}}})</span>
+<span class="sd">        {&#39;a.b.c&#39;: 1}</span>
+<span class="sd">        &gt;&gt;&gt; flatten_dict({&#39;user&#39;: {&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}})</span>
+<span class="sd">        {&#39;user.name&#39;: &#39;Alice&#39;, &#39;user.age&#39;: 25}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">separator</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">key</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">new_key</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="unflatten_dict">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.unflatten_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unflatten_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unflatten a flattened dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Flattened dictionary</span>
+<span class="sd">        separator: Separator used in keys, defaults to &#39;.&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Nested dictionary</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; unflatten_dict({&#39;a.b.c&#39;: 1})</span>
+<span class="sd">        {&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: 1}}}</span>
+<span class="sd">        &gt;&gt;&gt; unflatten_dict({&#39;user.name&#39;: &#39;Alice&#39;, &#39;user.age&#39;: 25})</span>
+<span class="sd">        {&#39;user&#39;: {&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">part</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current</span><span class="p">:</span>
+                <span class="n">current</span><span class="p">[</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">[</span><span class="n">part</span><span class="p">]</span>
+
+        <span class="n">current</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="get_nested_value">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.get_nested_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nested_value</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a nested value from a dictionary using a path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        path: Path to the value (e.g., &#39;user.profile.name&#39;)</span>
+<span class="sd">        separator: Path separator, defaults to &#39;.&#39;</span>
+<span class="sd">        default: Default value if path not found</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Value at the specified path or default</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; data = {&#39;user&#39;: {&#39;profile&#39;: {&#39;name&#39;: &#39;Alice&#39;}}}</span>
+<span class="sd">        &gt;&gt;&gt; get_nested_value(data, &#39;user.profile.name&#39;)</span>
+<span class="sd">        &#39;Alice&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get_nested_value(data, &#39;user.profile.age&#39;, default=0)</span>
+<span class="sd">        0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">obj</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">[</span><span class="n">part</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">current</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">default</span></div>
+
+
+
+<div class="viewcode-block" id="set_nested_value">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.set_nested_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_nested_value</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a nested value in a dictionary using a path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Target dictionary (will be modified)</span>
+<span class="sd">        path: Path to set the value (e.g., &#39;user.profile.name&#39;)</span>
+<span class="sd">        value: Value to set</span>
+<span class="sd">        separator: Path separator, defaults to &#39;.&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The modified dictionary</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; data = {}</span>
+<span class="sd">        &gt;&gt;&gt; set_nested_value(data, &#39;user.profile.name&#39;, &#39;Alice&#39;)</span>
+<span class="sd">        {&#39;user&#39;: {&#39;profile&#39;: {&#39;name&#39;: &#39;Alice&#39;}}}</span>
+<span class="sd">        &gt;&gt;&gt; data</span>
+<span class="sd">        {&#39;user&#39;: {&#39;profile&#39;: {&#39;name&#39;: &#39;Alice&#39;}}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">obj</span>
+
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">part</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current</span><span class="p">:</span>
+            <span class="n">current</span><span class="p">[</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">[</span><span class="n">part</span><span class="p">]</span>
+
+    <span class="n">current</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="get">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.get">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a value from a dictionary with optional default.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Source dictionary</span>
+<span class="sd">        key: Key to retrieve</span>
+<span class="sd">        default: Default value if key not found</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Value at the specified key or default</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; get({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}, &#39;name&#39;)</span>
+<span class="sd">        &#39;Alice&#39;</span>
+<span class="sd">        &gt;&gt;&gt; get({&#39;name&#39;: &#39;Alice&#39;}, &#39;age&#39;, 0)</span>
+<span class="sd">        0</span>
+<span class="sd">        &gt;&gt;&gt; get({}, &#39;nonexistent&#39;) is None</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="clone">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.clone">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a shallow copy of an object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Object to clone</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Shallow copy of the object</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; original = {&#39;a&#39;: 1, &#39;b&#39;: [1, 2, 3]}</span>
+<span class="sd">        &gt;&gt;&gt; cloned = clone(original)</span>
+<span class="sd">        &gt;&gt;&gt; cloned[&#39;a&#39;] = 2</span>
+<span class="sd">        &gt;&gt;&gt; original[&#39;a&#39;]</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; cloned[&#39;b&#39;] is original[&#39;b&#39;]</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+    <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_value">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.set_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_value</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a value in a dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Target dictionary (will be modified)</span>
+<span class="sd">        key: Key to set</span>
+<span class="sd">        value: Value to set</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The modified dictionary</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; data = {&#39;name&#39;: &#39;Alice&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; set_value(data, &#39;age&#39;, 25)</span>
+<span class="sd">        {&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}</span>
+<span class="sd">        &gt;&gt;&gt; data</span>
+<span class="sd">        {&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="has">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.has">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">has</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a dictionary has a specific key.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Dictionary to check</span>
+<span class="sd">        key: Key to look for</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if key exists, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; has({&#39;name&#39;: &#39;Alice&#39;, &#39;age&#39;: 25}, &#39;name&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; has({&#39;name&#39;: &#39;Alice&#39;}, &#39;age&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="filter_dict">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.object.filter_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter a dictionary based on a predicate function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Dictionary to filter</span>
+<span class="sd">        predicate: Function that takes key and value, returns True to keep</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        New dictionary with filtered key-value pairs</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; filter_dict({&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3}, lambda k, v: v &gt; 1)</span>
+<span class="sd">        {&#39;b&#39;: 2, &#39;c&#39;: 3}</span>
+<span class="sd">        &gt;&gt;&gt; filter_dict({&#39;DB_HOST&#39;: &#39;localhost&#39;, &#39;API_KEY&#39;: &#39;secret&#39;},</span>
+<span class="sd">        ...              lambda k, v: k.startswith(&#39;DB_&#39;))</span>
+<span class="sd">        {&#39;DB_HOST&#39;: &#39;localhost&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

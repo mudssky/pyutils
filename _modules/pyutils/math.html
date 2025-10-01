@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyutils.math &mdash; pyutils 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyutils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">内容目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">变更日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyutils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyutils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyutils.math</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyutils.math</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Math utility functions.</span>
+
+<span class="sd">This module provides utility functions for mathematical operations,</span>
+<span class="sd">ported from the jsutils library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_random_int">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.get_random_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_random_int</span><span class="p">(</span><span class="n">min_val</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_val</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random integer between min and max (inclusive).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        min_val: Minimum value (inclusive)</span>
+<span class="sd">        max_val: Maximum value (inclusive)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Random integer between min_val and max_val</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If min_val &gt; max_val</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; result = get_random_int(1, 10)</span>
+<span class="sd">        &gt;&gt;&gt; 1 &lt;= result &lt;= 10</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; get_random_int(5, 5)</span>
+<span class="sd">        5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">min_val</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min_val must be less than or equal to max_val&quot;</span><span class="p">)</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+
+    <span class="k">return</span> <span class="n">secrets</span><span class="o">.</span><span class="n">randbelow</span><span class="p">(</span><span class="n">max_val</span> <span class="o">-</span> <span class="n">min_val</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">min_val</span></div>
+
+
+
+<div class="viewcode-block" id="get_random_item_from_array">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.get_random_item_from_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_random_item_from_array</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a random item from a list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        items: List to select from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Random item from the list</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        IndexError: If the list is empty</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; items = [1, 2, 3, 4, 5]</span>
+<span class="sd">        &gt;&gt;&gt; result = get_random_item_from_array(items)</span>
+<span class="sd">        &gt;&gt;&gt; result in items</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; get_random_item_from_array([&#39;apple&#39;])</span>
+<span class="sd">        &#39;apple&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Cannot select from empty list&quot;</span><span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+
+    <span class="k">return</span> <span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="clamp">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.clamp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clamp</span><span class="p">(</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">min_val</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_val</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clamp a value between min and max bounds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to clamp</span>
+<span class="sd">        min_val: Minimum bound</span>
+<span class="sd">        max_val: Maximum bound</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Clamped value</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; clamp(5, 1, 10)</span>
+<span class="sd">        5</span>
+<span class="sd">        &gt;&gt;&gt; clamp(-5, 1, 10)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; clamp(15, 1, 10)</span>
+<span class="sd">        10</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_val</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">max_val</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="lerp">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.lerp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lerp</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Linear interpolation between two values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start: Starting value</span>
+<span class="sd">        end: Ending value</span>
+<span class="sd">        t: Interpolation factor (0.0 to 1.0)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Interpolated value</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; lerp(0, 10, 0.5)</span>
+<span class="sd">        5.0</span>
+<span class="sd">        &gt;&gt;&gt; lerp(10, 20, 0.25)</span>
+<span class="sd">        12.5</span>
+<span class="sd">        &gt;&gt;&gt; lerp(5, 15, 0.0)</span>
+<span class="sd">        5.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span></div>
+
+
+
+<div class="viewcode-block" id="normalize">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.normalize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">min_val</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_val</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize a value to a 0-1 range based on min and max bounds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to normalize</span>
+<span class="sd">        min_val: Minimum bound</span>
+<span class="sd">        max_val: Maximum bound</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Normalized value (0.0 to 1.0)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ZeroDivisionError: If max_val equals min_val (zero range)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; normalize(5, 0, 10)</span>
+<span class="sd">        0.5</span>
+<span class="sd">        &gt;&gt;&gt; normalize(25, 0, 100)</span>
+<span class="sd">        0.25</span>
+<span class="sd">        &gt;&gt;&gt; normalize(0, 0, 10)</span>
+<span class="sd">        0.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_val</span> <span class="o">==</span> <span class="n">min_val</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span><span class="s2">&quot;Cannot normalize with zero range (max_val == min_val)&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">min_val</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_val</span> <span class="o">-</span> <span class="n">min_val</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="degrees_to_radians">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.degrees_to_radians">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">degrees_to_radians</span><span class="p">(</span><span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert degrees to radians.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        degrees: Angle in degrees</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Angle in radians</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import math</span>
+<span class="sd">        &gt;&gt;&gt; abs(degrees_to_radians(180) - math.pi) &lt; 1e-10</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; abs(degrees_to_radians(90) - math.pi/2) &lt; 1e-10</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="k">return</span> <span class="n">degrees</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span></div>
+
+
+
+<div class="viewcode-block" id="radians_to_degrees">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.radians_to_degrees">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">radians_to_degrees</span><span class="p">(</span><span class="n">radians</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert radians to degrees.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        radians: Angle in radians</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Angle in degrees</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import math</span>
+<span class="sd">        &gt;&gt;&gt; abs(radians_to_degrees(math.pi) - 180) &lt; 1e-10</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; abs(radians_to_degrees(math.pi/2) - 90) &lt; 1e-10</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="k">return</span> <span class="n">radians</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span></div>
+
+
+
+<div class="viewcode-block" id="is_even">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.is_even">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_even</span><span class="p">(</span><span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a number is even.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        number: Integer to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if even, False if odd</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_even(4)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_even(5)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_even(0)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="is_odd">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.is_odd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_odd</span><span class="p">(</span><span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a number is odd.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        number: Integer to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if odd, False if even</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_odd(4)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_odd(5)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_odd(0)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="gcd">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.gcd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the greatest common divisor of two integers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a: First integer</span>
+<span class="sd">        b: Second integer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Greatest common divisor</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; gcd(12, 8)</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; gcd(17, 13)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; gcd(0, 5)</span>
+<span class="sd">        5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lcm">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.lcm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lcm</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the least common multiple of two integers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a: First integer</span>
+<span class="sd">        b: Second integer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Least common multiple</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; lcm(12, 8)</span>
+<span class="sd">        24</span>
+<span class="sd">        &gt;&gt;&gt; lcm(3, 5)</span>
+<span class="sd">        15</span>
+<span class="sd">        &gt;&gt;&gt; lcm(0, 5)</span>
+<span class="sd">        0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">//</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="factorial">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.factorial">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the factorial of a non-negative integer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: Non-negative integer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Factorial of n</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If n is negative</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; factorial(5)</span>
+<span class="sd">        120</span>
+<span class="sd">        &gt;&gt;&gt; factorial(0)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; factorial(1)</span>
+<span class="sd">        1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Factorial is not defined for negative numbers&quot;</span><span class="p">)</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_prime">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.is_prime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_prime</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a number is prime.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: Integer to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if prime, False otherwise</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; is_prime(7)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_prime(8)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_prime(2)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_prime(1)</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="fibonacci">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.fibonacci">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fibonacci</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the nth Fibonacci number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: Position in Fibonacci sequence (0-indexed)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        nth Fibonacci number</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If n is negative</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; fibonacci(0)</span>
+<span class="sd">        0</span>
+<span class="sd">        &gt;&gt;&gt; fibonacci(1)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; fibonacci(10)</span>
+<span class="sd">        55</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fibonacci is not defined for negative numbers&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">n</span>
+
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">b</span></div>
+
+
+
+<div class="viewcode-block" id="round_to_precision">
+<a class="viewcode-back" href="../../pyutils.html#pyutils.math.round_to_precision">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">round_to_precision</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">precision</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Round a number to specified decimal places.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Number to round</span>
+<span class="sd">        precision: Number of decimal places</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Rounded number</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; round_to_precision(3.14159, 2)</span>
+<span class="sd">        3.14</span>
+<span class="sd">        &gt;&gt;&gt; round_to_precision(2.5, 0)</span>
+<span class="sd">        2.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, pyutils contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
